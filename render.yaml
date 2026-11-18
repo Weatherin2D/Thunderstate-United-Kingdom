@@ -4,7 +4,7 @@
 # skywatch-ai needs 1c-2g (2 GB). Free/0.5c-512mb will OOM loading CPU torch.
 services:
   - type: web
-    name: skywatch-ai
+    name: thunderstate-uk-ai
     runtime: docker
     plan: 1c-2g
     region: singapore
@@ -20,7 +20,7 @@ services:
         value: "1"
 
   - type: web
-    name: skywatch-australia
+    name: thunderstate-uk
     runtime: docker
     plan: free
     region: singapore
@@ -32,7 +32,7 @@ services:
         value: production
       - key: HOSTNAME
         value: "0.0.0.0"
-      # After first AI deploy, set to https://skywatch-ai.onrender.com (or your custom name)
+      # After first AI deploy, set to https://thunderstate-uk-ai.onrender.com (or your custom name)
       - key: SKYWATCH_AI_URL
         sync: false
       - key: SKYWATCH_AI_API_KEY

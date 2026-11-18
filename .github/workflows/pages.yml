@@ -38,7 +38,7 @@ jobs:
       - name: Build
         working-directory: pages-site
         env:
-          VITE_BASE: /Skywatch-Australia/
+          VITE_BASE: /Thunderstate-United-Kingdom/
         run: npm run build
 
       - name: Upload Pages artifact

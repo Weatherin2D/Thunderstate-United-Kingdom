@@ -25,8 +25,8 @@ export function SiteFooter() {
         <div className="space-y-2">
           <CloudCountryLogo size="sm" />
           <p className="max-w-md text-sm text-white/70">
-            Explore Australian radar, lightning activity, forecasts, and severe
-            weather information in one place.
+            Thunderstate UK is in development. Its radar, forecasts, and
+            warnings currently show Australian data.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold">

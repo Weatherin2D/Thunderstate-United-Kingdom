@@ -1,6 +1,10 @@
-# Thunderstate
+# Thunderstate United Kingdom
 
-Professional Australian weather site — radar, forecasts, severe weather, and deeper insight.
+Independent starter copy for Thunderstate UK. This is a separate project from
+Thunderstate Australia; the weather feeds and Australia-specific maps have not
+been localized yet and still show Australian data.
+
+UK edition in development — radar, forecasts, severe weather, and deeper insight.
 
 **Local (full Next.js app):** `npm run dev` → [http://127.0.0.1:43127](http://127.0.0.1:43127)
 
@@ -51,7 +55,7 @@ The app auto-enables a **Hobby budget** on any Vercel deploy (`VERCEL=1`):
 
 **Deploy on a fresh Hobby account**
 
-1. [vercel.com](https://vercel.com) → new account → Import `Weatherin2D/Skywatch-Australia`.
+1. [vercel.com](https://vercel.com) → new account → Import `Weatherin2D/Thunderstate-United-Kingdom`.
 2. Framework: Next.js. Leave build defaults (`npm run build`).
 3. Env vars (Project → Settings → Environment Variables):
 
@@ -76,7 +80,7 @@ Static map + RainViewer radar + Open-Meteo capitals. Lives in `pages-site/`.
 | | |
 |---|---|
 | Local | `npm run dev:pages` → [http://127.0.0.1:43147](http://127.0.0.1:43147) |
-| Public URL | `https://weatherin2d.github.io/Skywatch-Australia/` |
+| Public URL | `https://weatherin2d.github.io/Thunderstate-United-Kingdom/` |
 
 **Enable once on GitHub**
 
@@ -95,8 +99,8 @@ Details: [`pages-site/README.md`](pages-site/README.md).
 **1. Get the code**
 
 ```bash
-git clone https://github.com/Weatherin2D/Skywatch-Australia.git
-cd Skywatch-Australia
+git clone https://github.com/Weatherin2D/Thunderstate-United-Kingdom.git
+cd Thunderstate-United-Kingdom
 ```
 
 **2. Secrets**

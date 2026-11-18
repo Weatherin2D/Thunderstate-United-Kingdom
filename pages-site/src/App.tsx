@@ -74,8 +74,8 @@ function App() {
 
       <header className="brand-bar">
         <div className="brand">
-          <p className="brand-mark">Thunderstate</p>
-          <p className="brand-sub">Australian weather</p>
+          <p className="brand-mark">Thunderstate UK</p>
+          <p className="brand-sub">In development — showing Australian weather</p>
         </div>
         <p className="tagline">
           Live rain radar and capital forecasts — static hosting, no server.

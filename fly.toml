@@ -1,7 +1,7 @@
 # Thunderstate — Fly.io
 # https://fly.io/docs/reference/configuration/
 
-app = "skywatch-australia"
+app = "thunderstate-uk"
 primary_region = "syd"
 
 [build]

@@ -17,15 +17,15 @@ const display = Oswald({
 });
 
 export const metadata: Metadata = {
-  title: "Thunderstate | Australian weather",
+  title: "Thunderstate UK | In development",
   description:
-    "Australian radar, forecasts, lightning activity, and severe weather information.",
-  applicationName: "Thunderstate",
+    "Thunderstate UK is in development. Its weather feeds and maps currently show Australian data.",
+  applicationName: "Thunderstate UK",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Thunderstate",
+    title: "Thunderstate UK",
   },
   icons: {
     icon: [{ url: "/icon", type: "image/png" }],
@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en-AU"
+      lang="en-GB"
       className={`${sans.variable} ${display.variable} h-full dark`}
     >
       <body className="min-h-full bg-[var(--page)] font-sans text-foreground antialiased">

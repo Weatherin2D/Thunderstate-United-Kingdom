@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Thunderstate",
-    short_name: "Thunderstate",
+    name: "Thunderstate UK",
+    short_name: "Thunderstate UK",
     description:
-      "Australian weather — radar, warnings, forecasts, and deeper insight.",
+      "Thunderstate UK is in development. Its weather feeds and maps currently show Australian data.",
     start_url: "/",
     display: "standalone",
     background_color: "#070b16",
