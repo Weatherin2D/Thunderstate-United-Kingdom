@@ -9,6 +9,7 @@ import {
   boundsMercatorAspect,
   gibsHimawariWmsUrl,
   getSatelliteProduct,
+  GIBS_UK_BOUNDS,
   lonLatToWebMercator,
   realEarthImageUrl,
   realEarthRasterSize,
@@ -763,10 +764,7 @@ async function fetchUpstreamWithRetry(
 export async function fetchAndCacheFrame(
   product: SatelliteProductId,
   timeUnix: number,
-  bounds: LonLatBounds = [
-    [-48, 105],
-    [-5, 165],
-  ],
+  bounds: LonLatBounds = GIBS_UK_BOUNDS,
   region = "national",
 ): Promise<{ body: Buffer; contentType: string } | null> {
   const cached = getCachedFrame(product, timeUnix, region);

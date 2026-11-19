@@ -136,80 +136,72 @@ export const MAP_REGIONS = [
     ] as RegionBounds,
   },
   {
-    id: "nsw",
+    id: "uk",
     label: "United Kingdom",
     short: "UK",
-    // Full state + coastal pad (geojson ~141–153.6E, 37.5–28.2S)
     bounds: [
       [49.5, -8.7],
       [59.5, 2.1],
     ] as RegionBounds,
   },
   {
-    id: "vic",
+    id: "england",
     label: "England",
     short: "ENG",
-    // Full state + Bass Strait pad (geojson ~141–150E, 39.1–34.0S)
     bounds: [
       [49.8, -6.5],
       [55.9, 2.1],
     ] as RegionBounds,
   },
   {
-    id: "qld",
+    id: "scotland",
     label: "Scotland",
     short: "SCT",
-    // Full mainland + Torres approaches + Coral Sea pad
     bounds: [
       [54.5, -8.6],
       [60.9, -0.6],
     ] as RegionBounds,
   },
   {
-    id: "wa",
+    id: "wales",
     label: "Wales",
     short: "WLS",
-    // Full mainland + Indian Ocean / Timor Sea pad (Steep Point → Kimberley)
     bounds: [
       [51.3, -5.8],
       [53.6, -2.6],
     ] as RegionBounds,
   },
   {
-    id: "sa",
+    id: "ni",
     label: "Northern Ireland",
     short: "NIR",
-    // Full state + Bight pad (geojson ~129–141E, 38.1–26.0S)
     bounds: [
       [54, -8.2],
       [55.3, -5.3],
     ] as RegionBounds,
   },
   {
-    id: "tas",
+    id: "western-eu",
     label: "Western Europe",
     short: "WE",
-    // Full island + surrounding waters (geojson ~143.8–148.3E, 43.6–39.6S)
     bounds: [
       [41, -11],
       [54.5, 9],
     ] as RegionBounds,
   },
   {
-    id: "nt",
+    id: "central-eu",
     label: "Central Europe",
     short: "CE",
-    // Full territory + Top End waters (geojson ~129–138E, 26.0–11.1S)
     bounds: [
       [43, 3],
       [55.5, 18],
     ] as RegionBounds,
   },
   {
-    id: "act",
+    id: "mediterranean",
     label: "Mediterranean",
     short: "MED",
-    // Full DEU with framing pad so the territory isn't edge-clipped
     bounds: [
       [35, -10],
       [47, 30],
@@ -219,7 +211,7 @@ export const MAP_REGIONS = [
 
 export type MapRegionId = (typeof MAP_REGIONS)[number]["id"];
 
-export const DEFAULT_MAP_REGION: MapRegionId = "nsw";
+export const DEFAULT_MAP_REGION: MapRegionId = "uk";
 
 export function getMapRegion(
   id: MapRegionId = DEFAULT_MAP_REGION,
@@ -232,7 +224,7 @@ export function isMapRegionId(value: string): value is MapRegionId {
 }
 
 /** Demo “now” for London — shared so every panel stays consistent. */
-export const SYDNEY_NOW = {
+export const LONDON_NOW = {
   place: "London, England",
   condition: "Partly cloudy",
   tempC: 22,
@@ -298,7 +290,7 @@ export const HIGHLIGHTS = [
   "Fresh Atlantic winds easing around the UK coast overnight",
 ] as const;
 
-/** Starts on “today” (Wed) so it matches SYDNEY_NOW. */
+/** Starts on “today” (Wed) so it matches LONDON_NOW. */
 export const WEEK_FORECAST = [
   { day: "Wed", high: 22, low: 16, icon: "partly" },
   { day: "Thu", high: 21, low: 15, icon: "rain" },

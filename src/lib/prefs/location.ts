@@ -14,18 +14,18 @@ export type SavedPlace = {
 };
 
 const STATE_TO_REGION: Record<string, MapRegionId> = {
-  ENG: "nsw",
-  SCT: "vic",
-  WLS: "qld",
-  EU: "wa",
-  IRE: "sa",
-  FRA: "tas",
-  NLD: "nt",
-  DEU: "act",
+  england: "england",
+  scotland: "scotland",
+  wales: "wales",
+  "northern ireland": "ni",
+  ireland: "national",
+  france: "western-eu",
+  netherlands: "western-eu",
+  germany: "central-eu",
 };
 
 export function regionIdForState(state: string): MapRegionId {
-  return STATE_TO_REGION[state.toUpperCase()] ?? "national";
+  return STATE_TO_REGION[state.toLowerCase()] ?? "national";
 }
 
 export function readSavedPlace(): SavedPlace | null {

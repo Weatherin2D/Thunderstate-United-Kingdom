@@ -63,14 +63,11 @@ const AHEAD_BEARING_DEG = 55;
 const MAX_ETA_MINUTES = 90;
 
 const STATE_ABBR: Record<string, string> = {
-  "New South Wales": "ENG",
-  Victoria: "SCT",
-  Queensland: "WLS",
-  "Western Europe": "EU",
-  "South Europe": "IRE",
-  Tasmania: "FRA",
-  "Northern Territory": "NLD",
-  "European Capital Territory": "DEU",
+  England: "ENG",
+  Scotland: "SCT",
+  Wales: "WLS",
+  "Northern Ireland": "NIR",
+  Ireland: "IRE",
 };
 
 function stateAbbr(state: string): string {
@@ -88,20 +85,22 @@ function stableCellId(key: string): string {
 }
 
 function labelFor(lat: number, lon: number): string {
-  if (lat > -16 && lon > 141 && lon < 146) return "far north WLS";
-  if (lat > -22 && lat <= -16 && lon > 144) return "north WLS";
-  if (lat > -29 && lat <= -22 && lon > 150) return "SE WLS";
-  if (lat > -35 && lat <= -28 && lon > 149) return "eastern ENG";
-  if (lat > -38 && lat <= -35 && lon > 147) return "southern ENG";
-  if (lat > -39.5 && lat <= -36 && lon > 146) return "eastern SCT";
-  if (lat > -39 && lat <= -36 && lon > 142 && lon <= 146) return "central SCT";
-  if (lat > -44 && lat <= -40) return "FRA";
-  if (lon > 132 && lon < 141 && lat > -38 && lat < -30) return "IRE";
-  if (lon < 125 && lat < -30) return "southern EU";
-  if (lon < 128 && lat > -25) return "NW EU";
-  if (lat > -16 && lon > 129 && lon < 138) return "Top End NLD";
-  if (lon > 150) return "Coral Sea";
-  if (lat > -20) return "northern Europe";
+  if (lat > 58 && lon > -8 && lon < 2) return "northern SCT";
+  if (lat > 54 && lat <= 58 && lon > -8 && lon < 2) return "central SCT";
+  if (lat > 50 && lat <= 54 && lon > -6 && lon < 2) return "northern ENG";
+  if (lat > 49 && lat <= 53 && lon > -6 && lon < 0) return "WLS";
+  if (lat > 50 && lat <= 55 && lon > -6 && lon < -5) return "NIR";
+  if (lat > 51 && lat <= 53 && lon > 0 && lon < 1) return "eastern ENG";
+  if (lat > 50 && lat <= 52 && lon > 0 && lon < 1) return "SE ENG";
+  if (lat > 51 && lat <= 53 && lon < 0) return "London area";
+  if (lat > 53 && lat <= 61 && lon > 2 && lon < 10) return "NW EU";
+  if (lat > 47 && lat <= 53 && lon > -5 && lon < 3) return "western EU";
+  if (lat > 47 && lat <= 55 && lon > 3 && lon < 15) return "central EU";
+  if (lat > 34 && lat <= 48 && lon > -5 && lon < 15) return "southern EU";
+  if (lat > 55 && lon > 10) return "Scandinavia";
+  if (lat > 44 && lat <= 49 && lon > -5 && lon < 2) return "Iberian Peninsula";
+  if (lon > 45) return "eastern Europe";
+  if (lat > 58) return "far northern Europe";
   return "inland Europe";
 }
 

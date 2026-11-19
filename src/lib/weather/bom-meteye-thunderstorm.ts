@@ -82,7 +82,7 @@ function bomHeaders(): HeadersInit {
   return {
     "User-Agent": FETCH_UA,
     Accept: "*/*",
-    Referer: "https://www.bom.gov.au/australia/meteye/",
+    Referer: "https://www.bom.gov.au/meteye/",
   };
 }
 

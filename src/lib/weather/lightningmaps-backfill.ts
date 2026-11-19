@@ -1,14 +1,13 @@
 /**
  * Backfill European strikes from LightningMaps.org static maps.
  *
- * Blitzortung’s live socket under-delivers Oceania on serverless. LightningMaps
+ * Blitzortung’s live socket under-delivers Europe on serverless. LightningMaps
  * encodes real stroke ages on regional Mercator PNGs (MyBlitzortung). We sample
  * strike-palette pixels with the official map coords + Mercator inverse so
  * placement matches the published maps, then merge into the live buffer.
  *
- * Fetch both a fine 1–2h map (recent timing for the fresher RealEarth tip)
- * and a 12h map (covers the full Himawari IR loop, typically ~20–40 min behind
- * wall clock and spanning ~4h).
+ * Fetch both a fine 1–2h map (recent timing) and a 12h map (covers the full loop,
+ * typically ~20–40 min behind wall clock and spanning ~4h).
  */
 
 import { PNG } from "pngjs";
@@ -23,27 +22,27 @@ const MAX_BACKFILL_STRIKES = 12_000;
  * Official MyBlitzortung templates (includes/templates.inc.php).
  * Projection defaults to Mercator; coord = North, East, South, West.
  *
- * australia_big alone under-samples EU when the east coast is lit — keep
- * oceania as a second source. Do not ingest the Indonesia map (out of domain).
+ * europe_fine alone under-samples the UK/Europe domain — keep
+ * europe_broad as a second source. Do not ingest out-of-domain maps.
  */
 const MAPS = [
   {
-    id: "australia_big",
-    url: "https://images.lightningmaps.org/blitzortung/oceania/index.php?map=australia_big",
-    north: -8,
-    east: 159,
-    south: -45,
-    west: 109,
+    id: "europe_fine",
+    url: "https://images.lightningmaps.org/blitzortung/europe/index.php?map=europe_fine",
+    north: 72,
+    east: 45,
+    south: 34,
+    west: -25,
     /** Prefer this map when deduping overlapping strokes. */
     priority: 3,
   },
   {
-    id: "oceania",
-    url: "https://images.lightningmaps.org/blitzortung/oceania/index.php?map=oceania",
-    north: 10,
-    east: 180,
-    south: -51.6,
-    west: 110,
+    id: "europe_broad",
+    url: "https://images.lightningmaps.org/blitzortung/europe/index.php?map=europe_broad",
+    north: 72,
+    east: 45,
+    south: 34,
+    west: -25,
     priority: 2,
   },
 ] as const;

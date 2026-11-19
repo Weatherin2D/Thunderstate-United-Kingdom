@@ -43,15 +43,12 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setActiveHash(seed);
-  }, [seed]);
-
-  useEffect(() => {
     if (!activeHash) return;
     const ac = new AbortController();
-    setLoading(true);
-    setError(null);
-    void (async () => {
+
+    const run = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const res = await fetch(
           `/api/weather/forecast/${encodeURIComponent(activeHash)}`,
@@ -74,7 +71,8 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
         setLoading(false);
         setError(err instanceof Error ? err.message : "Forecast unavailable");
       }
-    })();
+    }
+    run();
     return () => ac.abort();
   }, [activeHash]);
 
@@ -129,7 +127,6 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
           </p>
           <div className="sw-chip-row">
             {Object.entries(STATE_CAPITALS)
-              .filter(([key]) => key !== "australia")
               .map(([key, cap]) => (
                 <Link
                   key={key}
