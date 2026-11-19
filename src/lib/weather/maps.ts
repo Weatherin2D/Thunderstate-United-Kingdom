@@ -134,7 +134,7 @@ export type WeatherMapsPayload = {
   };
   radar: {
     past: WeatherFrame[];
-    source: "rainviewer";
+    source: "rainviewer" | "meteopool";
   };
 };
 
@@ -443,6 +443,19 @@ export function withRadarSmooth(
     return template.replace(/([?&]smooth=)\d/, "$10");
   }
   return template;
+}
+
+/**
+ * MeteoPool EU radar tile template — proxied through our server to bypass
+ * CORS (MeteoPool allows origin https://www.meteopool.org only).
+ * `ts` is baked in at map-load time so every tile in a frame shares one
+ * timestamp.
+ */
+export function meteoPoolTileUrlTemplate(timestamp: number): string {
+  const q = new URLSearchParams({
+    ts: String(timestamp),
+  });
+  return `/api/weather/radar-tile?${q.toString()}&z={z}&x={x}&y={y}`;
 }
 
 export function toIsoZ(ms: number): string {

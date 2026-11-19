@@ -537,7 +537,7 @@ function HomeDashboardInner({
 
   const showRadarOverlay = layers.radar;
   const radarSmoothing = mapSettings.radarSmoothing;
-  /** Keep tile URLs on crisp RainViewer; smoothing is CSS-only on the map. */
+  /** Keep tile URLs on crisp MeteoPool; smoothing is CSS-only on the map. */
   const radarFrames = useMemo(() => {
     const raw = radarFramesRaw;
     if (!raw.length) return raw;

@@ -9,9 +9,9 @@ import {
   gibsHimawariWmsUrl,
   getSatelliteProduct,
   isSatelliteProductId,
+  meteoPoolTileUrlTemplate,
   parseRealEarthTimeToken,
   parseSatelliteFrameCountParam,
-  rainviewerTileUrl,
   satelliteFrameProxyUrl,
   toIsoZ,
   type SatelliteProductId,
@@ -21,34 +21,21 @@ import {
   type WeatherMapsPayload,
 } from "@/lib/weather/maps";
 import { isRealEarthDisabled, warmFramesInBackground } from "@/lib/weather/fetch-frame";
-import { warmRadarFramesInBackground } from "@/lib/weather/warm-radar-tiles";
 import {
   allowBackgroundWarm,
-  isDirectRadarTilesEnabled,
   isHobbyBudget,
 } from "@/lib/runtime-budget";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const RAINVIEWER_URL = "https://api.rainviewer.com/public/weather-maps.json";
+const METEOPOOL_EU_TS_URL =
+  "https://www.meteopool.org/helper/radar-last-modified-v2-tiles-eu.php";
 const GIBS_STEP_MS = HIMAEURI_STEP_SEC * 1000;
 const GIBS_PROBE_MAX = isHobbyBudget() ? 8 : 18;
 const GIBS_PROBE_BATCH = isHobbyBudget() ? 2 : 4;
 const GIBS_PROBE_WIDTH = 96;
 const FRAME_COUNT: SatelliteFrameCount = SATELLITE_FRAME_COUNT;
-
-type RainViewerMaps = {
-  generated?: number;
-  host?: string;
-  radar?: {
-    past?: Array<{ time: number; path: string }>;
-    nowcast?: Array<{ time: number; path: string }>;
-  };
-  satellite?: {
-    infrared?: Array<{ time: number; path: string }>;
-  };
-};
 
 function emptyProductFrames(): WeatherMapsPayload["satellite"]["products"] {
   return Object.fromEntries(
@@ -168,22 +155,6 @@ function buildFramesAtLatest(
   );
 }
 
-function normalizeRainviewerFrames(
-  host: string,
-  frames: Array<{ time: number; path: string }> | undefined,
-  kind: "satellite" | "radar",
-): WeatherFrame[] {
-  if (!frames?.length) return [];
-  const directRadar = kind === "radar" && isDirectRadarTilesEnabled();
-  return frames.map((f) => ({
-    time: f.time,
-    path: f.path,
-    tileUrlTemplate: rainviewerTileUrl(host, f.path, kind, {
-      directRadar,
-    }),
-  }));
-}
-
 async function buildProductFrames(
   meta: SatelliteProductMeta,
   sharedTimelineUnix: number[] | null,
@@ -292,31 +263,30 @@ export async function GET(request: NextRequest) {
       ? rawProduct
       : DEFAULT_SATELLITE_PRODUCT;
 
-    const rvPromise = fetch(RAINVIEWER_URL, {
+    const mpTsPromise = fetch(METEOPOOL_EU_TS_URL, {
       headers: {
-        Accept: "application/json",
+        Accept: "text/plain",
         "User-Agent": "Thunderstate/1.0",
       },
       cache: "no-store",
       signal: AbortSignal.timeout(8000),
     })
-      .then(async (rvRes) => {
-        if (!rvRes.ok) throw new Error(`RainViewer HTTP ${rvRes.status}`);
-        return (await rvRes.json()) as RainViewerMaps;
+      .then(async (mpRes) => {
+        if (!mpRes.ok) throw new Error(`MeteoPool HTTP ${mpRes.status}`);
+        const text = await mpRes.text();
+        const ts = Number.parseInt(text.trim(), 10);
+        if (!Number.isFinite(ts) || ts <= 0) throw new Error("Invalid MeteoPool timestamp");
+        return ts;
       })
       .catch(() => null);
 
-    const rv = await rvPromise;
-    const host = rv?.host ?? "https://tilecache.rainviewer.com";
-    const radarPast = normalizeRainviewerFrames(host, rv?.radar?.past, "radar");
-    const radarNowcast = normalizeRainviewerFrames(
-      host,
-      rv?.radar?.nowcast,
-      "radar",
-    );
-    const radarAll = [...radarPast, ...radarNowcast].sort(
-      (a, b) => a.time - b.time,
-    );
+    const mpTs = await mpTsPromise;
+    const radarAll: WeatherFrame[] = mpTs != null
+      ? [{
+          time: mpTs,
+          tileUrlTemplate: meteoPoolTileUrlTemplate(mpTs),
+        }]
+      : [];
 
     const satellite = wantAll
       ? await buildAllSatelliteProducts(frameCount)
@@ -353,20 +323,14 @@ export async function GET(request: NextRequest) {
           };
         })();
 
-    const generated = rv?.generated ?? Math.floor(Date.now() / 1000);
+    const generated = mpTs ?? Math.floor(Date.now() / 1000);
     const activeProduct = wantAll ? DEFAULT_SATELLITE_PRODUCT : product;
     const frames = satellite.products[activeProduct].frames;
     const activeMeta = getSatelliteProduct(activeProduct);
 
-    // Hobby: never warm radar tiles server-side (recolour × hundreds of tiles
-    // was the main Active CPU burn). Full compute can opt in via SKYEUTCH_WARM.
-    if (allowBackgroundWarm() && !isDirectRadarTilesEnabled()) {
-      warmRadarFramesInBackground(
-        radarAll.slice(-2).flatMap((f) =>
-          f.path ? [{ host, path: f.path }] : [],
-        ),
-      );
-    }
+    // Hobby: never warm radar tiles server-side. MeteoPool tiles are already
+    // coloured WebP — no recolour CPU burn.
+    const host = "https://www.meteopool.org";
 
     const payload: WeatherMapsPayload = {
       generated,
@@ -379,7 +343,7 @@ export async function GET(request: NextRequest) {
       },
       radar: {
         past: radarAll,
-        source: "rainviewer",
+        source: "meteopool",
       },
     };
 

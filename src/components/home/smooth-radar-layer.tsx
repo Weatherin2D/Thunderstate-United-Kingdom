@@ -5,6 +5,7 @@ import { TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import {
   RADAR_NATIVE_MAX_ZOOM,
+  RADAR_TILE_SIZE,
   radarWarmupTileUrls,
 } from "@/lib/weather/radar-palette";
 import type { WeatherFrame } from "@/lib/weather/maps";
@@ -27,8 +28,8 @@ function createBufferLayer(zIndex: number, smoothed: boolean): L.TileLayer {
     updateWhenZooming: false,
     updateInterval: 90,
     zIndex,
-    // RainViewer only has real data through ~z7. Overzoom past that so tight
-    // zooms keep showing scaled reflectivity instead of empty z8–12 tiles.
+    // MeteoPool EU only has real data through ~z8. Overzoom past that so tight
+    // zooms keep showing scaled reflectivity instead of empty z9–12 tiles.
     maxZoom: 22,
     maxNativeZoom: RADAR_NATIVE_MAX_ZOOM,
     minZoom: 0,
@@ -50,7 +51,7 @@ export function SmoothRadarLayer({
 }: {
   url: string | null;
   opacity?: number;
-  /** RainViewer spatial smooth — also softens CSS image-rendering. */
+  /** Smoothed — also softens CSS image-rendering. */
   smoothed?: boolean;
 }) {
   const warmCacheRef = useRef<Map<string, number>>(new Map());
@@ -78,7 +79,7 @@ export function SmoothRadarLayer({
       url={url}
       opacity={opacity}
       zIndex={450}
-      tileSize={256}
+      tileSize={RADAR_TILE_SIZE}
       className={
         smoothed
           ? "skywatch-radar-tiles skywatch-radar-tiles--smooth"

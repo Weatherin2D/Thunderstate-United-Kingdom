@@ -1,12 +1,10 @@
 /**
- * Server-side radar tile warm — fetch + recolour into the process cache so the
- * first client paint is a cache hit.
+ * Server-side radar tile warm — fetch MeteoPool EU tiles into the process
+ * cache so the first client paint is a cache hit.
  */
 
 import {
   RADAR_NATIVE_MAX_ZOOM,
-  rainviewerRawTileUrl,
-  recolourRadarPng,
   type RadarWarmupBounds,
 } from "@/lib/weather/radar-palette";
 import {
@@ -22,6 +20,9 @@ const UK_BOUNDS: RadarWarmupBounds = {
   north: 61,
   east: 3,
 };
+
+const METEOPOOL_EU_TILE_BASE =
+  "https://www.meteopool.org/import/fromhetzner/data/tiles/radar-eu";
 
 const DEG2RAD = Math.PI / 180;
 
@@ -78,44 +79,45 @@ function tileRange(
 }
 
 async function warmOne(
-  host: string,
-  path: string,
+  ts: number,
   z: number,
   x: number,
   y: number,
 ): Promise<void> {
-  const key = radarTileCacheKey(host, path, z, x, y);
+  const key = radarTileCacheKey(String(ts), "", z, x, y);
   if (getCachedRadarTile(key)) return;
-  const upstream = rainviewerRawTileUrl(host, path, z, x, y);
+  const upstream = `${METEOPOOL_EU_TILE_BASE}/${ts}/${z}/${x}/${y}.webp`;
   const res = await fetch(upstream, {
-    headers: { Accept: "image/png" },
+    headers: {
+      Accept: "image/webp",
+      "User-Agent": "Thunderstate/1.0",
+      Referer: "https://www.meteopool.org/",
+    },
     cache: "force-cache",
-    next: { revalidate: 7200 },
+    next: { revalidate: 600 },
     signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) return;
   const buf = Buffer.from(await res.arrayBuffer());
-  setCachedRadarTile(key, recolourRadarPng(buf));
+  setCachedRadarTile(key, buf);
 }
 
 /**
- * Warm AU tiles for the given RainViewer frames (host + path pairs).
+ * Warm MeteoPool EU radar tiles for the given timestamp.
  * Fire-and-forget — never throws to the caller.
  */
 export function warmRadarFramesInBackground(
-  frames: { host: string; path: string }[],
-  zooms: number[] = [4, 5, 6, 7],
+  timestamps: number[],
+  zooms: number[] = [4, 5, 6, 7, 8],
 ): void {
-  if (!frames.length || !allowBackgroundWarm()) return;
+  if (!timestamps.length || !allowBackgroundWarm()) return;
   void Promise.resolve().then(async () => {
-    const jobs: { host: string; path: string; z: number; x: number; y: number }[] =
-      [];
-    for (const f of frames) {
+    const jobs: { ts: number; z: number; x: number; y: number }[] = [];
+    for (const ts of timestamps) {
       for (const z of zooms) {
-        // z7 is denser — keep the national warm window modest.
         const cap = z >= 7 ? 36 : z >= 6 ? 48 : 56;
         for (const { x, y } of tileRange(z, UK_BOUNDS, cap)) {
-          jobs.push({ host: f.host, path: f.path, z, x, y });
+          jobs.push({ ts, z, x, y });
         }
       }
     }
@@ -123,9 +125,7 @@ export function warmRadarFramesInBackground(
     for (let i = 0; i < jobs.length; i += CONCURRENCY) {
       const slice = jobs.slice(i, i + CONCURRENCY);
       await Promise.all(
-        slice.map((j) =>
-          warmOne(j.host, j.path, j.z, j.x, j.y).catch(() => undefined),
-        ),
+        slice.map((j) => warmOne(j.ts, j.z, j.x, j.y).catch(() => undefined)),
       );
     }
   });

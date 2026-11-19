@@ -1,4 +1,4 @@
-/** Process-local LRU cache for recoloured RainViewer radar tiles. */
+/** Process-local LRU cache for MeteoPool EU radar tiles (pre-coloured WebP). */
 
 type CacheEntry = {
   body: Buffer;
@@ -15,18 +15,17 @@ function store(): Map<string, CacheEntry> {
 }
 
 const MAX_ENTRIES = 2400;
-const TTL_MS = 90 * 60 * 1000;
+const TTL_MS = 10 * 60 * 1000;
 
 export function radarTileCacheKey(
-  host: string,
-  path: string,
+  ts: string,
+  _path: string,
   z: number,
   x: number,
   y: number,
-  smooth = false,
 ): string {
-  // v9: canonical user-specified CloudCountry dBZ ladder (swdbz3)
-  return `${host}|${path}|${z}/${x}/${y}|v9|s${smooth ? 1 : 0}`;
+  // v10: MeteoPool EU OPERA composite tiles (512px WebP, z8 native)
+  return `${ts}|${z}/${x}/${y}|v10`;
 }
 
 export function getCachedRadarTile(key: string): Buffer | null {

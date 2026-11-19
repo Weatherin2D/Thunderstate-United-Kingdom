@@ -222,16 +222,16 @@ export function transparentRadarTilePng(): Buffer {
 }
 
 /**
- * RainViewer serves useful reflectivity only through ~z7. Higher zooms return
- * empty/placeholder tiles — Leaflet must overzoom from this native max.
+ * MeteoPool EU radar serves useful reflectivity through ~z8. Higher zooms
+ * return empty tiles — Leaflet must overzoom from this native max.
  */
-export const RADAR_NATIVE_MAX_ZOOM = 7;
+export const RADAR_NATIVE_MAX_ZOOM = 8;
 
 /**
- * Upstream + served tile edge length. 256 keeps animation frame loads fast;
- * palette fidelity comes from the locked LUT + nearest-neighbour overzoom.
+ * Upstream + served tile edge length. MeteoPool serves 512px tiles; 512 keeps
+ * animation frame loads reasonable while preserving OPERA composite detail.
  */
-export const RADAR_TILE_SIZE: 256 = 256;
+export const RADAR_TILE_SIZE = 512 as const;
 
 /**
  * Crop a child tile out of a recoloured native parent and nearest-neighbour

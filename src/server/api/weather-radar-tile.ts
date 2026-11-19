@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   RADAR_NATIVE_MAX_ZOOM,
-  RADAR_PALETTE_ID,
-  RADAR_RENDER_REV,
+  RADAR_TILE_SIZE,
   extractOverzoomTile,
-  isRainviewerPlaceholderPng,
-  rainviewerRawTileUrl,
-  recolourRadarPng,
-  transparentRadarTilePng,
 } from "@/lib/weather/radar-palette";
 import {
   getCachedRadarTile,
@@ -17,59 +12,50 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const HOST_RE = /^https:\/\/([a-z0-9.-]+\.)?rainviewer\.com$/i;
-const PATH_RE = /^\/v2\/radar\/[a-z0-9]+$/i;
+const METEOPOOL_EU_TILE_BASE =
+  "https://www.meteopool.org/import/fromhetzner/data/tiles/radar-eu";
 
-function pngResponse(
+function webpResponse(
   body: Buffer,
   headers: Record<string, string>,
 ): NextResponse {
   return new NextResponse(new Uint8Array(body), {
     status: 200,
     headers: {
-      "Content-Type": "image/png",
+      "Content-Type": "image/webp",
       "Cache-Control":
-        "public, max-age=1800, stale-while-revalidate=7200, immutable",
+        "public, max-age=600, stale-while-revalidate=60, immutable",
       ...headers,
     },
   });
 }
 
+function emptyWebpTile(): Buffer {
+  // 1×1 transparent WebP
+  return Buffer.from(
+    "UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAAAAAAAAAQUxQSAwAAAARBxAR/Q9ERP8DAABWUDggGAAAABQBAJ0BKgEAAQAAAP4AAA3AAP7tQAAAAAAA",
+    "base64",
+  );
+}
+
 /**
- * Proxy RainViewer radar tiles remapped to the locked CloudCountry dBZ scale.
+ * Proxy MeteoPool EU radar tiles (pre-coloured WebP from OPERA composite).
  *
- * GET /api/weather/radar-tile?host=&path=&pal=&r=&smooth=&z=&x=&y=
+ * GET /api/weather/radar-tile?ts={unix}&z={z}&x={x}&y={y}
  *
- * `smooth=1` fetches RainViewer spatially-smoothed Universal Blue (`1_0`);
- * default `smooth=0` is crisp unsmoothed (`0_0`).
+ * MeteoPool restricts CORS to https://www.meteopool.org, so tiles must be
+ * proxied server-side. Tiles are served as-is (already coloured WebP, 512px,
+ * max native zoom 8).
  */
 export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams;
-  const host = sp.get("host") ?? "";
-  const path = sp.get("path") ?? "";
+  const ts = sp.get("ts") ?? "";
   const z = sp.get("z");
   const x = sp.get("x");
   const y = sp.get("y");
-  // Always fetch RainViewer unsmoothed (`0_0`). Spatially smoothed `1_0`
-  // tiles blend palette colours and our dBZ recolour punches them transparent.
-  const smooth = false;
-  void sp.get("smooth");
-  // Reject mismatched palette/rev so stale clients cannot poison the cache
-  // with an older colour ladder under a shared process key.
-  const pal = sp.get("pal") ?? "";
-  const rev = sp.get("r") ?? "";
-  if (
-    (pal && pal !== RADAR_PALETTE_ID) ||
-    (rev && rev !== RADAR_RENDER_REV)
-  ) {
-    return NextResponse.json(
-      { error: "Stale radar palette — refresh the page" },
-      { status: 409 },
-    );
-  }
 
-  if (!HOST_RE.test(host) || !PATH_RE.test(path)) {
-    return NextResponse.json({ error: "Invalid host or path" }, { status: 400 });
+  if (!/^\d{10}$/.test(ts)) {
+    return NextResponse.json({ error: "Invalid or missing ts" }, { status: 400 });
   }
   if (z == null || x == null || y == null) {
     return NextResponse.json({ error: "Missing z/x/y" }, { status: 400 });
@@ -95,45 +81,31 @@ export async function GET(req: NextRequest) {
   const fetchX = overzoom ? Math.floor(xi / scale) : xi;
   const fetchY = overzoom ? Math.floor(yi / scale) : yi;
 
-  const cacheKey = radarTileCacheKey(host, path, zi, xi, yi, smooth);
+  const cacheKey = radarTileCacheKey(ts, "", zi, xi, yi);
   const cached = getCachedRadarTile(cacheKey);
   if (cached) {
-    return pngResponse(cached, {
+    return webpResponse(cached, {
       "X-Radar-Cache": "HIT",
-      "X-Radar-Source": "rainviewer-raw",
-      "X-Radar-Palette": RADAR_PALETTE_ID,
-      "X-Radar-Rev": RADAR_RENDER_REV,
-      "X-Radar-Smooth": smooth ? "1" : "0",
-      "X-Radar-Tile-Size": "256",
+      "X-Radar-Source": "meteopool-eu",
+      "X-Radar-Tile-Size": String(RADAR_TILE_SIZE),
       "X-Radar-Native-Z": String(fetchZ),
     });
   }
 
-  const parentKey = radarTileCacheKey(
-    host,
-    path,
-    fetchZ,
-    fetchX,
-    fetchY,
-    smooth,
-  );
-  let parentRecoloured = getCachedRadarTile(parentKey);
+  const parentKey = radarTileCacheKey(ts, "", fetchZ, fetchX, fetchY);
+  let parentTile = getCachedRadarTile(parentKey);
 
-  if (!parentRecoloured) {
-    const upstream = rainviewerRawTileUrl(
-      host,
-      path,
-      fetchZ,
-      fetchX,
-      fetchY,
-      undefined,
-      smooth,
-    );
+  if (!parentTile) {
+    const upstream = `${METEOPOOL_EU_TILE_BASE}/${ts}/${fetchZ}/${fetchX}/${fetchY}.webp`;
     try {
       const res = await fetch(upstream, {
-        headers: { Accept: "image/png" },
+        headers: {
+          Accept: "image/webp",
+          "User-Agent": "Thunderstate/1.0",
+          Referer: "https://www.meteopool.org/",
+        },
         cache: "force-cache",
-        next: { revalidate: 7200 },
+        next: { revalidate: 600 },
       });
       if (!res.ok) {
         return NextResponse.json(
@@ -142,22 +114,19 @@ export async function GET(req: NextRequest) {
         );
       }
       const buf = Buffer.from(await res.arrayBuffer());
-      if (isRainviewerPlaceholderPng(buf)) {
-        const empty = transparentRadarTilePng();
-        setCachedRadarTile(parentKey, empty);
-        setCachedRadarTile(cacheKey, empty);
-        return pngResponse(empty, {
+      if (buf.length < 50) {
+        // Too small to be a real tile — treat as empty
+        setCachedRadarTile(parentKey, emptyWebpTile());
+        setCachedRadarTile(cacheKey, emptyWebpTile());
+        return webpResponse(emptyWebpTile(), {
           "X-Radar-Cache": "MISS",
-          "X-Radar-Source": "rainviewer-placeholder",
-          "X-Radar-Palette": RADAR_PALETTE_ID,
-          "X-Radar-Rev": RADAR_RENDER_REV,
-          "X-Radar-Smooth": smooth ? "1" : "0",
-          "X-Radar-Tile-Size": "256",
+          "X-Radar-Source": "meteopool-empty",
+          "X-Radar-Tile-Size": String(RADAR_TILE_SIZE),
           "X-Radar-Native-Z": String(fetchZ),
         });
       }
-      parentRecoloured = recolourRadarPng(buf);
-      setCachedRadarTile(parentKey, parentRecoloured);
+      parentTile = buf;
+      setCachedRadarTile(parentKey, parentTile);
     } catch (err) {
       console.error("[weather/radar-tile]", err);
       return NextResponse.json(
@@ -168,16 +137,13 @@ export async function GET(req: NextRequest) {
   }
 
   const out = overzoom
-    ? extractOverzoomTile(parentRecoloured, scale, xi, yi)
-    : parentRecoloured;
+    ? extractOverzoomTile(parentTile, scale, xi, yi)
+    : parentTile;
   setCachedRadarTile(cacheKey, out);
-  return pngResponse(out, {
+  return webpResponse(out, {
     "X-Radar-Cache": "MISS",
-    "X-Radar-Source": "rainviewer-raw",
-    "X-Radar-Palette": RADAR_PALETTE_ID,
-    "X-Radar-Rev": RADAR_RENDER_REV,
-    "X-Radar-Smooth": smooth ? "1" : "0",
-    "X-Radar-Tile-Size": "256",
+    "X-Radar-Source": "meteopool-eu",
+    "X-Radar-Tile-Size": String(RADAR_TILE_SIZE),
     "X-Radar-Native-Z": String(fetchZ),
     "X-Radar-Overzoom": overzoom ? String(scale) : "1",
   });
