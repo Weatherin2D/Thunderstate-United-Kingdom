@@ -371,9 +371,12 @@ async function fetchBomCyclones(): Promise<Cyclone[] | null> {
     });
     if (!response.ok) return null;
     const json = asRecord(await response.json());
-    if (!json || !Array.isArray(json.warnings)) return null;
+    if (!json) return null;
+    const warnings = json!.warnings;
+    const warningList = Array.isArray(warnings) ? (warnings as unknown[]) : null;
+    if (!warningList) return null;
 
-    const candidates = json.warnings
+    const candidates = warningList!
       .map(asRecord)
       .filter((warning): warning is Record<string, unknown> => warning !== null)
       .filter((warning) => /^WTC/i.test(String(warning.type ?? "")) || /European storm/i.test(plainText(warning.title)));
@@ -384,7 +387,11 @@ async function fetchBomCyclones(): Promise<Cyclone[] | null> {
       if (!name) continue;
       const key = name.toLowerCase();
       const previous = latestByName.get(key);
-      if (!previous || String(candidate.issue_datetime_utc ?? "") > String(previous.issue_datetime_utc ?? "")) {
+      if (!previous) {
+        latestByName.set(key, { ...candidate, normalizedName: name });
+        continue;
+      }
+      if (String(candidate.issue_datetime_utc ?? "") > String(previous!.issue_datetime_utc ?? "")) {
         latestByName.set(key, { ...candidate, normalizedName: name });
       }
     }
