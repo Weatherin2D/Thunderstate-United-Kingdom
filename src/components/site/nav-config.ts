@@ -20,7 +20,7 @@ export const PRIMARY_NAV = [
   { href: "/radar", label: "Radar", icon: CloudRain },
   { href: "/satellite", label: "Satellite", icon: Satellite },
   { href: "/forecast", label: "Forecast", icon: CloudSun },
-  { href: "/cyclone-centre", label: "Cyclones", icon: Wind },
+  { href: "/cyclone-centre", label: "European storms", icon: Wind },
 ] as const;
 
 /** Right-aligned primary items (sit beside More / search). */
@@ -41,13 +41,13 @@ export const SECONDARY_NAV = [
 
 export const MORE_NAV = [
   { href: "/ai", label: "Experimental tools hub" },
-  { href: "/cyclone-centre", label: "Cyclone centre" },
+  { href: "/cyclone-centre", label: "European storm centre" },
   {
-    href: "/soundings?mode=model&engine=predict&model=pulse&lat=-31.95&lon=115.86&place=Perth",
+    href: "/soundings?mode=model&engine=predict&model=pulse&lat=51.5074&lon=-0.1278&place=London",
     label: "Experimental storm profiles",
   },
   {
-    href: "/models?model=icon&skewt=1&engine=predict&lat=-31.95&lon=115.86",
+    href: "/models?model=icon&skewt=1&engine=predict&lat=51.5074&lon=-0.1278",
     label: "Experimental forecast models",
   },
   {
@@ -73,11 +73,10 @@ export const MOBILE_NAV = [
 ] as const;
 
 export const STATE_PILLS = [
-  "NSW",
-  "VIC",
-  "QLD",
-  "WA",
-  "SA",
-  "ACT",
-  "NT",
+  "ENG",
+  "SCT",
+  "WLS",
+  "NIR",
+  "IRE",
+  "EUR",
 ] as const;

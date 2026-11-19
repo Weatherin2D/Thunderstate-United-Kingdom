@@ -6,14 +6,14 @@ const CARDS = [
     title: "Storm profiles",
     blurb:
       "Explore forecast conditions at different heights in the atmosphere. Compare the forecast with weather-balloon observations.",
-    href: "/soundings?mode=model&engine=predict&model=pulse&lat=-31.95&lon=115.86&place=Perth",
+    href: "/soundings?mode=model&engine=predict&model=pulse&lat=51.5074&lon=-0.1278&place=London",
     cta: "Explore storm profiles",
   },
   {
     title: "Forecast models",
     blurb:
       "Explore weather forecasts on a map and compare conditions at different locations.",
-    href: "/models?model=icon&skewt=1&engine=predict&lat=-31.95&lon=115.86",
+    href: "/models?model=icon&skewt=1&engine=predict&lat=51.5074&lon=-0.1278",
     cta: "Explore forecast models",
   },
   {
@@ -39,7 +39,7 @@ export default function AiHubPage() {
           <p className="max-w-2xl text-sm leading-relaxed text-white/65">
             Try experimental tools for exploring storm conditions and forecast
             risk. Results may be incomplete and should not replace official
-            Bureau of Meteorology warnings.
+            Met Office warnings.
           </p>
         </header>
 

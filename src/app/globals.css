@@ -251,7 +251,7 @@
   image-rendering: auto;
 }
 
-/* BoM risk bands — keep carved edges smooth when Leaflet scales the overlay. */
+/* Met Office risk bands — keep carved edges smooth when Leaflet scales the overlay. */
 .skywatch-risk-chart,
 .leaflet-overlay-pane img.skywatch-risk-chart,
 .leaflet-image-layer.skywatch-risk-chart {

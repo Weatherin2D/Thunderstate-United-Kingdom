@@ -36,20 +36,20 @@ export type StormActivityPayload = {
 };
 
 const REGIONS: { label: string; south: number; north: number; west: number; east: number }[] = [
-  { label: "far north QLD", south: -16, north: -10, west: 141, east: 146 },
-  { label: "north QLD", south: -22, north: -16, west: 144, east: 148 },
-  { label: "SE QLD", south: -29, north: -22, west: 150, east: 154 },
-  { label: "eastern NSW", south: -35, north: -28, west: 149, east: 154 },
-  { label: "southern NSW", south: -38, north: -35, west: 147, east: 151 },
-  { label: "eastern VIC", south: -39.5, north: -36, west: 146, east: 150 },
-  { label: "central VIC", south: -39, north: -36, west: 142, east: 146 },
-  { label: "northern VIC", south: -37, north: -34, west: 142, east: 147 },
-  { label: "TAS", south: -44, north: -40, west: 144, east: 149 },
-  { label: "SA", south: -38, north: -30, west: 132, east: 141 },
-  { label: "southern WA", south: -36, north: -30, west: 114, east: 125 },
-  { label: "NW WA", south: -25, north: -14, west: 113, east: 128 },
-  { label: "Top End NT", south: -16, north: -10, west: 129, east: 138 },
-  { label: "central Australia", south: -28, north: -20, west: 129, east: 138 },
+  { label: "far north WLS", south: -16, north: -10, west: 141, east: 146 },
+  { label: "north WLS", south: -22, north: -16, west: 144, east: 148 },
+  { label: "SE WLS", south: -29, north: -22, west: 150, east: 154 },
+  { label: "eastern ENG", south: -35, north: -28, west: 149, east: 154 },
+  { label: "southern ENG", south: -38, north: -35, west: 147, east: 151 },
+  { label: "eastern SCT", south: -39.5, north: -36, west: 146, east: 150 },
+  { label: "central SCT", south: -39, north: -36, west: 142, east: 146 },
+  { label: "northern SCT", south: -37, north: -34, west: 142, east: 147 },
+  { label: "FRA", south: -44, north: -40, west: 144, east: 149 },
+  { label: "IRE", south: -38, north: -30, west: 132, east: 141 },
+  { label: "southern EU", south: -36, north: -30, west: 114, east: 125 },
+  { label: "NW EU", south: -25, north: -14, west: 113, east: 128 },
+  { label: "Top End NLD", south: -16, north: -10, west: 129, east: 138 },
+  { label: "central Europe", south: -28, north: -20, west: 129, east: 138 },
 ];
 
 function regionFor(lat: number, lon: number): string {
@@ -58,11 +58,11 @@ function regionFor(lat: number, lon: number): string {
       return r.label;
     }
   }
-  if (lon < 120) return "western WA";
+  if (lon < 120) return "western EU";
   if (lon > 150) return "Coral Sea";
-  if (lat > -20) return "northern Australia";
-  if (lat < -38) return "southern Australia";
-  return "inland Australia";
+  if (lat > -20) return "northern Europe";
+  if (lat < -38) return "southern Europe";
+  return "inland Europe";
 }
 
 export function summarizeStormActivity(

@@ -66,7 +66,7 @@ export function PublicOutlook() {
             Risk outlook
           </h1>
           <p className="mt-2 max-w-xl text-sm text-white/65 sm:text-base">
-            Public severe convective outlooks for Australia. Zoom and pan the
+            Public severe convective outlooks for Europe. Zoom and pan the
             map to explore risk areas.
           </p>
         </div>
@@ -142,7 +142,7 @@ export function PublicOutlook() {
                   ? `${active.features.length} risk area${active.features.length === 1 ? "" : "s"} · ${active.source === "customLayers" ? "Thunderstate estimate" : "risk categories"}`
                   : "No polygons drawn for this day."}
                 {data.issuedAt
-                  ? ` · Issued ${new Date(data.issuedAt).toLocaleString("en-AU", { timeZone: "Australia/Sydney" })} AEST/AEDT`
+                  ? ` · Issued ${new Date(data.issuedAt).toLocaleString("en-GB", { timeZone: "Europe/London" })} UK time`
                   : null}
               </p>
             </section>

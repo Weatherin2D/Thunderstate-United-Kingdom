@@ -13,9 +13,9 @@ type Place = { lat: number; lon: number; label: string; geohash?: string };
 export function ClimateDashboard() {
   const { place: saved, saveFromBomLocation } = useSavedPlace();
   const [place, setPlace] = useState<Place>({
-    lat: -33.87,
-    lon: 151.21,
-    label: "Sydney, NSW",
+    lat: 51.5074,
+    lon: -0.1278,
+    label: "London, ENG",
     geohash: STATE_CAPITALS.nsw.geohash,
   });
   const [data, setData] = useState<ClimateOutlookPayload | null>(null);
@@ -74,7 +74,7 @@ export function ClimateDashboard() {
           </h1>
           <p className="mt-1.5 max-w-2xl text-sm text-white/70">
             Temperature and rainfall guidance for 14 to 16 days ahead. Use it
-            for broad planning only; it is not an official Bureau of Meteorology
+            for broad planning only; it is not an official Met Office
             seasonal outlook.
           </p>
         </div>
@@ -129,7 +129,7 @@ export function ClimateDashboard() {
               <ul className="space-y-2">
                 {data.days.map((d) => {
                   const [y, m, day] = d.date.split("-").map(Number);
-                  const label = new Intl.DateTimeFormat("en-AU", {
+                  const label = new Intl.DateTimeFormat("en-GB", {
                     weekday: "short",
                     day: "numeric",
                     month: "short",
@@ -178,7 +178,7 @@ export function ClimateDashboard() {
 
             <section className="sw-panel p-4">
               <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-[var(--cyan)]">
-                Official BoM seasonal products
+                Official Met Office seasonal products
               </h2>
               <ul className="space-y-2">
                 {data.bomLinks.map((link) => (

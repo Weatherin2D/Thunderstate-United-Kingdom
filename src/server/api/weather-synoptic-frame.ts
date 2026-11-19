@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  BOM_FRONTS_ATTRIBUTION,
+  MET_OFFICE_FRONTS_ATTRIBUTION,
   getBomFrontFeatures,
 } from "@/lib/weather/bom-fronts";
 import { contourPressureGrid } from "@/lib/weather/synoptic-contour";
@@ -36,7 +36,7 @@ async function frontsOrEmpty(stamp: string) {
 
 /**
  * Vector MSLP field for a valid-time stamp.
- * Returns GeoJSON (isobars, H/L, BoM fronts).
+ * Returns GeoJSON (isobars, H/L, Met Office fronts).
  */
 export async function GET(request: NextRequest) {
   const stamp = request.nextUrl.searchParams.get("time") ?? "";
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     const geojson = contourPressureGrid(field);
     geojson.features.push(...fronts);
     const attribution = fronts.length
-      ? `${SYNOPTIC_ATTRIBUTION} · ${BOM_FRONTS_ATTRIBUTION}`
+      ? `${SYNOPTIC_ATTRIBUTION} · ${MET_OFFICE_FRONTS_ATTRIBUTION}`
       : SYNOPTIC_ATTRIBUTION;
     const payload: SynopticFieldPayload = {
       stamp,

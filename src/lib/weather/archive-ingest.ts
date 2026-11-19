@@ -23,7 +23,7 @@ import { ensureArchiveSatFrame } from "@/lib/weather/archive-sat";
 import { ensureArchiveRadarAt } from "@/lib/weather/archive-radar";
 import { getLiveLightningSnapshot } from "@/lib/weather/blitzortung-feed";
 import {
-  BOM_FRONTS_ATTRIBUTION,
+  MET_OFFICE_FRONTS_ATTRIBUTION,
   getBomFrontFeatures,
 } from "@/lib/weather/bom-fronts";
 import { type SatelliteProductId } from "@/lib/weather/maps";
@@ -88,7 +88,7 @@ async function ingestSynopticAt(unix: number): Promise<boolean> {
     const geojson = contourPressureGrid(field);
     geojson.features.push(...fronts);
     const attribution = fronts.length
-      ? `${SYNOPTIC_ATTRIBUTION} · ${BOM_FRONTS_ATTRIBUTION}`
+      ? `${SYNOPTIC_ATTRIBUTION} · ${MET_OFFICE_FRONTS_ATTRIBUTION}`
       : SYNOPTIC_ATTRIBUTION;
     await putSynopticRecord({
       stamp,

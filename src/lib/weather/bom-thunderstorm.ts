@@ -3,13 +3,13 @@ import type { MapRegionId, RegionBounds } from "@/components/home/mock-data";
 import { getMapRegion } from "@/components/home/mock-data";
 
 /**
- * BoM categorical thunderstorm forecast key (public product legend).
+ * Met Office categorical thunderstorm forecast key (public product legend).
  * Thunderstorms possible = green
  * Thunderstorms likely = pale/light green
  * Severe thunderstorms possible = yellow
  * Severe thunderstorms likely = red
  */
-export const BOM_THUNDERSTORM_CATEGORIES = [
+export const MET_OFFICE_THUNDERSTORM_CATEGORIES = [
   {
     id: "tstm_possible",
     label: "Thunderstorms Possible",
@@ -33,7 +33,7 @@ export const BOM_THUNDERSTORM_CATEGORIES = [
 ] as const;
 
 export type BomRiskCategoryId =
-  (typeof BOM_THUNDERSTORM_CATEGORIES)[number]["id"];
+  (typeof MET_OFFICE_THUNDERSTORM_CATEGORIES)[number]["id"];
 
 const STYLE_BY_ID: Record<BomRiskCategoryId, CategoryStyle> = {
   tstm_possible: {
@@ -70,7 +70,7 @@ const STYLE_BY_ID: Record<BomRiskCategoryId, CategoryStyle> = {
   },
 };
 
-/** Map free-text / AusRisk / SPC-ish labels onto the BoM 4-level key. */
+/** Map free-text / AusRisk / SPC-ish labels onto the Met Office 4-level key. */
 export function classifyBomRiskLabel(label: string): BomRiskCategoryId | null {
   const l = label.trim().toLowerCase();
   if (!l || l === "placeholder") return null;
@@ -136,7 +136,7 @@ export function styleForBomRiskLabel(label: string): CategoryStyle | null {
 }
 
 export function bomLegendItems() {
-  return BOM_THUNDERSTORM_CATEGORIES.map((c, order) => ({
+  return MET_OFFICE_THUNDERSTORM_CATEGORIES.map((c, order) => ({
     id: c.id,
     label: c.label,
     order,
@@ -145,7 +145,7 @@ export function bomLegendItems() {
   }));
 }
 
-/** Optional BoM product-sheet image uploads (not used for the public polygon map). */
+/** Optional Met Office product-sheet image uploads (not used for the public polygon map). */
 export type BomThunderstormDay = 1 | 2 | 3;
 export type BomRiskDisplay = "sheet" | "geo";
 
@@ -197,13 +197,13 @@ export function bomRiskDayLabels(now = new Date()): Record<
   { label: string; dateLabel: string }
 > {
   const ymd = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Australia/Sydney",
+    timeZone: "Europe/London",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   }).format(now);
   const [y, m, d] = ymd.split("-").map(Number);
-  const fmt = new Intl.DateTimeFormat("en-AU", {
+  const fmt = new Intl.DateTimeFormat("en-GB", {
     timeZone: "UTC",
     weekday: "short",
     day: "numeric",

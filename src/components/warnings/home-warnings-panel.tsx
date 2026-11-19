@@ -89,7 +89,7 @@ export function HomeWarningsPanel() {
       </div>
 
       {loading && shownCount === 0 ? (
-        <p className="text-sm text-white/70">Loading BoM warnings…</p>
+        <p className="text-sm text-white/70">Loading Met Office warnings…</p>
       ) : null}
 
       {error && shownCount === 0 ? (
@@ -103,7 +103,7 @@ export function HomeWarningsPanel() {
 
       {!loading && !error && shownCount === 0 ? (
         <p className="text-sm text-white/80">
-          No Bureau of Meteorology warnings current.
+          No Met Office warnings current.
         </p>
       ) : null}
 

@@ -54,7 +54,7 @@ function CycloneGroupList({
   cyclones: Cyclone[];
   selectedId: string | null;
   onSelect: (id: string) => void;
-  status: CyclonePayload["sourceStatus"]["australian"];
+  status: CyclonePayload["sourceStatus"]["european"];
   loading: boolean;
 }) {
   const emptyMessage = loading
@@ -69,7 +69,7 @@ function CycloneGroupList({
         <div>
           <h2 className="text-sm font-extrabold text-white">{group}</h2>
           <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-white/45">
-            {group === "Australian" ? "Bureau of Meteorology" : "NOAA / NHC"}
+            {group === "European" ? "Met Office" : "NOAA / NHC"}
           </p>
         </div>
         <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-xs font-semibold text-white/75">
@@ -282,13 +282,13 @@ export default function CycloneCentrePage() {
 
   const cyclones = data?.cyclones ?? (loading ? [] : ACTIVE_CYCLONE_PAYLOAD.cyclones);
   const sourceStatus = data?.sourceStatus ?? (loading
-    ? { australian: "live", overseas: "live" }
+    ? { european: "live", overseas: "live" }
     : ACTIVE_CYCLONE_PAYLOAD.sourceStatus);
-  const australianCyclones = cyclones.filter((item) => item.group === "Australian");
+  const europeanCyclones = cyclones.filter((item) => item.group === "European");
   const overseasCyclones = cyclones.filter((item) => item.group === "Overseas");
   const cyclone =
     cyclones.find((item) => item.id === selectedId) ??
-    australianCyclones[0] ??
+    europeanCyclones[0] ??
     overseasCyclones[0] ??
     null;
 
@@ -297,15 +297,15 @@ export default function CycloneCentrePage() {
       <SiteShell>
         <div className="mx-auto w-full max-w-[1600px] space-y-4 px-3 py-4 text-white sm:px-4 lg:px-5">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--cyan)]">Tropical cyclones</p>
-            <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl font-extrabold text-white">Cyclone centre</h1>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--cyan)]">European storms</p>
+              <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl font-extrabold text-white">European storm centre</h1>
           </div>
           <div className="grid gap-3 lg:grid-cols-2">
-            <CycloneGroupList group="Australian" cyclones={australianCyclones} selectedId={selectedId} onSelect={setSelectedId} status={sourceStatus.australian} loading={loading} />
+            <CycloneGroupList group="European" cyclones={europeanCyclones} selectedId={selectedId} onSelect={setSelectedId} status={sourceStatus.european} loading={loading} />
             <CycloneGroupList group="Overseas" cyclones={overseasCyclones} selectedId={selectedId} onSelect={setSelectedId} status={sourceStatus.overseas} loading={loading} />
           </div>
           {error ? <p className="text-sm text-amber-100">Cyclone service unavailable. Try again later.</p> : null}
-          {sourceStatus.australian === "fallback" || sourceStatus.overseas === "fallback" ? (
+          {sourceStatus.european === "fallback" || sourceStatus.overseas === "fallback" ? (
             <p className="text-sm text-amber-100">Live cyclone feeds are unavailable; the saved demo snapshot is being shown.</p>
           ) : null}
           <p className="text-sm text-white/65">
@@ -322,13 +322,13 @@ export default function CycloneCentrePage() {
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--cyan)]">
-              Tropical cyclones
+              European storms
             </p>
             <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Cyclone centre
+              European storm centre
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/70">
-              Active tropical cyclone information, current risks, and practical guidance for communities across Australia.
+              Active European storm information, current risks, and practical guidance for communities across Europe.
             </p>
           </div>
           <button
@@ -340,9 +340,9 @@ export default function CycloneCentrePage() {
           </button>
         </div>
 
-        {error || sourceStatus.australian !== "live" || sourceStatus.overseas !== "live" ? (
+        {error || sourceStatus.european !== "live" || sourceStatus.overseas !== "live" ? (
           <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100">
-            {sourceStatus.australian === "fallback" || sourceStatus.overseas === "fallback"
+            {sourceStatus.european === "fallback" || sourceStatus.overseas === "fallback"
               ? "Live cyclone feeds are unavailable; the saved demo snapshot is being shown."
               : "One or more live cyclone feeds are unavailable. Data from the other source may still be shown."}
           </div>
@@ -364,7 +364,7 @@ export default function CycloneCentrePage() {
         </div>
 
         <div className="mb-4 grid gap-3 lg:grid-cols-2">
-          <CycloneGroupList group="Australian" cyclones={australianCyclones} selectedId={cyclone.id} onSelect={setSelectedId} status={sourceStatus.australian} loading={loading} />
+          <CycloneGroupList group="European" cyclones={europeanCyclones} selectedId={cyclone.id} onSelect={setSelectedId} status={sourceStatus.european} loading={loading} />
           <CycloneGroupList group="Overseas" cyclones={overseasCyclones} selectedId={cyclone.id} onSelect={setSelectedId} status={sourceStatus.overseas} loading={loading} />
         </div>
 

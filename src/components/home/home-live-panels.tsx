@@ -89,7 +89,7 @@ export function HomePlaceProvider({ children }: { children: React.ReactNode }) {
 }
 
 /** @deprecated Use HomePlaceProvider */
-export const HomeSydneyForecastProvider = HomePlaceProvider;
+export const HomeLondonForecastProvider = HomePlaceProvider;
 
 function useHomePlace() {
   const ctx = useContext(HomePlaceContext);
@@ -105,7 +105,7 @@ export function useHomeSavedPlace() {
 
 export function HomeDateHeading() {
   const { forecast } = useHomePlace();
-  const tz = forecast?.location.timezone || "Australia/Sydney";
+  const tz = forecast?.location.timezone || "Europe/London";
   return <>{formatDateHeading(tz)}</>;
 }
 
@@ -149,7 +149,7 @@ function PlaceControls() {
       </div>
       {ready && !place ? (
         <p className="text-[10px] text-[var(--ink)]/60">
-          Showing Sydney until you set a place.
+          Showing London until you set a place.
         </p>
       ) : null}
       {geoError ? (
@@ -172,7 +172,7 @@ export function HomeNowPanel() {
   const loc = forecast?.location;
   const obs = forecast?.observation;
   const today = forecast?.daily[0] ?? null;
-  const tz = loc?.timezone || "Australia/Sydney";
+  const tz = loc?.timezone || "Europe/London";
 
   const temp =
     obs?.temp != null
@@ -299,7 +299,7 @@ export function HomeNowPanel() {
 
 export function HomeCapitalsPanel() {
   const { capitals, loading, error } = useCapitals();
-  const heading = formatDateHeading("Australia/Sydney");
+  const heading = formatDateHeading("Europe/London");
 
   return (
     <section className="sw-panel p-3 text-[var(--ink)] sm:p-3.5">
@@ -345,7 +345,7 @@ export function HomeCapitalsPanel() {
 export function HomeWeekPanel() {
   const { forecast, loading, error, geohash, label } = useHomePlace();
   const days = forecast?.daily ?? [];
-  const tz = forecast?.location.timezone || "Australia/Sydney";
+  const tz = forecast?.location.timezone || "Europe/London";
   const shortName = forecast?.location.name || label.split(",")[0] || "Local";
 
   return (
@@ -363,7 +363,7 @@ export function HomeWeekPanel() {
             const dayLabel =
               idx === 0
                 ? "Today"
-                : new Intl.DateTimeFormat("en-AU", {
+                : new Intl.DateTimeFormat("en-GB", {
                     timeZone: tz,
                     weekday: "short",
                   }).format(new Date(d.date));

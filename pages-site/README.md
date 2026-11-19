@@ -2,11 +2,11 @@
 
 Static Vite + React build that runs on **GitHub Pages** (no Docker, no Node server).
 This is a separate UK project, but its map, capitals, and weather data are still
-Australia-specific and will be localized in a later step.
+localized for the UK and Europe.
 
 ## Features
 
-- Australia-centred Leaflet map
+- UK-centred Leaflet map
 - Live **RainViewer** rain radar loop (play / scrub / opacity)
 - Optional RainViewer infrared satellite tiles
 - **Open-Meteo** current conditions for the eight capital cities

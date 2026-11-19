@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const q = new URL(req.url).searchParams.get("q")?.trim() || "";
     if (q.length < 2) {
       return NextResponse.json(
-        { query: q, locations: [], attribution: "Bureau of Meteorology" },
+        { query: q, locations: [], attribution: "Met Office" },
         {
           headers: {
             "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
       {
         query: q,
         locations,
-        attribution: "Bureau of Meteorology",
+        attribution: "Met Office",
       },
       {
         headers: {

@@ -78,15 +78,15 @@ export function LeafletMapAnnotations({
 }) {
   const zoom = useMapZoom();
   const outline = useGeoJson(
-    "/geo/australia-outline.geojson",
+    "/geo/europe-outline.geojson",
     settings.outlines,
   );
   const states = useGeoJson(
-    "/geo/australia-states.geojson",
+    "/geo/europe-country-outlines.geojson",
     settings.stateOutlines,
   );
   const stateLabels = useGeoJson(
-    "/geo/australia-state-labels.geojson",
+    "/geo/europe-country-labels.geojson",
     settings.stateLabels,
   );
   const oceans = useGeoJson("/geo/ocean-labels.geojson", settings.oceanNames);

@@ -18,7 +18,7 @@ export const maxDuration = 60;
 
 /**
  * Same-origin proxy for Himawari WMS frames.
- * Browser playback hits this URL so frames cache locally and avoid NASA connection limits.
+ * Browser playback hits this URL so frames cache locally and avoid NAIRE connection limits.
  * Optional `region` crops a higher-resolution state window.
  */
 export async function GET(request: NextRequest) {

@@ -30,7 +30,7 @@ export function buildSkywatchMoment(opts: {
   storm: StormActivityPayload | null;
   models: ModelComparisonPayload | null;
 }): SkywatchMoment {
-  const place = opts.placeName || "Australia";
+  const place = opts.placeName || "Europe";
   const top = opts.storm?.hotspots[0] ?? null;
   const rain = rainMm(opts.models);
   const hot = maxTemp(opts.models);

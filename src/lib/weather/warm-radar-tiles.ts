@@ -16,11 +16,11 @@ import {
 } from "@/lib/weather/radar-tile-cache";
 import { allowBackgroundWarm } from "@/lib/runtime-budget";
 
-const AU_BOUNDS: RadarWarmupBounds = {
-  south: -45,
-  west: 110,
-  north: -8,
-  east: 155,
+const UK_BOUNDS: RadarWarmupBounds = {
+  south: 49,
+  west: -11,
+  north: 61,
+  east: 3,
 };
 
 const DEG2RAD = Math.PI / 180;
@@ -114,7 +114,7 @@ export function warmRadarFramesInBackground(
       for (const z of zooms) {
         // z7 is denser — keep the national warm window modest.
         const cap = z >= 7 ? 36 : z >= 6 ? 48 : 56;
-        for (const { x, y } of tileRange(z, AU_BOUNDS, cap)) {
+        for (const { x, y } of tileRange(z, UK_BOUNDS, cap)) {
           jobs.push({ host: f.host, path: f.path, z, x, y });
         }
       }

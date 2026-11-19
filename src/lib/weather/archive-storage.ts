@@ -29,10 +29,10 @@ const BLOB_PREFIX = "archive/";
 const META_PATH = "archive/meta.json";
 const STEP_SEC = 10 * 60;
 /** Rolling 24h sat byte budget before product demotion. */
-export const ARCHIVE_SAT_BUDGET_BYTES = 800 * 1024 * 1024;
+export const ARCHIVE_IRET_BUDGET_BYTES = 800 * 1024 * 1024;
 
 /** Keep Redis growth bounded (Hobby KV plans are small). */
-const REDIS_SAT_TTL_SEC = 14 * 24 * 3600;
+const REDIS_IRET_TTL_SEC = 14 * 24 * 3600;
 const REDIS_SYNOPTIC_TTL_SEC = 21 * 24 * 3600;
 const REDIS_LIGHTNING_TTL_SEC = 14 * 24 * 3600;
 
@@ -229,10 +229,10 @@ async function redisPutSatFrame(
     data: jpeg.toString("base64"),
   };
   const pipeline = redis.pipeline();
-  pipeline.set(key, record, { ex: REDIS_SAT_TTL_SEC });
+  pipeline.set(key, record, { ex: REDIS_IRET_TTL_SEC });
   // Prefix so Upstash does not coerce "1830" into a number on SMEMBERS.
   pipeline.sadd(dayKey, `t${hhmm}`);
-  pipeline.expire(dayKey, REDIS_SAT_TTL_SEC);
+  pipeline.expire(dayKey, REDIS_IRET_TTL_SEC);
   await pipeline.exec();
 
   // Maintain coarse min/max bounds for catalog range.
@@ -245,7 +245,7 @@ async function redisPutSatFrame(
       existing?.min != null ? Math.min(existing.min, stamp) : stamp;
     const max =
       existing?.max != null ? Math.max(existing.max, stamp) : stamp;
-    await redis.set(boundsKey, { min, max }, { ex: REDIS_SAT_TTL_SEC });
+    await redis.set(boundsKey, { min, max }, { ex: REDIS_IRET_TTL_SEC });
   } catch (err) {
     console.warn("[archive-storage] redis bounds update failed", err);
   }
@@ -637,7 +637,7 @@ function defaultArchiveMeta(now = Math.floor(Date.now() / 1000)): ArchiveMeta {
   };
 }
 
-/** Ensure meta exists; epoch is start of AEST today on first create. */
+/** Ensure meta exists; epoch is start of UK time today on first create. */
 export async function ensureArchiveMeta(): Promise<ArchiveMeta> {
   try {
     const existing = await readArchiveMeta();
@@ -744,7 +744,7 @@ export async function putRadarFrame(
         contentType: "image/png",
         data: png.toString("base64"),
       };
-      await redis.set(redisKey, record, { ex: REDIS_SAT_TTL_SEC });
+      await redis.set(redisKey, record, { ex: REDIS_IRET_TTL_SEC });
       if (!process.env.VERCEL) {
         await putLocal(radarObjectPath(path, z, x, y), png).catch(() => undefined);
       }
@@ -944,7 +944,7 @@ export async function mergeLightningHour(
   return merged.length;
 }
 
-/** Strikes across AEST hours overlapping [from, to]. */
+/** Strikes across UK time hours overlapping [from, to]. */
 export async function getLightningRange(
   fromUnix: number,
   toUnix: number,
@@ -1047,7 +1047,7 @@ export function demoteProducts(
 ): { tier: number; products: SatelliteProductId[] } {
   let tier = Math.max(0, Math.min(currentTier, ARCHIVE_PRODUCT_TIERS.length - 1));
   while (
-    bytes24h > ARCHIVE_SAT_BUDGET_BYTES &&
+    bytes24h > ARCHIVE_IRET_BUDGET_BYTES &&
     tier < ARCHIVE_PRODUCT_TIERS.length - 1
   ) {
     tier += 1;

@@ -7,7 +7,7 @@ export type AlertSeverityFloor = "critical" | "severe";
 
 export type AlertPrefs = {
   enabled: boolean;
-  /** States to watch (uppercase). Empty = all Australian states. */
+  /** States to watch (uppercase). Empty = all European states. */
   states: string[];
   /** Notify at this severity and above. */
   severityFloor: AlertSeverityFloor;

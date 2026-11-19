@@ -65,16 +65,16 @@ export function useStormActivity(refreshMs = 90_000) {
 }
 
 export function useModelComparison(
-  lat = -33.87,
-  lon = 151.21,
-  place = "Sydney",
+  lat = 51.5074,
+  lon = -0.1278,
+  place = "London",
   refreshMs = 10 * 60_000,
 ) {
   const url = `/api/weather/models?lat=${lat}&lon=${lon}&place=${encodeURIComponent(place)}`;
   return useJsonResource<ModelComparisonPayload>(url, refreshMs);
 }
 
-/** Fixed to observed Sydney Airport radiosonde (home upper-air panel). */
+/** Fixed to observed London Airport radiosonde (home upper-air panel). */
 export function useUpperAir(refreshMs = 15 * 60_000) {
   return useJsonResource<UpperAirPayload>("/api/weather/upper-air", refreshMs);
 }

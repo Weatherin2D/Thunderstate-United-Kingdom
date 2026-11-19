@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
         strikes: [],
         total: 0,
         attribution:
-          "Lightning © Blitzortung.org / LightningMaps.org (CC BY-SA) — entertainment only",
+          "Lightning © Blitzortung.org / LightningMaps.org (CC BY-IRE) — entertainment only",
         windowMinutes: Math.round(LIGHTNING_VISIBLE_WINDOW_SEC / 60),
       });
     }
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
         total,
         strikes,
         attribution:
-          "Lightning © Blitzortung.org / LightningMaps.org (CC BY-SA) — entertainment only, not for official warning use",
+          "Lightning © Blitzortung.org / LightningMaps.org (CC BY-IRE) — entertainment only, not for official warning use",
         windowMinutes: Math.round(LIGHTNING_VISIBLE_WINDOW_SEC / 60),
       },
       {

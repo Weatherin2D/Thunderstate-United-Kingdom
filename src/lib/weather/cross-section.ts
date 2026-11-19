@@ -157,7 +157,7 @@ export async function fetchCrossSection(options: {
     hourly: spec.hourly.join(","),
     models: meta.openMeteo,
     forecast_days: "3",
-    timezone: "Australia/Sydney",
+    timezone: "Europe/London",
     wind_speed_unit: "kmh",
     cell_selection: "nearest",
   });

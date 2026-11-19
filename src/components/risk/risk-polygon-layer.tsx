@@ -28,7 +28,7 @@ function pathStyle(feature: DisplayFeature): PathOptions {
 
 /**
  * GeoJSON convective risk polygons for HomeMap (Map mode).
- * Styles are forced to the BoM 4-level colour key when labels match.
+ * Styles are forced to the Met Office 4-level colour key when labels match.
  */
 export function RiskPolygonLayer({ features, fit = false }: Props) {
   const map = useMap();

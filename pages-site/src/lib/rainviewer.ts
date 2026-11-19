@@ -60,8 +60,8 @@ export async function fetchSatelliteIrLatest(): Promise<string | null> {
 }
 
 export function formatFrameTime(unixSec: number): string {
-  return new Intl.DateTimeFormat('en-AU', {
-    timeZone: 'Australia/Sydney',
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/London',
     hour: '2-digit',
     minute: '2-digit',
     day: 'numeric',

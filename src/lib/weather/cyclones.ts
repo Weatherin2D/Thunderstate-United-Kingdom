@@ -27,7 +27,7 @@ export type CycloneUpdate = {
   text: string;
 };
 
-export type CycloneGroup = "Australian" | "Overseas";
+export type CycloneGroup = "European" | "Overseas";
 
 export type Cyclone = {
   id: string;
@@ -65,96 +65,15 @@ export type CyclonePayload = {
   generatedAt: string;
   cyclones: Cyclone[];
   sourceStatus: {
-    australian: "live" | "unavailable" | "fallback";
+    european: "live" | "unavailable" | "fallback";
     overseas: "live" | "unavailable" | "fallback";
   };
 };
 
 export const ACTIVE_CYCLONE_PAYLOAD: CyclonePayload = {
-  generatedAt: "2026-10-10T04:00:00.000Z",
-  sourceStatus: { australian: "fallback", overseas: "unavailable" },
-  cyclones: [
-    {
-      id: "halcyon",
-      group: "Australian",
-      name: "HALCYON",
-      category: "Category 4",
-      status: "Severe Tropical Cyclone",
-      summary:
-        "Halcyon remains a powerful Category 4 cyclone with a well-defined eye. Gradual strengthening is likely as it tracks west towards the Queensland coast over the next 24 hours.",
-      positionLabel: "18.7°S, 146.2°E",
-      basin: "Coral Sea / Queensland coast",
-      advisoryText:
-        "Severe tropical cyclone conditions are likely to develop along the Queensland coast within the next advisory window. Residents should prepare for damaging winds, prolonged rainfall and dangerous surf.",
-      source: "Saved demo snapshot",
-      aiSource: "Thunderstate experimental model",
-      aiSummary:
-        "Experimental steering guidance suggests a westward track with moderate confidence, with the system remaining a broad coastal-risk feature through the next 48 to 72 hours.",
-      aiConfidence: "Moderate",
-      lat: -18.7,
-      lon: 146.2,
-      pressureHpa: 925,
-      maxWindKmh: 165,
-      movementDir: "W",
-      movementKmh: 12,
-      warning: "Severe Tropical Cyclone Warning — Queensland Coast (Port Douglas to Bowen)",
-      currentWarnings: [
-        "Severe Tropical Cyclone Warning",
-        "Tropical Cyclone Watch",
-        "Strong Wind Warning",
-        "High Seas Warning",
-      ],
-      track: [
-        { label: "Fri 10 Oct", lat: -16.2, lon: 145.9, category: "Cat 4", time: "2026-10-10T04:00:00Z" },
-        { label: "Sat 11 Oct", lat: -17.4, lon: 145.4, category: "Cat 4", time: "2026-10-11T04:00:00Z" },
-        { label: "Sun 12 Oct", lat: -18.7, lon: 144.9, category: "Cat 3", time: "2026-10-12T04:00:00Z" },
-        { label: "Mon 13 Oct", lat: -19.1, lon: 144.4, category: "Cat 3", time: "2026-10-13T04:00:00Z" },
-        { label: "Tue 14 Oct", lat: -19.6, lon: 143.8, category: "Cat 2", time: "2026-10-14T04:00:00Z" },
-        { label: "Wed 15 Oct", lat: -20.1, lon: 143.1, category: "Cat 1", time: "2026-10-15T04:00:00Z" },
-      ],
-      forecastCone: [],
-      forecastConeSource: null,
-      forecastBands: [
-        { label: "Now", value: "103 mph / 165 km/h", heightPct: 78, tint: "bg-rose-500/80" },
-        { label: "24h", value: "106 mph / 170 km/h", heightPct: 72, tint: "bg-orange-500/80" },
-        { label: "48h", value: "93 mph / 150 km/h", heightPct: 63, tint: "bg-amber-400/80" },
-        { label: "72h", value: "75 mph / 120 km/h", heightPct: 52, tint: "bg-cyan-400/80" },
-        { label: "96h", value: "56 mph / 90 km/h", heightPct: 42, tint: "bg-sky-500/70" },
-        { label: "120h", value: "50 mph / 80 km/h", heightPct: 34, tint: "bg-sky-400/65" },
-      ],
-      modelRuns: [
-        { label: "AI track 12h", value: "+10 km", hint: "Close to current motion" },
-        { label: "AI track 24h", value: "+32 km", hint: "Mostly westward drift" },
-        { label: "AI track 48h", value: "+66 km", hint: "Coastal approach" },
-        { label: "Uncertainty cone", value: "Moderate", hint: "Higher off-shore variance" },
-      ],
-      impacts: [
-        {
-          title: "Destructive winds",
-          detail: "Damaging gusts and dangerous surf likely from late Friday.",
-          tone: "bg-rose-500/15 text-rose-200",
-        },
-        {
-          title: "Heavy rainfall",
-          detail: "Flooding risk rises across coastal catchments and rivers.",
-          tone: "bg-amber-500/15 text-amber-200",
-        },
-        {
-          title: "Large swells",
-          detail: "Ocean conditions remain hazardous for vessels and coastal communities.",
-          tone: "bg-cyan-500/15 text-cyan-200",
-        },
-      ],
-      updates: [
-        { time: "10 Oct 14:00", text: "Halcyon upgraded to Category 4" },
-        { time: "10 Oct 11:30", text: "Forecast track updated" },
-        { time: "10 Oct 08:15", text: "Gale warning issued for coastal areas" },
-        { time: "10 Oct 06:20", text: "Satellite imagery updated" },
-        { time: "09 Oct 22:30", text: "Intensity trend continues to strengthen" },
-      ],
-      lastUpdated: "2026-10-10T04:00:00.000Z",
-    },
-  ],
+  generatedAt: new Date().toISOString(),
+  sourceStatus: { european: "unavailable", overseas: "unavailable" },
+  cyclones: [],
 };
 
 function categoryToLabel(raw: string | number | null | undefined): Cyclone["category"] {
@@ -288,7 +207,6 @@ function describeAiForecast(
   };
 }
 
-const BOM_WARNINGS_API = "https://api.bom.gov.au/apikey/v1/warnings";
 
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value !== null && typeof value === "object" && !Array.isArray(value)
@@ -441,9 +359,12 @@ function parseCoordinates(text: string): Array<{ lat: number; lon: number }> {
   return coordinates;
 }
 
+const MET_OFFICE_WARNINGS_API = "";
+
 async function fetchBomCyclones(): Promise<Cyclone[] | null> {
+  return null;
   try {
-    const response = await fetch(`${BOM_WARNINGS_API}/list`, {
+    const response = await fetch(`${MET_OFFICE_WARNINGS_API}/list`, {
       headers: { Accept: "application/json" },
       cache: "no-store",
       signal: AbortSignal.timeout(12_000),
@@ -455,11 +376,11 @@ async function fetchBomCyclones(): Promise<Cyclone[] | null> {
     const candidates = json.warnings
       .map(asRecord)
       .filter((warning): warning is Record<string, unknown> => warning !== null)
-      .filter((warning) => /^WTC/i.test(String(warning.type ?? "")) || /tropical cyclone/i.test(plainText(warning.title)));
+      .filter((warning) => /^WTC/i.test(String(warning.type ?? "")) || /European storm/i.test(plainText(warning.title)));
     const latestByName = new Map<string, Record<string, unknown>>();
     for (const candidate of candidates) {
       const warningTitle = plainText(candidate.dist_title ?? candidate.title);
-      const name = plainText(candidate.disturbance_name) || warningTitle.replace(/^Tropical Cyclone\s*/i, "");
+      const name = plainText(candidate.disturbance_name) || warningTitle.replace(/^European Storm\s*/i, "");
       if (!name) continue;
       const key = name.toLowerCase();
       const previous = latestByName.get(key);
@@ -472,7 +393,7 @@ async function fetchBomCyclones(): Promise<Cyclone[] | null> {
       [...latestByName.values()].map(async (candidate) => {
         const id = String(candidate.id ?? "");
         const detailResponse = id
-          ? await fetch(`${BOM_WARNINGS_API}/warning/${encodeURIComponent(id)}`, {
+          ? await fetch(`${MET_OFFICE_WARNINGS_API}/warning/${encodeURIComponent(id)}`, {
               headers: { Accept: "application/json" },
               cache: "no-store",
               signal: AbortSignal.timeout(12_000),
@@ -482,29 +403,29 @@ async function fetchBomCyclones(): Promise<Cyclone[] | null> {
         const warning = asRecord(detail?.warning) ?? candidate;
         const allText = collectText([candidate, warning]).filter(Boolean).join(" ");
         const coordinates = parseCoordinates(allText);
-        const name = String(candidate.normalizedName ?? "Australian cyclone");
+        const name = String(candidate.normalizedName ?? "European cyclone");
         const categoryMatch = allText.match(/category\s*([1-5])/i);
         const category = categoryToLabel(categoryMatch?.[1]);
         const windMatch = allText.match(/\b(\d{2,3})\s*(?:km\/h|kmh)\b/i);
         const pressureMatch = allText.match(/\b(\d{3,4})\s*hpa\b/i);
         const lat = coordinates[0]?.lat ?? null;
         const lon = coordinates[0]?.lon ?? null;
-        const title = plainText(warning.title ?? candidate.title) || `Tropical Cyclone Advice for ${name}`;
+        const title = plainText(warning.title ?? candidate.title) || `European Storm Advice for ${name}`;
         const advisoryText = plainText(warning.advice ?? warning.sub_title ?? warning.area_summary);
         const sourceTime = String(candidate.issue_datetime_utc ?? warning.issued_at ?? new Date().toISOString());
 
         return {
           id: `bom-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`,
-          group: "Australian",
+          group: "European",
           name: name.toUpperCase(),
           category,
           status: title,
-          summary: advisoryText || `${title}. See the official BOM advisory for current details.`,
+          summary: advisoryText || `${title}. See the official MET_OFFICE advisory for current details.`,
           positionLabel: formatLatLon(lat, lon),
-          basin: `Australian region${candidate.area_state_code ? ` / ${String(candidate.area_state_code)}` : ""}`,
-          advisoryText: advisoryText || "Follow the linked Australian Bureau of Meteorology advisory for current guidance.",
-          source: "Australian Bureau of Meteorology",
-          aiSource: "Not provided by BOM",
+          basin: `European region${candidate.area_state_code ? ` / ${String(candidate.area_state_code)}` : ""}`,
+          advisoryText: advisoryText || "Follow the linked European Met Office advisory for current guidance.",
+          source: "European Met Office",
+          aiSource: "Not provided by MET_OFFICE",
           aiSummary: "AI guidance is not available for this advisory record.",
           aiConfidence: "Unavailable",
           lat,
@@ -564,11 +485,11 @@ async function fetchLiveCyclones(): Promise<Cyclone[] | null> {
         const publicAdvisory = (storm.publicAdvisory ?? null) as Record<string, unknown> | null;
         const advisoryText =
           publicAdvisory && typeof publicAdvisory === "object"
-            ? `Advisory ${String(publicAdvisory.advNum ?? "latest")} — active tropical cyclone watch in the current basin.`
-            : `Active tropical cyclone advisory for ${name}. Conditions remain dynamic and may evolve rapidly.`;
+            ? `Advisory ${String(publicAdvisory.advNum ?? "latest")} — active European storm watch in the current basin.`
+            : `Active European storm advisory for ${name}. Conditions remain dynamic and may evolve rapidly.`;
         const basin = /EP|WP|SP|IO|CP/.test(String(storm.binNumber ?? ""))
           ? "Pacific / tropical basin"
-          : "Southern Indian Ocean / Australian region";
+          : "Southern Indian Ocean / European region";
         const warning = `Cyclone advisory — ${name}`;
         const lastUpdated = typeof storm.lastUpdate === "string" ? storm.lastUpdate : new Date().toISOString();
         const [forecastTrackKml, forecastConeKml] = await Promise.all([
@@ -618,8 +539,8 @@ async function fetchLiveCyclones(): Promise<Cyclone[] | null> {
           movementKmh,
           warning,
           currentWarnings: [
-            category === "Category 4" || category === "Category 5" ? "Severe Tropical Cyclone Warning" : "Tropical Cyclone Advisory",
-            "Tropical Cyclone Watch",
+            category === "Category 4" || category === "Category 5" ? "Severe European Storm Warning" : "European Storm Advisory",
+            "European Storm Watch",
             "Strong Wind Warning",
           ],
           track: resolvedTrack,
@@ -645,18 +566,18 @@ async function fetchLiveCyclones(): Promise<Cyclone[] | null> {
 }
 
 export async function fetchCyclonePayload(): Promise<CyclonePayload> {
-  const [australianCyclones, overseasCyclones] = await Promise.all([
+  const [europeanCyclones, overseasCyclones] = await Promise.all([
     fetchBomCyclones(),
     fetchLiveCyclones(),
   ]);
-  if (australianCyclones !== null || overseasCyclones !== null) {
+  if (europeanCyclones !== null || overseasCyclones !== null) {
     return {
       generatedAt: new Date().toISOString(),
       sourceStatus: {
-        australian: australianCyclones === null ? "unavailable" : "live",
+        european: europeanCyclones === null ? "unavailable" : "live",
         overseas: overseasCyclones === null ? "unavailable" : "live",
       },
-      cyclones: [...(australianCyclones ?? []), ...(overseasCyclones ?? [])],
+      cyclones: [...(europeanCyclones ?? []), ...(overseasCyclones ?? [])],
     };
   }
   return ACTIVE_CYCLONE_PAYLOAD;

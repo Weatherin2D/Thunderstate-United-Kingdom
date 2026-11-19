@@ -6,7 +6,7 @@ export const revalidate = 0;
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-/** Home upper-air panel — always the latest observed Sydney Airport sounding. */
+/** Home upper-air panel — always the latest observed London Airport sounding. */
 export async function GET() {
   try {
     const payload = await fetchUpperAir();

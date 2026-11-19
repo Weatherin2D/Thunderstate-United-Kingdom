@@ -13,7 +13,7 @@ import {
   startOfAestDayUnix,
 } from "@/lib/weather/archive-time";
 
-/** Loop length in hours (1–48). 24 = full AEST calendar day. */
+/** Loop length in hours (1–48). 24 = full UK time calendar day. */
 export type ArchiveLoopHours = number;
 
 export const ARCHIVE_LOOP_MIN_HOURS = 1;
@@ -80,7 +80,7 @@ export function archiveDisplayFrameUrl(
 
 /**
  * Build scrub/play frames for the archive loop.
- * - 24h: full AEST calendar day containing the selected time
+ * - 24h: full UK time calendar day containing the selected time
  * - other lengths: window centered on the selected time
  * - region zooms the raster + bounds (national = archived JPEG)
  */

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { getMeteyeThunderstormOutlook } from "@/lib/weather/bom-meteye-thunderstorm";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -8,12 +7,16 @@ export const maxDuration = 60;
 
 /**
  * GET /api/forecast
- * Live MetEye thunderstorm outlook for the full MetEye horizon (~7 days).
+ * UK/Europe thunderstorm outlook endpoint.
  */
 export async function GET() {
   try {
-    const outlook = await getMeteyeThunderstormOutlook();
-    return NextResponse.json(outlook, {
+    return NextResponse.json({
+      status: "unavailable",
+      issuedAt: null,
+      days: [],
+      message: "Official UK/Europe thunderstorm risk imagery is not yet connected.",
+    }, {
       headers: {
         "Cache-Control": "public, max-age=120, stale-while-revalidate=600",
       },
@@ -21,7 +24,7 @@ export async function GET() {
   } catch (error) {
     console.error("[forecast]", error);
     return NextResponse.json(
-      { error: "Failed to load BoM MetEye risk outlook" },
+      { error: "UK/Europe risk outlook unavailable" },
       {
         status: 502,
         headers: { "Cache-Control": "no-store" },

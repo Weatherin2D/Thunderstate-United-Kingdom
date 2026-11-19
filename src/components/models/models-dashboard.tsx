@@ -13,14 +13,14 @@ const CAPITAL_COORDS: Record<
   string,
   { lat: number; lon: number; name: string; state: string; geohash: string }
 > = {
-  nsw: { lat: -33.87, lon: 151.21, name: "Sydney", state: "NSW", geohash: STATE_CAPITALS.nsw.geohash },
-  vic: { lat: -37.81, lon: 144.96, name: "Melbourne", state: "VIC", geohash: STATE_CAPITALS.vic.geohash },
-  qld: { lat: -27.47, lon: 153.03, name: "Brisbane", state: "QLD", geohash: STATE_CAPITALS.qld.geohash },
-  wa: { lat: -31.95, lon: 115.86, name: "Perth", state: "WA", geohash: STATE_CAPITALS.wa.geohash },
-  sa: { lat: -34.93, lon: 138.6, name: "Adelaide", state: "SA", geohash: STATE_CAPITALS.sa.geohash },
-  tas: { lat: -42.88, lon: 147.33, name: "Hobart", state: "TAS", geohash: STATE_CAPITALS.tas.geohash },
-  act: { lat: -35.28, lon: 149.13, name: "Canberra", state: "ACT", geohash: STATE_CAPITALS.act.geohash },
-  nt: { lat: -12.46, lon: 130.84, name: "Darwin", state: "NT", geohash: STATE_CAPITALS.nt.geohash },
+  nsw: { lat: 51.5074, lon: -0.1278, name: "London", state: "England", geohash: STATE_CAPITALS.nsw.geohash },
+  vic: { lat: 55.9533, lon: -3.1883, name: "Edinburgh", state: "Scotland", geohash: STATE_CAPITALS.vic.geohash },
+  qld: { lat: 51.4816, lon: -3.1791, name: "Cardiff", state: "Wales", geohash: STATE_CAPITALS.qld.geohash },
+  wa: { lat: 54.5973, lon: -5.9301, name: "Belfast", state: "Northern Ireland", geohash: STATE_CAPITALS.wa.geohash },
+  sa: { lat: 53.3498, lon: -6.2603, name: "Dublin", state: "Ireland", geohash: STATE_CAPITALS.sa.geohash },
+  tas: { lat: 48.8566, lon: 2.3522, name: "Paris", state: "France", geohash: STATE_CAPITALS.tas.geohash },
+  act: { lat: 52.52, lon: 13.405, name: "Berlin", state: "Germany", geohash: STATE_CAPITALS.act.geohash },
+  nt: { lat: 52.3676, lon: 4.9041, name: "Amsterdam", state: "Netherlands", geohash: STATE_CAPITALS.nt.geohash },
 };
 
 const MODEL_ORDER: ModelId[] = ["ecmwf", "icon", "gfs"];
@@ -35,7 +35,7 @@ type Place = { lat: number; lon: number; label: string; geohash?: string };
 function formatDayChip(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   const noon = new Date(Date.UTC(y!, m! - 1, d!, 12));
-  return new Intl.DateTimeFormat("en-AU", {
+  return new Intl.DateTimeFormat("en-GB", {
     timeZone: "UTC",
     weekday: "short",
     day: "numeric",
@@ -89,7 +89,7 @@ export function ModelsDashboard() {
   const [place, setPlace] = useState<Place>({
     lat: CAPITAL_COORDS.nsw!.lat,
     lon: CAPITAL_COORDS.nsw!.lon,
-    label: "Sydney, NSW",
+    label: "London, ENG",
     geohash: CAPITAL_COORDS.nsw!.geohash,
   });
   const [data, setData] = useState<ModelComparisonPayload | null>(null);
@@ -195,7 +195,7 @@ export function ModelsDashboard() {
               Model comparison
             </h1>
             <p className="mt-1.5 max-w-2xl text-sm text-white/70">
-              ECMWF, ICON and GFS day-by-day guidance for Australia — rain, temperature
+              ECMWF, ICON and GFS day-by-day guidance for Europe — rain, temperature
               and wind side by side.
             </p>
           </div>

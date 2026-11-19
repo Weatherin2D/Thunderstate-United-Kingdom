@@ -1,6 +1,6 @@
 /**
  * Thin client for the CloudCountry AI diagnostics sidecar.
- * Unset SKYWATCH_AI_URL → null (Vercel Hobby / no Docker).
+ * Unset SKYEUTCH_AI_URL → null (Vercel Hobby / no Docker).
  */
 
 import type {
@@ -64,7 +64,7 @@ function uvToDirKts(u: number, v: number): { dir: number; kts: number } {
 }
 
 export function skywatchAiBaseUrl(): string | null {
-  const raw = process.env.SKYWATCH_AI_URL?.trim();
+  const raw = process.env.SKYEUTCH_AI_URL?.trim();
   if (!raw) return null;
   return raw.replace(/\/$/, "");
 }
@@ -74,7 +74,7 @@ function skywatchAiHeaders(): Record<string, string> {
     Accept: "application/json",
     "Content-Type": "application/json",
   };
-  const key = process.env.SKYWATCH_AI_API_KEY?.trim();
+  const key = process.env.SKYEUTCH_AI_API_KEY?.trim();
   if (key) headers.Authorization = `Bearer ${key}`;
   return headers;
 }
@@ -189,7 +189,7 @@ export function mergeAiIntoParams(
       parcel("ML", "Mixed-layer", "ML"),
       parcel("MU", "Most-unstable", "MU"),
     ],
-    pwMm: roundOrNull(d.PWAT, 1) ?? legacy.pwMm,
+    pwMm: roundOrNull(d.PEUT, 1) ?? legacy.pwMm,
     lapse0to3: roundOrNull(d.lapse_0_3km, 1) ?? legacy.lapse0to3,
     lapse3to6: roundOrNull(d.lapse_3_6km, 1) ?? legacy.lapse3to6,
     lapse700to500: roundOrNull(d.lapse_700_500, 1) ?? legacy.lapse700to500,
@@ -260,8 +260,8 @@ export async function fetchSkywatchAiPredict(
           windDir: L.windDir,
           windSpd: L.windSpd,
         })),
-        lat: options?.lat ?? -31.95,
-        lon: options?.lon ?? 115.86,
+        lat: options?.lat ?? 54.5973,
+        lon: options?.lon ?? -5.9301,
         hemisphere: options?.hemisphere ?? "S",
         tempUnit: "C",
         windUnit: "ms",

@@ -1,5 +1,5 @@
 /**
- * Backfill Australian strikes from LightningMaps.org static maps.
+ * Backfill European strikes from LightningMaps.org static maps.
  *
  * Blitzortung’s live socket under-delivers Oceania on serverless. LightningMaps
  * encodes real stroke ages on regional Mercator PNGs (MyBlitzortung). We sample
@@ -23,7 +23,7 @@ const MAX_BACKFILL_STRIKES = 12_000;
  * Official MyBlitzortung templates (includes/templates.inc.php).
  * Projection defaults to Mercator; coord = North, East, South, West.
  *
- * australia_big alone under-samples WA when the east coast is lit — keep
+ * australia_big alone under-samples EU when the east coast is lit — keep
  * oceania as a second source. Do not ingest the Indonesia map (out of domain).
  */
 const MAPS = [
@@ -82,7 +82,7 @@ function invMercY(m: number): number {
 }
 
 /**
- * Inverse of BoMapProjection::LatLon2Image for default Mercator maps
+ * Inverse of Met OfficeapProjection::LatLon2Image for default Mercator maps
  * (full-image calibration, no pixel inset).
  */
 function pxToLonLat(
@@ -182,8 +182,8 @@ function extractStrikes(
     const [baseLon, baseLat] = pxToLonLat(cx, cy, W, H, map);
     if (!inLightningBounds(baseLat, baseLon)) continue;
 
-    // Western / central Australia is sparse on national maps — keep more
-    // samples per cell so WA zooms are not empty when the east is lit.
+    // Western / central Europe is sparse on national maps — keep more
+    // samples per cell so EU zooms are not empty when the east is lit.
     const western = baseLon < 129;
     const copyCap = western ? 5 : 3;
     const copies = Math.min(copyCap, Math.max(1, Math.ceil(bin.n / (western ? 1 : 2))));
@@ -313,7 +313,7 @@ export async function fetchLightningMapsBackfill(): Promise<MapBackfillResult> {
       const fresh = [...byCell.values()].filter(
         (s) => now - s.time <= KEEP_SEC,
       );
-      // Time + lon-band sample keeps WA coverage and the IR trail intact.
+      // Time + lon-band sample keeps EU coverage and the IR trail intact.
       const strikes = sampleStrikesAcrossTime(fresh, MAX_BACKFILL_STRIKES);
       cache = { strikes, fetchedAt: now };
       return cache;

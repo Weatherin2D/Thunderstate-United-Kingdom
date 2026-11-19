@@ -5,7 +5,7 @@ import {
   type ArchiveSynopticRecord,
 } from "@/lib/weather/archive-storage";
 import {
-  BOM_FRONTS_ATTRIBUTION,
+  MET_OFFICE_FRONTS_ATTRIBUTION,
   getBomFrontFeatures,
 } from "@/lib/weather/bom-fronts";
 import { ensureArchiveMeta } from "@/lib/weather/archive-storage";
@@ -79,7 +79,7 @@ async function buildAndStore(unix: number): Promise<ArchiveSynopticRecord> {
   const geojson = contourPressureGrid(field);
   geojson.features.push(...fronts);
   const attribution = fronts.length
-    ? `${SYNOPTIC_ATTRIBUTION} · ${BOM_FRONTS_ATTRIBUTION}`
+    ? `${SYNOPTIC_ATTRIBUTION} · ${MET_OFFICE_FRONTS_ATTRIBUTION}`
     : SYNOPTIC_ATTRIBUTION;
   const record: ArchiveSynopticRecord = {
     stamp,

@@ -27,7 +27,7 @@ export type HazardsPayload = {
   fire: {
     rating: string | null;
     colour: string | null;
-    /** Open-Meteo fire weather index when BoM text missing. */
+    /** Open-Meteo fire weather index when Met Office text missing. */
     fwi: number | null;
     guidance: boolean;
     note: string;
@@ -62,7 +62,7 @@ async function fetchMarine(
       hourly:
         "wave_height,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,wind_speed_10m,wind_direction_10m",
       forecast_days: "1",
-      timezone: "Australia/Sydney",
+      timezone: "Europe/London",
     });
     const res = await fetch(
       `https://marine-api.open-meteo.com/v1/marine?${params}`,
@@ -106,7 +106,7 @@ async function fetchFireIndex(
       longitude: String(lon),
       daily: "fire_weather_index",
       forecast_days: "1",
-      timezone: "Australia/Sydney",
+      timezone: "Europe/London",
     });
     const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`, {
       headers: { Accept: "application/json" },
@@ -130,7 +130,7 @@ export async function fetchHazards(options: {
 }): Promise<HazardsPayload> {
   const forecast = await fetchLocationForecast(options.geohash);
   if (!forecast) {
-    throw new Error("No BoM forecast for this location");
+    throw new Error("No Met Office forecast for this location");
   }
   const lat = options.latitude ?? forecast.location.latitude;
   const lon = options.longitude ?? forecast.location.longitude;
@@ -163,7 +163,7 @@ export async function fetchHazards(options: {
       fwi: hasBomFire ? null : fwi,
       guidance: !hasBomFire && fwi != null,
       note: hasBomFire
-        ? "BoM fire danger rating for today."
+        ? "Met Office fire danger rating for today."
         : fwi != null
           ? "Open-Meteo fire weather index guidance — check your state fire service for official ratings."
           : "No fire danger rating available for this location right now.",

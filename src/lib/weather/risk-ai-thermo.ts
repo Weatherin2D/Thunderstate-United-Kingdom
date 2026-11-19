@@ -32,7 +32,7 @@ export function riskAiThermoFromSounding(
     { label: "MUCAPE", value: fmt(mu?.cape, 0, " J/kg") },
     { label: "0–6 km shear", value: fmt(sounding.params.shear0to6Kts, 0, " kt") },
     { label: "0–3 km SRH", value: fmt(sounding.params.srh0to3, 0, " m²/s²") },
-    { label: "PWAT", value: fmt(sounding.params.pwMm, 1, " mm") },
+    { label: "PEUT", value: fmt(sounding.params.pwMm, 1, " mm") },
     { label: "Lapse 0–3", value: fmt(sounding.params.lapse0to3, 1, " °C/km") },
   ];
 

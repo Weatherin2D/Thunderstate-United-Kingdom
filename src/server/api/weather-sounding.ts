@@ -223,7 +223,7 @@ export async function GET(req: NextRequest) {
       if (Number.isFinite(lat) && Number.isFinite(lon)) {
         wmo = nearestSoundingStation(lat, lon).wmo;
       } else {
-        wmo = "94767"; // Sydney default
+        wmo = "94767"; // London default
       }
     }
     if (!getSoundingStation(wmo) && !/^\d{5}$/.test(wmo)) {

@@ -7,14 +7,14 @@ export type Capital = {
 }
 
 export const CAPITALS: Capital[] = [
-  { id: 'syd', name: 'Sydney', lat: -33.87, lon: 151.21, timezone: 'Australia/Sydney' },
-  { id: 'mel', name: 'Melbourne', lat: -37.81, lon: 144.96, timezone: 'Australia/Melbourne' },
-  { id: 'bne', name: 'Brisbane', lat: -27.47, lon: 153.03, timezone: 'Australia/Brisbane' },
-  { id: 'per', name: 'Perth', lat: -31.95, lon: 115.86, timezone: 'Australia/Perth' },
-  { id: 'adl', name: 'Adelaide', lat: -34.93, lon: 138.6, timezone: 'Australia/Adelaide' },
-  { id: 'hba', name: 'Hobart', lat: -42.88, lon: 147.33, timezone: 'Australia/Hobart' },
-  { id: 'cbr', name: 'Canberra', lat: -35.28, lon: 149.13, timezone: 'Australia/Sydney' },
-  { id: 'drw', name: 'Darwin', lat: -12.46, lon: 130.84, timezone: 'Australia/Darwin' },
+  { id: 'lon', name: 'London', lat: 51.5074, lon: -0.1278, timezone: 'Europe/London' },
+  { id: 'edi', name: 'Edinburgh', lat: 55.9533, lon: -3.1883, timezone: 'Europe/London' },
+  { id: 'car', name: 'Cardiff', lat: 51.4816, lon: -3.1791, timezone: 'Europe/London' },
+  { id: 'bel', name: 'Belfast', lat: 54.5973, lon: -5.9301, timezone: 'Europe/London' },
+  { id: 'dub', name: 'Dublin', lat: 53.3498, lon: -6.2603, timezone: 'Europe/Dublin' },
+  { id: 'ams', name: 'Amsterdam', lat: 52.3676, lon: 4.9041, timezone: 'Europe/Amsterdam' },
+  { id: 'par', name: 'Paris', lat: 48.8566, lon: 2.3522, timezone: 'Europe/Paris' },
+  { id: 'ber', name: 'Berlin', lat: 52.52, lon: 13.405, timezone: 'Europe/Berlin' },
 ]
 
 export type CapitalForecast = {

@@ -32,7 +32,7 @@ import type {
   RolledDay,
 } from "@/lib/forecast/types";
 import {
-  BOM_METEYE_IMAGE_BOUNDS,
+  MET_OFFICE_METEYE_IMAGE_BOUNDS,
   METEYE_THUNDERSTORM_CATEGORIES,
 } from "@/lib/weather/bom-meteye-constants";
 import {
@@ -275,7 +275,7 @@ const RISK_SOURCE_OPTIONS: { id: RiskSource; label: string }[] = [
 
 function sourceBlurb(source: RiskSource, product: ModelRiskProduct): string {
   if (source === "bom") {
-    return "Official Bureau of Meteorology thunderstorm forecast, showing areas where storms are possible or likely.";
+    return "Official Met Office thunderstorm forecast, showing areas where storms are possible or likely.";
   }
   return `${riskSourceName(source)} — ${PRODUCT_META[product].description}`;
 }
@@ -285,7 +285,7 @@ function sourceLoadingLabel(
   product: ModelRiskProduct,
 ): string {
   if (source === "bom") {
-    return "Loading the Bureau of Meteorology thunderstorm forecast…";
+    return "Loading the Met Office thunderstorm forecast…";
   }
   return `Loading ${riskSourceName(source)} · ${PRODUCT_META[product].label}…`;
 }
@@ -295,14 +295,14 @@ function sourceEmptyFallback(
   product: ModelRiskProduct,
 ): string {
   if (source === "bom") {
-    return "The latest Bureau of Meteorology forecast shows no thunderstorm areas.";
+    return "The latest Met Office forecast shows no thunderstorm areas.";
   }
   const model = riskSourceName(source);
   return PRODUCT_META[product].emptyMessage(model);
 }
 
 function riskSourceName(source: Exclude<RiskSource, "bom">): string {
-  if (source === "access") return "Bureau of Meteorology ACCESS model";
+  if (source === "access") return "Met Office ACCESS model";
   if (source === "ifs") return "ECMWF forecast model";
   if (source === "ukmo") return "UK Met Office forecast";
   return "Thunderstate estimate";
@@ -794,7 +794,7 @@ export function RiskDashboard() {
               showSynoptic={false}
               riskFeatures={[]}
               riskImageUrl={riskImageUrl}
-              riskImageBounds={BOM_METEYE_IMAGE_BOUNDS}
+              riskImageBounds={MET_OFFICE_METEYE_IMAGE_BOUNDS}
               riskImageDisplay="geo"
               riskImageOpacity={0.82}
               onMapClick={onMapClick}
@@ -879,15 +879,15 @@ export function RiskDashboard() {
 
           <p className="text-xs text-white/45">
             {source === "bom"
-              ? "Source: Bureau of Meteorology thunderstorm forecast"
+              ? "Source: Met Office thunderstorm forecast"
               : catalog?.attribution ??
                 `Source: Thunderstate forecast · ${source === "access" ? "ACCESS" : source === "ifs" ? "IFS" : source === "ukmo" ? "UKMO" : "Pulse"}`}
             {data?.issuedAt
-              ? ` · issued ${new Date(data.issuedAt).toLocaleString("en-AU", {
-                  timeZone: "Australia/Sydney",
+              ? ` · issued ${new Date(data.issuedAt).toLocaleString("en-GB", {
+                  timeZone: "Europe/London",
                   dateStyle: "medium",
                   timeStyle: "short",
-                })} (AEST/AEDT)`
+                })} (UK time)`
               : ""}
             {source === "bom"
               ? ". Updated every three hours, with forecasts up to about seven days ahead."
@@ -912,7 +912,7 @@ export function RiskDashboard() {
                 activeId={activeLegendId}
               />
               <p className="text-xs leading-relaxed text-white/50">
-                The same colours as the Bureau of Meteorology forecast. Dimmed
+                The same colours as the Met Office forecast. Dimmed
                 areas are not forecast for this day. Select an area for details.
               </p>
             </>

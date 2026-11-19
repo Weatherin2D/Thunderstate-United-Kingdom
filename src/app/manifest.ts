@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Thunderstate UK",
     short_name: "Thunderstate UK",
     description:
-      "Thunderstate UK is in development. Its weather feeds and maps currently show Australian data.",
+      "Live weather, radar and forecast tools for the UK and Europe.",
     start_url: "/",
     display: "standalone",
     background_color: "#070b16",

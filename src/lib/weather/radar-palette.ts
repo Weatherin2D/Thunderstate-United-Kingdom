@@ -320,12 +320,12 @@ export type RadarWarmupBounds = {
   east: number;
 };
 
-/** Default Australia-ish mercator window used when no bounds are supplied. */
-const AU_WARMUP_BOUNDS: RadarWarmupBounds = {
-  south: -45,
-  west: 110,
-  north: -8,
-  east: 155,
+/** Default UK mercator window used when no bounds are supplied. */
+const UK_WARMUP_BOUNDS: RadarWarmupBounds = {
+  south: 49,
+  west: -11,
+  north: 61,
+  east: 3,
 };
 
 function expandTemplate(
@@ -342,12 +342,12 @@ function expandTemplate(
 
 /**
  * Expand a Leaflet tile template for warm-up over a lat/lng window
- * (defaults to Australia). Caps tiles per zoom so high zooms stay cheap.
+ * (defaults to Europe). Caps tiles per zoom so high zooms stay cheap.
  */
 export function radarWarmupTileUrls(
   template: string,
   zooms: number[] = [4, 5, 6],
-  bounds: RadarWarmupBounds = AU_WARMUP_BOUNDS,
+  bounds: RadarWarmupBounds = UK_WARMUP_BOUNDS,
   maxTilesPerZoom = 64,
 ): string[] {
   const urls: string[] = [];

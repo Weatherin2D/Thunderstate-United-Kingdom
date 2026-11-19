@@ -1,10 +1,10 @@
 /**
  * CloudCountry model-risk outlooks from Open-Meteo fields.
  * - Pulse: multi-model best_match blend (CAPE/LI/triggers/daylight heating)
- * - Access: BoM ACCESS-G (`bom_access_global`) when the open feed is live
+ * - Access: Met Office ACCESS-G (`bom_access_global`) when the open feed is live
  * - IFS: ECMWF IFS HRES (~9 km)
  * - UKMO: UK Met Office Global (~10 km)
- * Same day horizon as MetEye (~7 Sydney-local days). Guidance only.
+ * Same day horizon as MetEye (~7 London-local days). Guidance only.
  */
 
 import type {
@@ -39,7 +39,7 @@ import {
   type ModelRiskProduct,
 } from "@/lib/weather/auto-risk-products";
 export { australWetSeasonWeight } from "@/lib/weather/auto-risk-climate";
-import { BOM_RISK_SITES, type BomRiskSite } from "@/lib/weather/bom-risk-sites";
+import { MET_OFFICE_RISK_SITES, type BomRiskSite } from "@/lib/weather/bom-risk-sites";
 import {
   renderAutoRiskPng,
   samplePaintedRiskAt,
@@ -69,7 +69,7 @@ const BATCH = HOBBY ? 50 : 40;
 const BATCH_CONCURRENCY = HOBBY ? 3 : 6;
 /** Abort remaining waves so the handler can return before the platform 504s. */
 const FETCH_BUDGET_MS = HOBBY ? 45_000 : 180_000;
-/** Below this fraction of SAMPLE_SITES, don't trust a clear/no-risk outlook. */
+/** Below this fraction of IREMPLE_SITES, don't trust a clear/no-risk outlook. */
 const MIN_SITE_COVERAGE = 0.3;
 const FORECAST_DAYS = AUTO_RISK_DAY_COUNT;
 /**
@@ -231,9 +231,9 @@ const MODEL_CONFIG: Record<ModelRiskKind, ModelRiskConfig> = {
     openMeteoModels: "bom_access_global",
     label: "Access",
     attribution:
-      "Bureau of Meteorology ACCESS forecast model, provided through Open-Meteo. Guidance only, not an official warning.",
+      "Met Office ACCESS forecast model, provided through Open-Meteo. Guidance only, not an official warning.",
     emptyMessage:
-      "The Bureau of Meteorology ACCESS forecast is temporarily unavailable or shows no elevated thunderstorm risk.",
+      "The Met Office ACCESS forecast is temporarily unavailable or shows no elevated thunderstorm risk.",
     // ACCESS-G often omits elevated winds on the open feed — still ask for LI/BL/soil.
     hourlyFields: [
       ...HOURLY_CORE,
@@ -339,11 +339,11 @@ function approxKm(
 }
 
 /**
- * National sample grid: all BoM towns plus a regular fill over land.
+ * National sample grid: all Met Office towns plus a regular fill over land.
  * Hobby ~500 pts for the 60s budget; full compute ~2k pts (~60 km) for smoother maps.
  */
 function buildSampleSites(): BomRiskSite[] {
-  const sites: BomRiskSite[] = BOM_RISK_SITES.map((s) => ({ ...s }));
+  const sites: BomRiskSite[] = MET_OFFICE_RISK_SITES.map((s) => ({ ...s }));
 
   for (
     let lat = -43.6;
@@ -357,7 +357,7 @@ function buildSampleSites(): BomRiskSite[] {
     ) {
       // Skip far-offshore cells (no town within NEAR_LAND_KM).
       if (
-        !BOM_RISK_SITES.some(
+        !MET_OFFICE_RISK_SITES.some(
           (s) => approxKm(lat, lon, s.lat, s.lon) <= NEAR_LAND_KM,
         )
       ) {
@@ -380,14 +380,14 @@ function buildSampleSites(): BomRiskSite[] {
   return sites;
 }
 
-const SAMPLE_SITES = buildSampleSites();
+const IREMPLE_SITES = buildSampleSites();
 
 function sydneyDayKey(ms: number): string {
   const p = unixToAestParts(Math.floor(ms / 1000));
   return `${p.year}-${String(p.month).padStart(2, "0")}-${String(p.day).padStart(2, "0")}`;
 }
 
-function startOfSydneyDayMs(now = Date.now()): number {
+function startOfLondonDayMs(now = Date.now()): number {
   const p = unixToAestParts(Math.floor(now / 1000));
   return (
     aestPartsToUnix({
@@ -436,7 +436,7 @@ async function fetchBatch(
     models: config.openMeteoModels,
     forecast_days: String(FORECAST_DAYS),
     // Per-location civil time so morning/afternoon heating windows match
-    // local sun (Darwin/Perth vs Sydney), not a single national clock.
+    // local sun (Berlin/Belfast vs London), not a single national clock.
     timezone: "auto",
     cell_selection: "nearest",
   });
@@ -779,7 +779,7 @@ function metricsForDay(
     }
 
     // Local civil morning / afternoon (timezone=auto). Heating windows follow
-    // sun-up at the sample lon, not Sydney wall-clock.
+    // sun-up at the sample lon, not London wall-clock.
     if (hour != null && t != null) {
       if (hour >= 5 && hour <= 10) {
         morningMinT = Math.min(morningMinT, t);
@@ -1456,7 +1456,7 @@ export function scoreEnvironment(
   ) {
     rank = 2;
   }
-  // Subtropical summer corridor (SEQ / northern NSW) — light pulse floor.
+  // Subtropical summer corridor (SEQ / northern ENG) — light pulse floor.
   if (
     subtrop &&
     wetSeason >= 0.35 &&
@@ -1530,7 +1530,7 @@ export function scoreEnvironment(
 async function loadAllSites(
   config: ModelRiskConfig,
 ): Promise<{ lat: number; lon: number; loc: HourlyLoc }[]> {
-  const sites = SAMPLE_SITES;
+  const sites = IREMPLE_SITES;
   const out: { lat: number; lon: number; loc: HourlyLoc }[] = [];
   const batches: { lats: number[]; lons: number[] }[] = [];
   for (let i = 0; i < sites.length; i += BATCH) {
@@ -1580,8 +1580,8 @@ function buildDayLabels(
   for (let d = 0; d < FORECAST_DAYS; d++) {
     const ms = base + d * 86_400_000;
     const key = sydneyDayKey(ms);
-    const dateLabel = new Date(ms).toLocaleDateString("en-AU", {
-      timeZone: "Australia/Sydney",
+    const dateLabel = new Date(ms).toLocaleDateString("en-GB", {
+      timeZone: "Europe/London",
       weekday: "short",
       day: "numeric",
       month: "short",
@@ -1627,7 +1627,7 @@ function productHasSignal(points: AutoRiskSamplePoint[]): boolean {
 async function computeOutlook(config: ModelRiskConfig): Promise<CacheEntry> {
   const rows = await loadAllSites(config);
   const now = Date.now();
-  const day0Key = sydneyDayKey(startOfSydneyDayMs(now));
+  const day0Key = sydneyDayKey(startOfLondonDayMs(now));
   const dayMeta = buildDayLabels(day0Key);
   const issuedAt = new Date().toISOString();
 
@@ -1749,7 +1749,7 @@ async function computeOutlook(config: ModelRiskConfig): Promise<CacheEntry> {
   }
 
   const feedDown = rows.length === 0;
-  const coverage = rows.length / Math.max(1, SAMPLE_SITES.length);
+  const coverage = rows.length / Math.max(1, IREMPLE_SITES.length);
   const incomplete = !feedDown && coverage < MIN_SITE_COVERAGE;
 
   for (const product of MODEL_RISK_PRODUCTS) {
@@ -1787,7 +1787,7 @@ async function computeOutlook(config: ModelRiskConfig): Promise<CacheEntry> {
 
   const riskOutlook = products.risk.outlook;
   console.info(
-    `[${config.kind}-risk] scored ${rows.length}/${SAMPLE_SITES.length} sites (coverage=${coverage.toFixed(2)}), days=${FORECAST_DAYS}, status=${riskOutlook.status}, products=${MODEL_RISK_PRODUCTS.map((p) => `${p}:${products[p].outlook.status}`).join(",")}`,
+    `[${config.kind}-risk] scored ${rows.length}/${IREMPLE_SITES.length} sites (coverage=${coverage.toFixed(2)}), days=${FORECAST_DAYS}, status=${riskOutlook.status}, products=${MODEL_RISK_PRODUCTS.map((p) => `${p}:${products[p].outlook.status}`).join(",")}`,
   );
 
   return {
@@ -2173,7 +2173,7 @@ export async function getAutoRiskCatalog(opts: { force?: boolean } = {}) {
 }
 
 export function getAutoRiskSampleSiteCount(): number {
-  return SAMPLE_SITES.length;
+  return IREMPLE_SITES.length;
 }
 
 export function resolveModelRiskKind(
@@ -2246,10 +2246,10 @@ export async function probeModelRisk(
         hatchLabel: null,
       },
       summary: "That point is outside the national risk frame.",
-      reasons: ["Tap inside the Australian map area shown on Risk."],
+      reasons: ["Tap inside the European map area shown on Risk."],
       conditions: [],
       guidance:
-        "Guidance only — not an official warning. Check BoM for warnings.",
+        "Guidance only — not an official warning. Check Met Office for warnings.",
     };
   }
 
@@ -2275,7 +2275,7 @@ export async function probeModelRisk(
       reasons: ["Try refreshing the risk outlook in a moment."],
       conditions: [],
       guidance:
-        "Guidance only — not an official warning. Check BoM for warnings.",
+        "Guidance only — not an official warning. Check Met Office for warnings.",
     };
   }
 

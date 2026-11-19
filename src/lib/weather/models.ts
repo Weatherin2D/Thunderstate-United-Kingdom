@@ -122,7 +122,7 @@ export async function fetchModelComparison(options: {
   const {
     latitude,
     longitude,
-    placeLabel = "Sydney",
+    placeLabel = "London",
     days: daysIn = 1,
   } = options;
   const forecastDays = Math.max(1, Math.min(7, Math.round(daysIn)));
@@ -133,7 +133,7 @@ export async function fetchModelComparison(options: {
     daily:
       "temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max",
     forecast_days: String(forecastDays),
-    timezone: "Australia/Sydney",
+    timezone: "Europe/London",
     models: "ecmwf_ifs025,icon_seamless,gfs_seamless",
   });
 

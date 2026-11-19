@@ -28,6 +28,7 @@ import {
 import { cn } from "@/lib/utils";
 
 type WarningSource = "bom" | "auto";
+const UK_AREA_OPTIONS = ["ENG", "SCT", "WLS", "NIR"] as const;
 
 function categoryHref(
   category: WarningCategory | null,
@@ -220,7 +221,7 @@ export function WarningsListPage() {
         <div className="mb-5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--cyan)]">
             {source === "bom"
-              ? "Bureau of Meteorology"
+              ? "Met Office"
               : "Thunderstate thunderstorm estimates"}
           </p>
           <h1 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-extrabold text-white sm:text-3xl">
@@ -228,8 +229,8 @@ export function WarningsListPage() {
           </h1>
           <p className="mt-1.5 max-w-xl text-sm text-white/70">
             {source === "bom"
-              ? "Live Australian weather warnings by severity — Critical, Severe, Moderate, and Minor."
-              : "Thunderstorm cells identified from lightning activity. Scores are estimates, not official Bureau of Meteorology warnings."}
+              ? "Live European weather warnings by severity — Critical, Severe, Moderate, and Minor."
+              : "Thunderstorm cells identified from lightning activity. Scores are estimates, not official Met Office warnings."}
           </p>
         </div>
 
@@ -245,7 +246,7 @@ export function WarningsListPage() {
                 source === "bom" ? "sw-chip-active" : "sw-chip-idle",
               )}
             >
-              BoM
+              Met Office
             </Link>
             <Link
               href={sourceHref("auto")}
@@ -303,7 +304,7 @@ export function WarningsListPage() {
 
               <div>
                 <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-white/50">
-                  State
+                  Area
                 </p>
                 <div className="sw-chip-row">
                   <Link
@@ -313,9 +314,9 @@ export function WarningsListPage() {
                       !stateFilter ? "sw-chip-active" : "sw-chip-idle",
                     )}
                   >
-                    National
+                    UK-wide
                   </Link>
-                  {states.map((s) => (
+                  {(states.length ? states : [...UK_AREA_OPTIONS]).map((s) => (
                     <Link
                       key={s}
                       href={categoryHref(categoryFilter, s, "bom")}
@@ -465,7 +466,7 @@ export function WarningsListPage() {
             <p className="flex items-center gap-1.5 text-[11px] text-white/45">
               <Radio className="h-3.5 w-3.5" aria-hidden />
               {cellsData?.note ??
-                "Thunderstate estimates based on lightning activity. Not official Bureau of Meteorology warnings."}
+                "Thunderstate estimates based on lightning activity. Not official Met Office warnings."}
             </p>
           </div>
         )}

@@ -10,14 +10,14 @@ import type {
 } from "@/lib/weather/ensemble-spaghetti";
 import { cn } from "@/lib/utils";
 
-const DEFAULT_LAT = -33.87;
-const DEFAULT_LON = 151.21;
+const DEFAULT_LAT = 51.5074;
+const DEFAULT_LON = -0.1278;
 
 function formatTick(iso: string): string {
   const ms = Date.parse(iso);
   if (!Number.isFinite(ms)) return "";
-  return new Intl.DateTimeFormat("en-AU", {
-    timeZone: "Australia/Sydney",
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
     day: "numeric",
     month: "short",
     hour: "2-digit",
@@ -138,7 +138,7 @@ export function EnsembleDashboard() {
         label: `${place.name}, ${place.state}`,
       };
     }
-    return { lat: DEFAULT_LAT, lon: DEFAULT_LON, label: "Sydney, NSW" };
+    return { lat: DEFAULT_LAT, lon: DEFAULT_LON, label: "London, ENG" };
   }, [place]);
 
   useEffect(() => {

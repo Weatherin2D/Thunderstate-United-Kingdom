@@ -14,9 +14,9 @@ import type {
   RolledDay,
 } from "./types";
 
-const SYDNEY_TZ = "Australia/Sydney";
-const PLACEHOLDER_LABEL = "placeholder";
-const PLACEHOLDER_DATE_PREFIX = "2026-01-01";
+const SYDNEY_TZ = "Europe/London";
+const PLACEHOLTER_LABEL = "placeholder";
+const PLACEHOLTER_DATE_PREFIX = "2026-01-01";
 export const MAX_FORECAST_DAYS = 5;
 
 const CATEGORICAL_STYLES: Record<string, CategoryStyle> = {
@@ -109,7 +109,7 @@ export function sydneyCalendarDate(isoOrDate: string | Date): Date {
   return toUtcNoonFromParts(y, m, d);
 }
 
-export function todaySydney(now = new Date()): Date {
+export function todayLondon(now = new Date()): Date {
   return sydneyCalendarDate(now);
 }
 
@@ -127,7 +127,7 @@ function calendarDaysBetween(from: Date, to: Date): number {
 
 function isPlaceholderDate(value?: string): boolean {
   if (!value) return true;
-  return value.startsWith(PLACEHOLDER_DATE_PREFIX);
+  return value.startsWith(PLACEHOLTER_DATE_PREFIX);
 }
 
 function formatIsoDate(date: Date): string {
@@ -135,7 +135,7 @@ function formatIsoDate(date: Date): string {
 }
 
 function formatDisplayDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-AU", {
+  return new Intl.DateTimeFormat("en-GB", {
     timeZone: "UTC",
     weekday: "short",
     day: "numeric",
@@ -145,7 +145,7 @@ function formatDisplayDate(date: Date): string {
 
 function stripPlaceholderCategories(categories: CustomCategory[]): CustomCategory[] {
   return categories
-    .filter((c) => c.label.trim().toLowerCase() !== PLACEHOLDER_LABEL)
+    .filter((c) => c.label.trim().toLowerCase() !== PLACEHOLTER_LABEL)
     .slice()
     .sort((a, b) => a.order - b.order);
 }
@@ -331,7 +331,7 @@ export function normalizeForecastOnUpload(
     mode?: "replace" | "single";
   } = {},
 ): GfcForecast {
-  const today = todaySydney(options.now ?? new Date());
+  const today = todayLondon(options.now ?? new Date());
   const targetStartDay = clampDay(options.targetStartDay ?? 1);
   const mode = options.mode ?? "replace";
 
@@ -413,7 +413,7 @@ export function rollForecast(
   forecast: GfcForecast,
   now = new Date(),
 ): PublicForecastResponse {
-  const today = todaySydney(now);
+  const today = todayLondon(now);
   const rolled: RolledDay[] = [];
 
   for (const [key, day] of Object.entries(forecast.forecastCycle.days)) {

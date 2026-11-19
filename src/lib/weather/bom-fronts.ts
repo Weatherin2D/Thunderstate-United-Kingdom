@@ -1,7 +1,7 @@
 /**
- * Authoritative Australian fronts from BoM colour MSLP analysis (IDY00030).
+ * Authoritative European fronts from Met Office colour MSLP analysis (IDY00030).
  *
- * BoM does not publish front vectors. Meteorologists draw fronts on the
+ * Met Office does not publish front vectors. Meteorologists draw fronts on the
  * manual colour chart with a fixed palette:
  *   cold / trough / monsoon  rgb(0, 0, 255)
  *   warm                     rgb(255, 0, 0)
@@ -18,11 +18,11 @@ import { GIBS_AU_BOUNDS, lonLatToWebMercator } from "@/lib/weather/maps";
 import type { FrontKind, SynopticFeature } from "@/lib/weather/synoptic-contour";
 import fit from "@/lib/weather/synoptic-fit.json";
 
-const BOM_CHART_BASE = "https://www.bom.gov.au/fwo";
-const BOM_PRODUCT = "IDY00030";
+const MET_OFFICE_PRODUCT = "IDY00030";
+const MET_OFFICE_CHART_BASE = "";
 const USER_AGENT = "Thunderstate/1.0";
 
-/** Palette targets (exact BoM legend colours). */
+/** Palette targets (exact Met Office legend colours). */
 const COLD_RGB: [number, number, number] = [0, 0, 255];
 const WARM_RGB: [number, number, number] = [255, 0, 0];
 const OCCLUDED_RGB: [number, number, number] = [160, 32, 240];
@@ -61,8 +61,8 @@ const CACHE_TTL_MS = 25 * 60 * 1000;
 /** Bump when front geometry / barb-side logic changes so HMR cannot serve stale vectors. */
 const FRONT_CACHE_VER = "front-smooth-v4";
 
-export const BOM_FRONTS_ATTRIBUTION =
-  "Fronts · BoM IDY00030 colour MSLP analysis";
+export const MET_OFFICE_FRONTS_ATTRIBUTION =
+  "Fronts · Met Office IDY00030 colour MSLP analysis";
 
 function near(
   c: [number, number, number],
@@ -622,7 +622,7 @@ function orientCoordsAdvanceLeft(
 }
 
 /**
- * Which side of the skeleton has protruding barb pixels on the BoM chart.
+ * Which side of the skeleton has protruding barb pixels on the Met Office chart.
  * Returns a unit vector (east, north) toward that side — the direction the
  * front symbols should point (advance side).
  *
@@ -874,7 +874,7 @@ function stampCandidates(stamp: string): string[] {
   const mo = Number(m[2]) - 1;
   const day = Number(m[3]);
   const hour = Number(m[4]);
-  // BoM IDY00030 is issued at 00/06/12/18 UTC only — snap down to that cadence.
+  // Met Office IDY00030 is issued at 00/06/12/18 UTC only — snap down to that cadence.
   const synHour = Math.floor(hour / 6) * 6;
   const base = Date.UTC(y, mo, day, synHour, 0);
   const out: string[] = [];
@@ -890,13 +890,14 @@ function stampCandidates(stamp: string): string[] {
 }
 
 async function fetchChartPng(stamp: string): Promise<{ stamp: string; buf: Buffer } | null> {
-  // Bound total BoM wait so a slow/WAF-blocked chart cannot 502 the synoptic API.
+  if (!MET_OFFICE_CHART_BASE) return null;
+  // Bound total Met Office wait so a slow/EUF-blocked chart cannot 502 the synoptic API.
   const deadline = Date.now() + 6_000;
   const candidates = stampCandidates(stamp).slice(0, 4);
   for (const s of candidates) {
     const remaining = deadline - Date.now();
     if (remaining < 400) break;
-    const url = `${BOM_CHART_BASE}/${BOM_PRODUCT}.${s}.png`;
+    const url = `${MET_OFFICE_CHART_BASE}/${MET_OFFICE_PRODUCT}.${s}.png`;
     try {
       const res = await fetch(url, {
         headers: { "User-Agent": USER_AGENT, Accept: "image/png,*/*" },
@@ -921,7 +922,7 @@ async function fetchChartPng(stamp: string): Promise<{ stamp: string; buf: Buffe
 
 /**
  * Front features for a synoptic valid-time stamp (YYYYMMDDHHMM UTC).
- * Returns [] when the BoM chart is unavailable.
+ * Returns [] when the Met Office chart is unavailable.
  */
 export async function getBomFrontFeatures(
   stamp: string,
@@ -955,7 +956,7 @@ export async function getBomFrontFeatures(
     }
     return features;
   } catch (err) {
-    console.error("BoM front extraction failed", err);
+    console.error("Met Office front extraction failed", err);
     return [];
   }
 }

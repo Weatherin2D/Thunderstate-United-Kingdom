@@ -14,14 +14,14 @@ export type SavedPlace = {
 };
 
 const STATE_TO_REGION: Record<string, MapRegionId> = {
-  NSW: "nsw",
-  VIC: "vic",
-  QLD: "qld",
-  WA: "wa",
-  SA: "sa",
-  TAS: "tas",
-  NT: "nt",
-  ACT: "act",
+  ENG: "nsw",
+  SCT: "vic",
+  WLS: "qld",
+  EU: "wa",
+  IRE: "sa",
+  FRA: "tas",
+  NLD: "nt",
+  DEU: "act",
 };
 
 export function regionIdForState(state: string): MapRegionId {

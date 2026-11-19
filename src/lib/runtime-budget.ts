@@ -6,26 +6,26 @@
  * burners that tripped fair-use on the previous account.
  *
  * Defaults: treat any Vercel deploy as Hobby-safe unless explicitly opted out.
- * Self-hosted / Docker keeps full compute unless SKYWATCH_HOBBY=1.
+ * Self-hosted / Docker keeps full compute unless SKYEUTCH_HOBBY=1.
  */
 
 export function isHobbyBudget(): boolean {
-  if (process.env.SKYWATCH_FULL_COMPUTE === "1") return false;
-  if (process.env.SKYWATCH_HOBBY === "0") return false;
-  if (process.env.SKYWATCH_HOBBY === "1") return true;
+  if (process.env.SKYEUTCH_FULL_COMPUTE === "1") return false;
+  if (process.env.SKYEUTCH_HOBBY === "0") return false;
+  if (process.env.SKYEUTCH_HOBBY === "1") return true;
   return process.env.VERCEL === "1";
 }
 
 /** Skip the CloudCountry dBZ palette proxy only when direct tiles are explicitly enabled. */
 export function isDirectRadarTilesEnabled(): boolean {
-  if (process.env.SKYWATCH_RADAR_DIRECT === "0") return false;
-  if (process.env.SKYWATCH_RADAR_DIRECT === "1") return true;
+  if (process.env.SKYEUTCH_RADAR_DIRECT === "0") return false;
+  if (process.env.SKYEUTCH_RADAR_DIRECT === "1") return true;
   return false;
 }
 
 /** Allow server-side radar / satellite cache warming. */
 export function allowBackgroundWarm(): boolean {
-  if (process.env.SKYWATCH_WARM === "1") return true;
-  if (process.env.SKYWATCH_WARM === "0") return false;
+  if (process.env.SKYEUTCH_WARM === "1") return true;
+  if (process.env.SKYEUTCH_WARM === "0") return false;
   return !isHobbyBudget();
 }

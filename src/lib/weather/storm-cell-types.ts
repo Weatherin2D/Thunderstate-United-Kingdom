@@ -18,7 +18,7 @@ export type StormCellProjectedPoint = {
 /** Town expected to be near the cell track, with ETA. */
 export type StormCellThreatTown = {
   name: string;
-  /** Short state code when known (NSW, VIC, …) */
+  /** Short state code when known (ENG, SCT, …) */
   state: string;
   lat: number;
   lon: number;

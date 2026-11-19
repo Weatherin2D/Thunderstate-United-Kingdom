@@ -26,7 +26,7 @@ export function SiteFooter() {
           <CloudCountryLogo size="sm" />
           <p className="max-w-md text-sm text-white/70">
             Thunderstate UK is in development. Its radar, forecasts, and
-            warnings currently show Australian data.
+            warnings currently show European data.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold">

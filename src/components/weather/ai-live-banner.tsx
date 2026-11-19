@@ -23,11 +23,11 @@ function isBannerVisible() {
 
 const LINKS = [
   {
-    href: "/soundings?mode=model&engine=predict&model=pulse&lat=-31.95&lon=115.86&place=Perth",
+    href: "/soundings?mode=model&engine=predict&model=pulse&lat=51.5074&lon=-0.1278&place=London",
     label: "Storm profiles",
   },
   {
-    href: "/models?model=icon&skewt=1&engine=predict&lat=-31.95&lon=115.86",
+    href: "/models?model=icon&skewt=1&engine=predict&lat=51.5074&lon=-0.1278",
     label: "Forecast models",
   },
   {

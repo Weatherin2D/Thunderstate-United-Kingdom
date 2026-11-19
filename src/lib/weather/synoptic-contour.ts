@@ -1,6 +1,6 @@
 /**
  * Marching-squares isobars + H/L centres from a synoptic pressure field.
- * Fronts come from BoM IDY00030 (see bom-fronts.ts) and are merged by the API.
+ * Fronts come from Met Office IDY00030 (see bom-fronts.ts) and are merged by the API.
  */
 
 import type { PressureGrid, SynopticField } from "@/lib/weather/synoptic-grid";

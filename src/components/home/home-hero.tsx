@@ -42,7 +42,7 @@ export function HomeHero() {
             <span className="block whitespace-nowrap">in development</span>
           </h1>
           <p className="max-w-xl text-sm text-white/80 sm:text-base">
-            This starter currently shows Australian radar, lightning, satellite,
+            This starter currently shows European radar, lightning, satellite,
             and forecast data while UK feeds are developed.
           </p>
         </div>

@@ -1,5 +1,5 @@
 /**
- * Home upper-air insight panel — observed Sydney Airport radiosonde (UWYO).
+ * Home upper-air insight panel — observed London Airport radiosonde (UWYO).
  */
 
 import { fetchObservedSounding } from "@/lib/weather/uwyo-sounding";
@@ -26,7 +26,7 @@ export type UpperAirPayload = {
   message?: string;
 };
 
-const SYDNEY_WMO = "94767";
+const CAMBORNE_WMO = "03808";
 
 function interpLevel(
   levels: SoundingLevel[],
@@ -59,14 +59,14 @@ function interpLevel(
   return null;
 }
 
-/** Observed Sydney Airport sounding shaped for the home upper-air panel. */
+/** Observed London Airport sounding shaped for the home upper-air panel. */
 export async function fetchUpperAir(_options?: {
   latitude?: number;
   longitude?: number;
   placeLabel?: string;
 }): Promise<UpperAirPayload> {
-  // Home panel is fixed to the Sydney observed radiosonde (not model/place).
-  const sounding = await fetchObservedSounding({ wmo: SYDNEY_WMO });
+  // Home panel is fixed to the London observed radiosonde (not model/place).
+  const sounding = await fetchObservedSounding({ wmo: CAMBORNE_WMO });
   const levels = sounding.levels;
   const sfc = sounding.params.parcels.find((p) => p.id === "SFC");
   const l500 = interpLevel(levels, 500);
@@ -82,7 +82,7 @@ export async function fetchUpperAir(_options?: {
   return {
     latitude: sounding.latitude,
     longitude: sounding.longitude,
-    placeLabel: "Sydney",
+    placeLabel: "London",
     validTime: sounding.validTime,
     cape: sfc?.cape ?? null,
     cin: sfc?.cin ?? null,
@@ -100,9 +100,9 @@ export async function fetchUpperAir(_options?: {
     ],
     attribution:
       sounding.status === "ok"
-        ? "Observed radiosonde · Sydney Airport (UWYO BUFR)"
+        ? "Observed radiosonde · London Airport (UWYO BUFR)"
         : sounding.attribution,
-    stationId: SYDNEY_WMO,
+    stationId: CAMBORNE_WMO,
     status: sounding.status,
     message: sounding.message,
   };

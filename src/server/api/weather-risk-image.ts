@@ -20,7 +20,7 @@ const EMPTY_PNG = Buffer.from(
 
 /**
  * GET /api/weather/risk-image?source=bom|pulse|…&product=risk|tstorm|…&day=1…N
- * BoM MetEye PNG (default) or CloudCountry model risk / hazard-chance raster.
+ * Met Office MetEye PNG (default) or CloudCountry model risk / hazard-chance raster.
  */
 export async function GET(req: NextRequest) {
   const sourceParam = (req.nextUrl.searchParams.get("source") || "bom")
@@ -33,6 +33,15 @@ export async function GET(req: NextRequest) {
   const dayNum = Number(req.nextUrl.searchParams.get("day") || "1");
 
   try {
+    if (!modelKind && sourceParam === "bom") {
+      return new NextResponse(new Uint8Array(EMPTY_PNG), {
+        headers: {
+          "Content-Type": "image/png",
+          "Cache-Control": "no-store",
+          "X-Risk-Source": "unavailable",
+        },
+      });
+    }
     if (modelKind) {
       if (!isModelRiskDay(dayNum)) {
         return NextResponse.json(
@@ -82,8 +91,8 @@ export async function GET(req: NextRequest) {
         "X-Risk-Display": "geo",
         "X-Risk-Source": "bom",
         "X-Risk-Product": "risk",
-        "X-BoM-Product": "IDZ73094",
-        ...(result?.issuedAt ? { "X-BoM-Issued-At": result.issuedAt } : {}),
+        "X-Met Office-Product": "IDZ73094",
+        ...(result?.issuedAt ? { "X-Met Office-Issued-At": result.issuedAt } : {}),
       },
     });
   } catch (err) {

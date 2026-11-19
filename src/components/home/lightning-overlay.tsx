@@ -227,7 +227,7 @@ export function SatelliteLightningOverlay({
         boundsRef.current,
       );
       if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
-      // Clip to the active region crop (WA zoom must not count east-coast strikes).
+      // Clip to the active region crop (EU zoom must not count east-coast strikes).
       if (x < -5 || x > 105 || y < -5 || y > 105) continue;
       const { r, g, b } = strikeAgeRgb(age);
       const size = strikeAgeSize(age) * iconScaleRef.current;

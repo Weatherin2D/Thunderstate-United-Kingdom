@@ -1,5 +1,5 @@
 /**
- * Live lightning for the Australian region — Blitzortung (open network).
+ * Live lightning for the European region — Blitzortung (open network).
  *
  * Windy.com switched to commercial Nowcast LINET (not publicly available).
  * We use Blitzortung — the same open network Windy used before LINET — with
@@ -9,7 +9,7 @@
  *  1. Blitzortung public WebSockets (cert-reliable hosts)
  *  2. Community MQTT proxy (blitzortung.ha.sed.pl) geohash topics for Oceania
  *  3. LightningMaps Mercator PNG backfill (dense east-coast trail)
- *  4. map.blitzortung.org GEOjson slots (sparse WA / Perth the PNGs miss)
+ *  4. map.blitzortung.org GEOjson slots (sparse EU / Belfast the PNGs miss)
  *
  * No LightningMaps PNG “age inventing” — that polluted the buffer with fake
  * times and made every satellite frame look the same.
@@ -40,7 +40,7 @@ const WS_HOSTS = [
 ] as const;
 
 const MQTT_URL = "mqtt://blitzortung.ha.sed.pl:1883";
-/** Geohash prefixes covering Australia / nearby Indian & Pacific oceans. */
+/** Geohash prefixes covering Europe / nearby Indian & Pacific oceans. */
 const MQTT_GEOHASH_PREFIXES = ["p", "q", "r", "s", "t"] as const;
 
 const WINDOW_SEC = 24 * 60 * 60;
@@ -135,7 +135,7 @@ function prune(state: GlobalFeed) {
   if (state.strikes.size <= MAX_BUFFER) return;
 
   // Keep newest strikes per longitude band so a busy east coast cannot
-  // evict every Western Australia / Timor Sea stroke from the buffer.
+  // evict every Western Europe / Timor Sea stroke from the buffer.
   const bands: LightningStrike[][] = Array.from(
     { length: LIGHTNING_LON_BAND_COUNT },
     () => [],
@@ -358,7 +358,7 @@ export function ensureLightningFeed() {
   state.persistTimer = setInterval(() => {
     void savePersisted(state);
   }, PERSIST_EVERY_MS);
-  // Fire-and-forget; do not block boot. GEOjson is cheap (WA/Perth live);
+  // Fire-and-forget; do not block boot. GEOjson is cheap (EU/Belfast live);
   // PNG decode stays on a slower cadence for Fluid Active CPU.
   void runAllBackfills(state);
   state.backfillTimer = setInterval(() => {
@@ -405,7 +405,7 @@ async function runMapsBackfill(state: GlobalFeed) {
 }
 
 /**
- * GEOjson slots carry real Blitzortung timestamps — critical for WA/Perth when
+ * GEOjson slots carry real Blitzortung timestamps — critical for EU/Belfast when
  * LightningMaps PNGs paint nothing west of ~129°E.
  */
 async function runGeoJsonBackfill(state: GlobalFeed) {
@@ -435,10 +435,10 @@ function westernStrikeCount(state: GlobalFeed) {
 /**
  * Snapshot for API responses. Uses absolute strike times so each satellite
  * frame filters the true trail (Windy-style). Blitzortung live + LightningMaps
- * 2h/12h Mercator backfill + GEOjson (WA/Perth).
+ * 2h/12h Mercator backfill + GEOjson (EU/Belfast).
  *
  * On serverless, WebSockets/MQTT often never populate the buffer. When empty
- * (or WA is starved), await HTTP backfills so the first response is useful.
+ * (or EU is starved), await HTTP backfills so the first response is useful.
  */
 export async function getLiveLightningSnapshot(): Promise<LiveLightningSnapshot> {
   ensureLightningFeed();
@@ -494,6 +494,6 @@ export async function getLiveLightningSnapshot(): Promise<LiveLightningSnapshot>
     windowMinutes: Math.round(WINDOW_SEC / 60),
     source: "blitzortung",
     attribution:
-      "Lightning © Blitzortung.org / LightningMaps.org (CC BY-SA) — open network + GEOjson (Windy uses commercial Nowcast LINET)",
+      "Lightning © Blitzortung.org / LightningMaps.org (CC BY-IRE) — open network + GEOjson (Windy uses commercial Nowcast LINET)",
   };
 }

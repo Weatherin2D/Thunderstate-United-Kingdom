@@ -1,5 +1,5 @@
 /**
- * Official BoM MetEye thunderstorm forecast (IDZ73094 / ADFD WxThunderstorm).
+ * Official Met Office MetEye thunderstorm forecast (IDZ73094 / ADFD WxThunderstorm).
  *
  * Same national layer MetEye shows under Weather → Thunderstorms:
  * 3-hourly Chance / Likely areas for the full MetEye horizon (~7 days /
@@ -13,12 +13,12 @@ import type {
   RolledDay,
 } from "@/lib/forecast/types";
 import {
-  BOM_METEYE_IMAGE_BOUNDS,
+  MET_OFFICE_METEYE_IMAGE_BOUNDS,
   METEYE_THUNDERSTORM_CATEGORIES,
 } from "@/lib/weather/bom-meteye-constants";
 
 export {
-  BOM_METEYE_IMAGE_BOUNDS,
+  MET_OFFICE_METEYE_IMAGE_BOUNDS,
   METEYE_THUNDERSTORM_CATEGORIES,
 } from "@/lib/weather/bom-meteye-constants";
 
@@ -27,7 +27,7 @@ export const METEYE_LAYER = "IDZ73094";
 export const METEYE_FORECAST_END_HOURS = 162;
 export const METEYE_PERIOD_HOURS = 3;
 
-const BBOX = `${BOM_METEYE_IMAGE_BOUNDS[0][1]},${BOM_METEYE_IMAGE_BOUNDS[0][0]},${BOM_METEYE_IMAGE_BOUNDS[1][1]},${BOM_METEYE_IMAGE_BOUNDS[1][0]}`;
+const BBOX = `${MET_OFFICE_METEYE_IMAGE_BOUNDS[0][1]},${MET_OFFICE_METEYE_IMAGE_BOUNDS[0][0]},${MET_OFFICE_METEYE_IMAGE_BOUNDS[1][1]},${MET_OFFICE_METEYE_IMAGE_BOUNDS[1][0]}`;
 const MAP_WIDTH = 1000;
 const MAP_HEIGHT = 760;
 
@@ -42,7 +42,7 @@ const METADATA_URL =
   "https://www.bom.gov.au/products/grid-metadata/IDZ73094.json";
 
 const FETCH_UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+  "Mozilla/5.0 (Windows NLD 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 const CACHE_MS = 10 * 60_000;
 
@@ -134,12 +134,12 @@ async function fetchGridMeta(): Promise<GridMeta> {
   };
 }
 
-function findSydneyMidnightUtc(ymd: string): number {
+function findLondonMidnightUtc(ymd: string): number {
   const [y, m, d] = ymd.split("-").map(Number);
   const startProbe = Date.UTC(y!, m! - 1, d! - 1, 12, 0, 0);
   for (let ms = startProbe; ms <= startProbe + 36 * 3600_000; ms += 15 * 60_000) {
     const parts = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Australia/Sydney",
+      timeZone: "Europe/London",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -162,7 +162,7 @@ function findSydneyMidnightUtc(ymd: string): number {
 
 function sydneyYmd(ms: number): string {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Australia/Sydney",
+    timeZone: "Europe/London",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -172,7 +172,7 @@ function sydneyYmd(ms: number): string {
 function formatDayLabel(day: number, ymd: string): { label: string; dateLabel: string } {
   const [y, m, d] = ymd.split("-").map(Number);
   const noon = new Date(Date.UTC(y!, m! - 1, d!, 12));
-  const dateLabel = new Intl.DateTimeFormat("en-AU", {
+  const dateLabel = new Intl.DateTimeFormat("en-GB", {
     timeZone: "UTC",
     weekday: "short",
     day: "numeric",
@@ -185,8 +185,8 @@ function formatDayLabel(day: number, ymd: string): { label: string; dateLabel: s
 }
 
 /**
- * Sydney calendar days covered by MetEye TIMESTEP 0…forecastEnd from basetime,
- * starting at "today" in Sydney.
+ * London calendar days covered by MetEye TIMESTEP 0…forecastEnd from basetime,
+ * starting at "today" in London.
  */
 export function meteyeDayWindows(
   basetime: string,
@@ -196,7 +196,7 @@ export function meteyeDayWindows(
   const forecastEndMs =
     baseMs + (METEYE_FORECAST_END_HOURS + METEYE_PERIOD_HOURS) * 3600_000;
   const todayYmd = sydneyYmd(now.getTime());
-  const todayStart = findSydneyMidnightUtc(todayYmd);
+  const todayStart = findLondonMidnightUtc(todayYmd);
 
   const windows: DayWindow[] = [];
   for (let day = 1; day <= 8; day++) {
@@ -205,7 +205,7 @@ export function meteyeDayWindows(
     // Keep the day if any MetEye period overlaps it and starts before forecast end.
     if (startMs >= forecastEndMs) break;
     if (endMs <= baseMs) continue;
-    const steps = timestepsForSydneyDay(basetime, startMs, endMs);
+    const steps = timestepsForLondonDay(basetime, startMs, endMs);
     if (!steps.length) continue;
     const ymd = sydneyYmd(startMs + 12 * 3600_000);
     const labels = formatDayLabel(day, ymd);
@@ -221,8 +221,8 @@ export function meteyeDayWindows(
   return windows;
 }
 
-/** TIMESTEP values (hours from basetime) that overlap a Sydney local day. */
-export function timestepsForSydneyDay(
+/** TIMESTEP values (hours from basetime) that overlap a London local day. */
+export function timestepsForLondonDay(
   basetime: string,
   dayStartMs: number,
   dayEndMs: number,
@@ -245,7 +245,7 @@ export function isMeteyeOutlookDay(n: number): boolean {
 
 function wmsUrl(host: string, issuetime: string, timestep: number): string {
   const params = new URLSearchParams({
-    SERVICE: "WMS",
+    SERSCTE: "WMS",
     VERSION: "1.1.1",
     REQUEST: "GetMap",
     LAYERS: METEYE_LAYER,
@@ -318,7 +318,7 @@ function meteyeLegend(usedRanks: Set<number>): DisplayLegendItem[] {
 /**
  * One MetEye TIMESTEP per day — same as scrubbing MetEye to that period.
  * Day 1: period containing "now" (else next remaining).
- * Later days: closest to 15:00 Australia/Sydney.
+ * Later days: closest to 15:00 Europe/London.
  */
 function pickRepresentativeTimestep(
   basetime: string,
@@ -392,7 +392,7 @@ async function buildDayFrame(
   meta: GridMeta,
   win: DayWindow,
 ): Promise<DayFrame | null> {
-  const steps = timestepsForSydneyDay(meta.basetime, win.startMs, win.endMs);
+  const steps = timestepsForLondonDay(meta.basetime, win.startMs, win.endMs);
   if (!steps.length) return null;
 
   const picked = pickRepresentativeTimestep(
@@ -427,7 +427,7 @@ async function buildBundle(): Promise<CacheBundle> {
   const issuedAtIso = formatIssuedAtIso(meta.issuetime);
   const dayFrames = new Map<number, DayFrame>();
 
-  // Gentle on BoM WMS — sequential day fetches.
+  // Gentle on Met Office WMS — sequential day fetches.
   for (const win of windows) {
     const frame = await buildDayFrame(meta, win);
     if (frame) dayFrames.set(win.day, frame);
@@ -459,7 +459,7 @@ async function buildBundle(): Promise<CacheBundle> {
     defaultDay: 1,
     message: any
       ? undefined
-      : "No thunderstorm areas in the current BoM MetEye forecast.",
+      : "No thunderstorm areas in the current Met Office MetEye forecast.",
   };
 
   return {
@@ -546,7 +546,7 @@ export async function probeMeteyeThunderstorm(
   const result = await getMeteyeThunderstormDayPng(day, opts);
   if (!result) return null;
 
-  const [[minLat, minLon], [maxLat, maxLon]] = BOM_METEYE_IMAGE_BOUNDS;
+  const [[minLat, minLon], [maxLat, maxLon]] = MET_OFFICE_METEYE_IMAGE_BOUNDS;
   if (lat < minLat || lat > maxLat || lon < minLon || lon > maxLon) {
     return {
       status: "empty",
@@ -565,9 +565,9 @@ export async function probeMeteyeThunderstorm(
         hatchLabel: null,
       },
       summary: "That point is outside the MetEye national thunderstorm frame.",
-      reasons: ["Tap inside the Australian map area shown on Risk."],
+      reasons: ["Tap inside the European map area shown on Risk."],
       conditions: [],
-      guidance: "Official BoM MetEye thunderstorm layer (IDZ73094).",
+      guidance: "Official Met Office MetEye thunderstorm layer (IDZ73094).",
     };
   }
 
@@ -608,17 +608,17 @@ export async function probeMeteyeThunderstorm(
         hatchLabel: null,
       },
       summary:
-        "BoM MetEye does not show a Chance or Likely thunderstorm area at this point for the selected day.",
+        "Met Office MetEye does not show a Chance or Likely thunderstorm area at this point for the selected day.",
       reasons: [
         "Clear / no-thunderstorm shading on the official MetEye IDZ73094 frame.",
         "Nearby coloured areas may still apply within a few tens of kilometres.",
       ],
       conditions: [
-        { label: "Source", value: "BoM MetEye IDZ73094" },
+        { label: "Source", value: "Met Office MetEye IDZ73094" },
         { label: "Day", value: String(day) },
       ],
       guidance:
-        "Official BoM product. For warnings and watches, use the Warnings page or bom.gov.au.",
+        "Official Met Office product. For warnings and watches, use the Warnings page or bom.gov.au.",
     };
   }
 
@@ -643,7 +643,7 @@ export async function probeMeteyeThunderstorm(
       hatch: 0,
       hatchLabel: null,
     },
-    summary: `${cat.label} on BoM MetEye for this location.`,
+    summary: `${cat.label} on Met Office MetEye for this location.`,
     reasons: [
       blurb,
       "Colour is sampled from the same MetEye thunderstorm frame shown on the map.",
@@ -651,18 +651,18 @@ export async function probeMeteyeThunderstorm(
     ],
     conditions: [
       { label: "Category", value: cat.label },
-      { label: "Source", value: "BoM MetEye IDZ73094" },
+      { label: "Source", value: "Met Office MetEye IDZ73094" },
       { label: "Day", value: String(day) },
       {
         label: "Issued",
-        value: new Date(result.issuedAt).toLocaleString("en-AU", {
-          timeZone: "Australia/Sydney",
+        value: new Date(result.issuedAt).toLocaleString("en-GB", {
+          timeZone: "Europe/London",
           dateStyle: "medium",
           timeStyle: "short",
         }),
       },
     ],
     guidance:
-      "Official BoM product. For warnings and watches, use the Warnings page or bom.gov.au.",
+      "Official Met Office product. For warnings and watches, use the Warnings page or bom.gov.au.",
   };
 }

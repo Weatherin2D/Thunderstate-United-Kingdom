@@ -188,7 +188,7 @@ export function useLightning(enabled: boolean) {
         status: "live",
         live: true,
         attribution:
-          "Lightning © Blitzortung.org / LightningMaps.org (CC BY-SA)",
+          "Lightning © Blitzortung.org / LightningMaps.org (CC BY-IRE)",
       });
     });
 

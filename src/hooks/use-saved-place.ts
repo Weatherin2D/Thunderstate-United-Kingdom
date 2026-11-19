@@ -63,7 +63,7 @@ export function useSavedPlace() {
       });
     });
     const { latitude, longitude } = pos.coords;
-    // BoM search doesn't take lat/lon — use OpenStreetMap reverse then BoM search.
+    // Met Office search doesn't take lat/lon — use OpenStreetMap reverse then Met Office search.
     const rev = await fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
       {
@@ -84,14 +84,14 @@ export function useSavedPlace() {
     if (!query) {
       // Fall back: pick nearest capital by haversine from known list.
       const capitals = [
-        { name: "Sydney", state: "NSW", geohash: "r3gx2sp", lat: -33.87, lon: 151.21 },
-        { name: "Melbourne", state: "VIC", geohash: "r1r0fup", lat: -37.81, lon: 144.96 },
-        { name: "Brisbane", state: "QLD", geohash: "r7hgdmr", lat: -27.47, lon: 153.03 },
-        { name: "Perth", state: "WA", geohash: "qd66hrm", lat: -31.95, lon: 115.86 },
-        { name: "Adelaide", state: "SA", geohash: "r1f93ck", lat: -34.93, lon: 138.6 },
-        { name: "Hobart", state: "TAS", geohash: "r22u080", lat: -42.88, lon: 147.33 },
-        { name: "Canberra", state: "ACT", geohash: "r3dp5hh", lat: -35.28, lon: 149.13 },
-        { name: "Darwin", state: "NT", geohash: "qvv117s", lat: -12.46, lon: 130.84 },
+        { name: "London", state: "England", geohash: "uk-london", lat: 51.5074, lon: -0.1278 },
+        { name: "Edinburgh", state: "Scotland", geohash: "uk-edinburgh", lat: 55.9533, lon: -3.1883 },
+        { name: "Cardiff", state: "Wales", geohash: "uk-cardiff", lat: 51.4816, lon: -3.1791 },
+        { name: "Belfast", state: "Northern Ireland", geohash: "uk-belfast", lat: 54.5973, lon: -5.9301 },
+        { name: "Dublin", state: "Ireland", geohash: "ie-dublin", lat: 53.3498, lon: -6.2603 },
+        { name: "Paris", state: "France", geohash: "fr-paris", lat: 48.8566, lon: 2.3522 },
+        { name: "Amsterdam", state: "Netherlands", geohash: "nl-amsterdam", lat: 52.3676, lon: 4.9041 },
+        { name: "Berlin", state: "Germany", geohash: "de-berlin", lat: 52.52, lon: 13.405 },
       ];
       let best = capitals[0]!;
       let bestD = Infinity;
@@ -125,7 +125,7 @@ export function useSavedPlace() {
       locations: BomLocation[];
     };
     const hit = data.locations?.[0];
-    if (!hit) throw new Error("No nearby BoM location found.");
+    if (!hit) throw new Error("No nearby Met Office location found.");
     return saveFromBomLocation(hit);
   }
 

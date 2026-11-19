@@ -10,8 +10,8 @@ import type { CapitalForecast } from '../lib/capitals'
 import { formatTemp, weatherLabel } from '../lib/capitals'
 import 'leaflet/dist/leaflet.css'
 
-const AU_CENTER: [number, number] = [-25.5, 134.5]
-const AU_ZOOM = 4
+const EUROPE_CENLTER: [number, number] = [54, 8]
+const EUROPE_ZOOM = 4
 
 type Props = {
   radarTileUrl: string | null
@@ -48,8 +48,8 @@ export function RadarMap({
 }: Props) {
   return (
     <MapContainer
-      center={AU_CENTER}
-      zoom={AU_ZOOM}
+      center={EUROPE_CENLTER}
+      zoom={EUROPE_ZOOM}
       minZoom={3}
       maxZoom={10}
       className="radar-map"

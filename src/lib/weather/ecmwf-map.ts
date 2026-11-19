@@ -626,7 +626,7 @@ async function fetchBatch(
     hourly: fields,
     models: openMeteoModel(model),
     forecast_days: String(FORECAST_DAYS),
-    timezone: "Australia/Sydney",
+    timezone: "Europe/London",
     cell_selection: "nearest",
     wind_speed_unit: "kmh",
   });
@@ -864,7 +864,7 @@ export type EcmwfMapCatalog = {
 };
 
 function synthesizeHourlyTimes(forecastDays = FORECAST_DAYS): string[] {
-  /** Local wall times matching Open-Meteo timezone=Australia/Sydney format. */
+  /** Local wall times matching Open-Meteo timezone=Europe/London format. */
   const out: string[] = [];
   const start = new Date();
   start.setMinutes(0, 0, 0);
@@ -889,7 +889,7 @@ async function fetchHourlyTimes(
     hourly: field,
     models: openMeteoModel(model),
     forecast_days: String(FORECAST_DAYS),
-    timezone: "Australia/Sydney",
+    timezone: "Europe/London",
   });
   let lastErr: Error | null = null;
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -1426,7 +1426,7 @@ async function fetchPointSeries(
     hourly: field,
     models: openMeteoModel(model),
     forecast_days: String(FORECAST_DAYS),
-    timezone: "Australia/Sydney",
+    timezone: "Europe/London",
     wind_speed_unit: "kmh",
   });
   const url = `https://api.open-meteo.com/v1/forecast?${params}`;

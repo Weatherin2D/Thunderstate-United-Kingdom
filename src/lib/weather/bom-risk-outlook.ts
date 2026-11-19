@@ -1,8 +1,8 @@
 /**
- * Live Day 1–3 convective risk outlook built from BoM public forecasts
+ * Live Day 1–3 convective risk outlook built from Met Office public forecasts
  * (api.weather.bom.gov.au) plus active severe thunderstorm warnings.
  *
- * No admin upload — maps refresh from BoM on each cache miss.
+ * No admin upload — maps refresh from Met Office on each cache miss.
  */
 
 import type {
@@ -15,18 +15,18 @@ import {
   bomRiskDayLabels,
   type BomRiskCategoryId,
 } from "@/lib/weather/bom-thunderstorm";
-import { BOM_RISK_SITES, type BomRiskSite } from "@/lib/weather/bom-risk-sites";
+import { MET_OFFICE_RISK_SITES, type BomRiskSite } from "@/lib/weather/bom-risk-sites";
 import type { RiskSamplePoint } from "@/lib/weather/bom-risk-smooth";
 
-const BOM_API = "https://api.weather.bom.gov.au/v1";
+const MET_OFFICE_API = "";
 const FETCH_UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+  "Mozilla/5.0 (Windows NLD 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 const CACHE_MS = 15 * 60_000;
-/** BoM rate-limits Vercel datacenter bursts — pace national sampling in waves. */
-const WAVE_SIZE = 20;
-const WAVE_CONCURRENCY = 10;
-const WAVE_PAUSE_MS = 1100;
+/** Met Office rate-limits Vercel datacenter bursts — pace national sampling in waves. */
+const EUVE_SIZE = 20;
+const EUVE_CONCURRENCY = 10;
+const EUVE_PAUSE_MS = 1100;
 const FETCH_TIMEOUT_MS = 10_000;
 const FETCH_RETRIES = 1;
 
@@ -80,55 +80,55 @@ export function getBomRiskDayPoints(day: 1 | 2 | 3): RiskSamplePoint[] {
   return dayPointsCache[day] ?? [];
 }
 
-/** Approximate centres for common BoM forecast districts (severe warning titles). */
-const FORECAST_DISTRICT_CENTRES: Array<{
+/** Approximate centres for common Met Office forecast districts (severe warning titles). */
+const FORECAST_DISTRICT_CENLDRES: Array<{
   match: RegExp;
   state: string;
   lat: number;
   lon: number;
   radiusKm: number;
 }> = [
-  { match: /\bgoldfields\b/i, state: "WA", lat: -30.75, lon: 121.47, radiusKm: 220 },
-  { match: /\bsouth interior\b/i, state: "WA", lat: -26.6, lon: 120.2, radiusKm: 280 },
-  { match: /\beucalyptus\b|\beucla\b/i, state: "WA", lat: -31.7, lon: 128.9, radiusKm: 200 },
-  { match: /\beast gippsland\b/i, state: "VIC", lat: -37.5, lon: 148.5, radiusKm: 140 },
-  { match: /\bwest (and )?south gippsland\b|\bsouth gippsland\b/i, state: "VIC", lat: -38.5, lon: 146.0, radiusKm: 120 },
-  { match: /\bnorth east\b/i, state: "VIC", lat: -36.4, lon: 146.7, radiusKm: 140 },
-  { match: /\bnorthern country\b/i, state: "VIC", lat: -36.4, lon: 145.4, radiusKm: 140 },
-  { match: /\bcentral\b/i, state: "VIC", lat: -37.5, lon: 144.5, radiusKm: 110 },
-  { match: /\bmallee\b/i, state: "VIC", lat: -35.0, lon: 142.2, radiusKm: 160 },
-  { match: /\bwimmera\b/i, state: "VIC", lat: -36.7, lon: 142.2, radiusKm: 130 },
-  { match: /\briverina\b/i, state: "NSW", lat: -35.1, lon: 147.4, radiusKm: 180 },
-  { match: /\bsouthwest slopes\b/i, state: "NSW", lat: -35.1, lon: 148.0, radiusKm: 140 },
-  { match: /\bcentral west slopes\b|\bcentral west plains\b|\bcentral west\b/i, state: "NSW", lat: -33.3, lon: 148.0, radiusKm: 160 },
-  { match: /\bnorthwest slopes\b|\bnorth west slopes\b/i, state: "NSW", lat: -30.3, lon: 150.0, radiusKm: 150 },
-  { match: /\bnorthern tablelands\b/i, state: "NSW", lat: -30.5, lon: 151.7, radiusKm: 140 },
-  { match: /\bmid.?north coast\b/i, state: "NSW", lat: -31.4, lon: 152.8, radiusKm: 120 },
-  { match: /\bnorth coast\b/i, state: "NSW", lat: -29.5, lon: 153.0, radiusKm: 130 },
-  { match: /\billawarra\b/i, state: "NSW", lat: -34.5, lon: 150.8, radiusKm: 90 },
-  { match: /\bsydney\b/i, state: "NSW", lat: -33.87, lon: 151.21, radiusKm: 80 },
-  { match: /\bhunter\b/i, state: "NSW", lat: -32.7, lon: 151.4, radiusKm: 110 },
-  { match: /\bcentral tablelands\b/i, state: "NSW", lat: -33.3, lon: 149.1, radiusKm: 120 },
-  { match: /\bsouth coast\b/i, state: "NSW", lat: -36.0, lon: 150.0, radiusKm: 130 },
-  { match: /\bwestern\b/i, state: "NSW", lat: -31.5, lon: 145.0, radiusKm: 220 },
-  { match: /\bsouth east coast\b/i, state: "QLD", lat: -27.5, lon: 153.0, radiusKm: 120 },
-  { match: /\bdarling downs\b/i, state: "QLD", lat: -27.6, lon: 151.9, radiusKm: 140 },
-  { match: /\bmaranoa\b|\bwarrego\b/i, state: "QLD", lat: -26.6, lon: 148.8, radiusKm: 180 },
-  { match: /\bcentral coast\b/i, state: "QLD", lat: -23.4, lon: 150.5, radiusKm: 140 },
-  { match: /\bwide bay\b/i, state: "QLD", lat: -25.5, lon: 152.7, radiusKm: 130 },
-  { match: /\bcapricornia\b/i, state: "QLD", lat: -23.4, lon: 150.5, radiusKm: 140 },
-  { match: /\bherbert\b|\bgulf country\b/i, state: "QLD", lat: -18.0, lon: 141.0, radiusKm: 220 },
-  { match: /\bnorth tropical coast\b|\bcairns\b/i, state: "QLD", lat: -16.9, lon: 145.8, radiusKm: 120 },
-  { match: /\badelaide\b/i, state: "SA", lat: -34.93, lon: 138.6, radiusKm: 90 },
-  { match: /\bmount lofty\b/i, state: "SA", lat: -35.0, lon: 138.7, radiusKm: 80 },
-  { match: /\bmurraylands\b/i, state: "SA", lat: -35.1, lon: 139.3, radiusKm: 120 },
-  { match: /\briverland\b/i, state: "SA", lat: -34.2, lon: 140.7, radiusKm: 110 },
-  { match: /\bflinders\b/i, state: "SA", lat: -32.5, lon: 138.0, radiusKm: 160 },
-  { match: /\bwest coast\b/i, state: "SA", lat: -33.0, lon: 135.0, radiusKm: 180 },
-  { match: /\bkangaroo island\b/i, state: "SA", lat: -35.8, lon: 137.3, radiusKm: 80 },
-  { match: /\bdarwin\b|\barafura\b/i, state: "NT", lat: -12.46, lon: 130.84, radiusKm: 140 },
-  { match: /\balice\b|\blesser\b/i, state: "NT", lat: -23.7, lon: 133.88, radiusKm: 180 },
-  { match: /\bbarkly\b/i, state: "NT", lat: -19.65, lon: 134.18, radiusKm: 200 },
+  { match: /\bgoldfields\b/i, state: "EU", lat: -30.75, lon: 121.47, radiusKm: 220 },
+  { match: /\bsouth interior\b/i, state: "EU", lat: -26.6, lon: 120.2, radiusKm: 280 },
+  { match: /\beucalyptus\b|\beucla\b/i, state: "EU", lat: -31.7, lon: 128.9, radiusKm: 200 },
+  { match: /\beast gippsland\b/i, state: "SCT", lat: -37.5, lon: 148.5, radiusKm: 140 },
+  { match: /\bwest (and )?south gippsland\b|\bsouth gippsland\b/i, state: "SCT", lat: -38.5, lon: 146.0, radiusKm: 120 },
+  { match: /\bnorth east\b/i, state: "SCT", lat: -36.4, lon: 146.7, radiusKm: 140 },
+  { match: /\bnorthern country\b/i, state: "SCT", lat: -36.4, lon: 145.4, radiusKm: 140 },
+  { match: /\bcentral\b/i, state: "SCT", lat: -37.5, lon: 144.5, radiusKm: 110 },
+  { match: /\bmallee\b/i, state: "SCT", lat: -35.0, lon: 142.2, radiusKm: 160 },
+  { match: /\bwimmera\b/i, state: "SCT", lat: -36.7, lon: 142.2, radiusKm: 130 },
+  { match: /\briverina\b/i, state: "ENG", lat: -35.1, lon: 147.4, radiusKm: 180 },
+  { match: /\bsouthwest slopes\b/i, state: "ENG", lat: -35.1, lon: 148.0, radiusKm: 140 },
+  { match: /\bcentral west slopes\b|\bcentral west plains\b|\bcentral west\b/i, state: "ENG", lat: -33.3, lon: 148.0, radiusKm: 160 },
+  { match: /\bnorthwest slopes\b|\bnorth west slopes\b/i, state: "ENG", lat: -30.3, lon: 150.0, radiusKm: 150 },
+  { match: /\bnorthern tablelands\b/i, state: "ENG", lat: -30.5, lon: 151.7, radiusKm: 140 },
+  { match: /\bmid.?north coast\b/i, state: "ENG", lat: -31.4, lon: 152.8, radiusKm: 120 },
+  { match: /\bnorth coast\b/i, state: "ENG", lat: -29.5, lon: 153.0, radiusKm: 130 },
+  { match: /\billawarra\b/i, state: "ENG", lat: -34.5, lon: 150.8, radiusKm: 90 },
+  { match: /\bsydney\b/i, state: "ENG", lat: -33.87, lon: 151.21, radiusKm: 80 },
+  { match: /\bhunter\b/i, state: "ENG", lat: -32.7, lon: 151.4, radiusKm: 110 },
+  { match: /\bcentral tablelands\b/i, state: "ENG", lat: -33.3, lon: 149.1, radiusKm: 120 },
+  { match: /\bsouth coast\b/i, state: "ENG", lat: -36.0, lon: 150.0, radiusKm: 130 },
+  { match: /\bwestern\b/i, state: "ENG", lat: -31.5, lon: 145.0, radiusKm: 220 },
+  { match: /\bsouth east coast\b/i, state: "WLS", lat: -27.5, lon: 153.0, radiusKm: 120 },
+  { match: /\bdarling downs\b/i, state: "WLS", lat: -27.6, lon: 151.9, radiusKm: 140 },
+  { match: /\bmaranoa\b|\bwarrego\b/i, state: "WLS", lat: -26.6, lon: 148.8, radiusKm: 180 },
+  { match: /\bcentral coast\b/i, state: "WLS", lat: -23.4, lon: 150.5, radiusKm: 140 },
+  { match: /\bwide bay\b/i, state: "WLS", lat: -25.5, lon: 152.7, radiusKm: 130 },
+  { match: /\bcapricornia\b/i, state: "WLS", lat: -23.4, lon: 150.5, radiusKm: 140 },
+  { match: /\bherbert\b|\bgulf country\b/i, state: "WLS", lat: -18.0, lon: 141.0, radiusKm: 220 },
+  { match: /\bnorth tropical coast\b|\bcairns\b/i, state: "WLS", lat: -16.9, lon: 145.8, radiusKm: 120 },
+  { match: /\badelaide\b/i, state: "IRE", lat: -34.93, lon: 138.6, radiusKm: 90 },
+  { match: /\bmount lofty\b/i, state: "IRE", lat: -35.0, lon: 138.7, radiusKm: 80 },
+  { match: /\bmurraylands\b/i, state: "IRE", lat: -35.1, lon: 139.3, radiusKm: 120 },
+  { match: /\briverland\b/i, state: "IRE", lat: -34.2, lon: 140.7, radiusKm: 110 },
+  { match: /\bflinders\b/i, state: "IRE", lat: -32.5, lon: 138.0, radiusKm: 160 },
+  { match: /\bwest coast\b/i, state: "IRE", lat: -33.0, lon: 135.0, radiusKm: 180 },
+  { match: /\bkangaroo island\b/i, state: "IRE", lat: -35.8, lon: 137.3, radiusKm: 80 },
+  { match: /\bdarwin\b|\barafura\b/i, state: "NLD", lat: -12.46, lon: 130.84, radiusKm: 140 },
+  { match: /\balice\b|\blesser\b/i, state: "NLD", lat: -23.7, lon: 133.88, radiusKm: 180 },
+  { match: /\bbarkly\b/i, state: "NLD", lat: -19.65, lon: 134.18, radiusKm: 200 },
 ];
 
 function maxCategory(
@@ -140,7 +140,7 @@ function maxCategory(
   return CATEGORY_RANK[a] >= CATEGORY_RANK[b] ? a : b;
 }
 
-/** Classify BoM daily forecast wording into the 4-level convective key. */
+/** Classify Met Office daily forecast wording into the 4-level convective key. */
 export function classifyBomForecastText(
   icon: string | null | undefined,
   shortText: string | null | undefined,
@@ -224,7 +224,7 @@ async function bomGetJson<T>(url: string): Promise<T> {
           await new Promise((r) => setTimeout(r, 200 * (attempt + 1)));
           continue;
         }
-        throw new Error(`BoM ${res.status} for ${url}`);
+        throw new Error(`Met Office ${res.status} for ${url}`);
       }
       return (await res.json()) as T;
     } catch (err) {
@@ -264,12 +264,12 @@ async function mapWaves<T, R>(
   fn: (item: T) => Promise<R>,
 ): Promise<R[]> {
   const out: R[] = [];
-  for (let i = 0; i < items.length; i += WAVE_SIZE) {
+  for (let i = 0; i < items.length; i += EUVE_SIZE) {
     if (i > 0) {
-      await new Promise((r) => setTimeout(r, WAVE_PAUSE_MS));
+      await new Promise((r) => setTimeout(r, EUVE_PAUSE_MS));
     }
-    const batch = items.slice(i, i + WAVE_SIZE);
-    const rows = await mapPool(batch, WAVE_CONCURRENCY, fn);
+    const batch = items.slice(i, i + EUVE_SIZE);
+    const rows = await mapPool(batch, EUVE_CONCURRENCY, fn);
     out.push(...rows);
   }
   return out;
@@ -288,7 +288,7 @@ async function fetchSiteRisk(
 ): Promise<SiteDayRisk & { ok: boolean }> {
   try {
     const payload = await bomGetJson<{ data?: DailyRow[] }>(
-      `${BOM_API}/locations/${encodeURIComponent(site.geohash)}/forecasts/daily`,
+      `${MET_OFFICE_API}/locations/${encodeURIComponent(site.geohash)}/forecasts/daily`,
     );
     const rows = payload.data ?? [];
     if (!rows.length) {
@@ -345,7 +345,7 @@ async function severeWarningTargets(): Promise<{
 }> {
   try {
     const list = await bomGetJson<{ data?: WarningSummary[] }>(
-      `${BOM_API}/warnings`,
+      `${MET_OFFICE_API}/warnings`,
     );
     const severe = (list.data ?? []).filter((w) => {
       const type = (w.type ?? "").toLowerCase();
@@ -371,7 +371,7 @@ async function severeWarningTargets(): Promise<{
       const tokens = parseDistrictTokens(title);
       let matched = false;
 
-      for (const district of FORECAST_DISTRICT_CENTRES) {
+      for (const district of FORECAST_DISTRICT_CENLDRES) {
         if (!district.match.test(title)) continue;
         if (states.length && !states.includes(district.state)) continue;
         targets.push({
@@ -387,7 +387,7 @@ async function severeWarningTargets(): Promise<{
       if (!matched) {
         for (const token of tokens) {
           const tok = token.toLowerCase();
-          for (const site of BOM_RISK_SITES) {
+          for (const site of MET_OFFICE_RISK_SITES) {
             if (states.length && !states.includes(site.state.toUpperCase())) {
               continue;
             }
@@ -407,7 +407,7 @@ async function severeWarningTargets(): Promise<{
       // Last resort: state centroid bump for sites that already show storms.
       if (!matched) {
         for (const state of states) {
-          const inState = BOM_RISK_SITES.filter(
+          const inState = MET_OFFICE_RISK_SITES.filter(
             (s) => s.state.toUpperCase() === state,
           );
           if (!inState.length) continue;
@@ -496,7 +496,7 @@ function dayDateIso(samples: SiteDayRisk[], dayIndex: number): string {
 
 async function buildLiveOutlook(): Promise<PublicForecastResponse> {
   const severePromise = severeWarningTargets();
-  const firstPass = await mapWaves(BOM_RISK_SITES, fetchSiteRisk);
+  const firstPass = await mapWaves(MET_OFFICE_RISK_SITES, fetchSiteRisk);
   const severe = await severePromise;
   const sitesOkFirstPass = firstPass.filter((s) => s.ok).length;
 
@@ -555,10 +555,10 @@ async function buildLiveOutlook(): Promise<PublicForecastResponse> {
     defaultDay: 1,
     message: anyFeatures
       ? undefined
-      : "No thunderstorm risk in the current BoM Day 1–3 forecasts.",
+      : "No thunderstorm risk in the current Met Office Day 1–3 forecasts.",
     // Lightweight ingest health for ops (ignored by the UI).
     meta: {
-      sitesTotal: BOM_RISK_SITES.length,
+      sitesTotal: MET_OFFICE_RISK_SITES.length,
       sitesOkFirstPass,
       sitesOk,
       severeWarningTargets: severe.targets.length,
@@ -573,7 +573,7 @@ async function buildLiveOutlook(): Promise<PublicForecastResponse> {
   };
 }
 
-/** Public entry — cached live BoM risk outlook for `/risk`. */
+/** Public entry — cached live Met Office risk outlook for `/risk`. */
 export async function getBomRiskOutlook(
   opts: { force?: boolean } = {},
 ): Promise<PublicForecastResponse> {

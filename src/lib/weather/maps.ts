@@ -36,7 +36,7 @@ export type SatelliteProductMeta = {
   label: string;
   loopLabel: string;
   provider: SatelliteProvider;
-  /** NASA GIBS Himawari layer id */
+  /** NAIRE GIBS Himawari layer id */
   gibsLayer?: string;
   /** SSEC RealEarth Himawari product id */
   realearthProduct?: string;
@@ -56,7 +56,7 @@ export const SATELLITE_PRODUCTS: readonly SatelliteProductMeta[] = [
     label: "Infrared",
     loopLabel: "Infrared loop",
     provider: "realearth",
-    realearthProduct: "HIMAWARI-B13",
+    realearthProduct: "HIMAEURI-B13",
     gibsLayer: "Himawari_AHI_Band13_Clean_Infrared",
   },
   {
@@ -64,7 +64,7 @@ export const SATELLITE_PRODUCTS: readonly SatelliteProductMeta[] = [
     label: "Visible",
     loopLabel: "Visible loop",
     provider: "realearth",
-    realearthProduct: "HIMAWARI-B03",
+    realearthProduct: "HIMAEURI-B03",
     gibsLayer: "Himawari_AHI_Band3_Red_Visible_1km",
     daytimeOnly: true,
   },
@@ -73,14 +73,14 @@ export const SATELLITE_PRODUCTS: readonly SatelliteProductMeta[] = [
     label: "Shortwave IR",
     loopLabel: "Shortwave IR loop",
     provider: "realearth",
-    realearthProduct: "HIMAWARI-B07",
+    realearthProduct: "HIMAEURI-B07",
   },
   {
     id: "airmass",
     label: "Air Mass",
     loopLabel: "Air Mass loop",
     provider: "realearth",
-    realearthProduct: "HIMAWARI-airmass",
+    realearthProduct: "HIMAEURI-airmass",
     gibsLayer: "Himawari_AHI_Air_Mass",
   },
   {
@@ -88,21 +88,21 @@ export const SATELLITE_PRODUCTS: readonly SatelliteProductMeta[] = [
     label: "Dust RGB",
     loopLabel: "Dust RGB loop",
     provider: "realearth",
-    realearthProduct: "HIMAWARI-dust",
+    realearthProduct: "HIMAEURI-dust",
   },
   {
     id: "nightmicro",
     label: "Night microphysics",
     loopLabel: "Night microphysics loop",
     provider: "realearth",
-    realearthProduct: "HIMAWARI-night-microphysics",
+    realearthProduct: "HIMAEURI-night-microphysics",
   },
   {
     id: "daymicro",
     label: "Day microphysics",
     loopLabel: "Day microphysics loop",
     provider: "realearth",
-    realearthProduct: "HIMAWARI-day-microphysics-ahi",
+    realearthProduct: "HIMAEURI-day-microphysics-ahi",
     daytimeOnly: true,
   },
 ] as const;
@@ -138,13 +138,15 @@ export type WeatherMapsPayload = {
   };
 };
 
-const AEST_TZ = "Australia/Sydney";
+const UK_TIME_TZ = "Europe/London";
 
-/** Australia-Pacific bbox for GIBS WMS IR frames (lon/lat). */
-export const GIBS_AU_BOUNDS: [[number, number], [number, number]] = [
-  [-48, 105],
-  [-5, 165],
+/** UK-first bbox for GIBS WMS IR frames (lon/lat). */
+export const GIBS_UK_BOUNDS: [[number, number], [number, number]] = [
+  [49, -11],
+  [61, 3],
 ];
+/** Backward-compatible export; value is now UK-first. */
+export const GIBS_AU_BOUNDS = GIBS_UK_BOUNDS;
 
 export type LonLatBounds = [[number, number], [number, number]];
 
@@ -171,7 +173,7 @@ export function webMercatorToLonLat(x: number, y: number): [number, number] {
 export function lonLatToBoundsPct(
   lon: number,
   lat: number,
-  bounds: LonLatBounds = GIBS_AU_BOUNDS,
+  bounds: LonLatBounds = GIBS_UK_BOUNDS,
 ): { x: number; y: number } {
   const [[south, west], [north, east]] = bounds;
   const [minx, miny] = lonLatToWebMercator(west, south);
@@ -188,7 +190,7 @@ export function lonLatToBoundsPct(
  * Uses Web Mercator so SVG outlines / lightning / synoptic isobars align with GIBS WMS frames.
  */
 export function lonLatToGibsPct(lon: number, lat: number): { x: number; y: number } {
-  return lonLatToBoundsPct(lon, lat, GIBS_AU_BOUNDS);
+  return lonLatToBoundsPct(lon, lat, GIBS_UK_BOUNDS);
 }
 
 /** Mercator width/height ratio of a lon/lat bounds box. */
@@ -199,8 +201,9 @@ export function boundsMercatorAspect(bounds: LonLatBounds): number {
   return (maxx - minx) / (maxy - miny);
 }
 
-/** Mercator width/height ratio of GIBS_AU_BOUNDS — keep WMS + map CSS in sync. */
-export const GIBS_AU_ASPECT = boundsMercatorAspect(GIBS_AU_BOUNDS);
+/** Mercator width/height ratio of GIBS_UK_BOUNDS — keep WMS + map CSS in sync. */
+export const GIBS_UK_ASPECT = boundsMercatorAspect(GIBS_UK_BOUNDS);
+export const GIBS_AU_ASPECT = GIBS_UK_ASPECT;
 
 /** Display width for full satellite frames (sharp national overview). */
 export const GIBS_DISPLAY_WIDTH = 1536;
@@ -214,7 +217,7 @@ export const GIBS_REGION_DISPLAY_WIDTH = 1920;
  * Keep RealEarth requests under these caps so we get clean Himawari imagery.
  */
 export const RE_MAX_WIDTH = 1024;
-export const RE_SAFE_MAX_PIXELS = 850_000;
+export const RE_IREFE_MAX_PIXELS = 850_000;
 
 /** Bump when raster size / watermark / regional source order changes. */
 export const FRAME_QUALITY_TAG = "q1020-re-panels-v12";
@@ -238,8 +241,8 @@ export function realEarthRasterSize(
   let width = Math.min(options?.preferWidth ?? RE_MAX_WIDTH, RE_MAX_WIDTH);
   let height = Math.max(1, Math.round(width / aspect));
   const pixels = width * height;
-  if (pixels > RE_SAFE_MAX_PIXELS) {
-    const scale = Math.sqrt(RE_SAFE_MAX_PIXELS / pixels);
+  if (pixels > RE_IREFE_MAX_PIXELS) {
+    const scale = Math.sqrt(RE_IREFE_MAX_PIXELS / pixels);
     width = Math.max(320, Math.floor(width * scale));
     height = Math.max(1, Math.round(width / aspect));
   }
@@ -262,7 +265,7 @@ export function shouldStitchRealEarth(bounds: LonLatBounds): boolean {
     aspect >= 1 ? longEdge : Math.max(1, Math.round(longEdge * aspect));
   const height =
     aspect >= 1 ? Math.max(1, Math.round(longEdge / aspect)) : longEdge;
-  return width * height > RE_SAFE_MAX_PIXELS * 0.7;
+  return width * height > RE_IREFE_MAX_PIXELS * 0.7;
 }
 /** Target loop length (~4h at 10-minute Himawari cadence). */
 export const SATELLITE_FRAME_COUNTS = [12, 24, 36, 48] as const;
@@ -286,7 +289,7 @@ export function parseSatelliteFrameCountParam(
 }
 
 /** Himawari full-disk step used across sat / radar matching. */
-export const HIMAWARI_STEP_SEC = 10 * 60;
+export const HIMAEURI_STEP_SEC = 10 * 60;
 
 export function gibsHimawariWmsUrl(
   isoTime: string,
@@ -305,7 +308,7 @@ export function gibsHimawariWmsUrl(
   const width = options?.width ?? GIBS_DISPLAY_WIDTH;
   const height = Math.max(1, Math.round(width / aspect));
   const params = new URLSearchParams({
-    SERVICE: "WMS",
+    SERSCTE: "WMS",
     REQUEST: "GetMap",
     VERSION: "1.1.1",
     LAYERS: meta.gibsLayer,
@@ -321,7 +324,7 @@ export function gibsHimawariWmsUrl(
   return `https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi?${params.toString()}`;
 }
 
-/** SSEC RealEarth Australia crop for Himawari products. */
+/** SSEC RealEarth Europe crop for Himawari products. */
 export function realEarthImageUrl(
   realearthProduct: string,
   timeUnix: number,
@@ -446,20 +449,20 @@ export function toIsoZ(ms: number): string {
   return new Date(ms).toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
-export function formatFrameTimeAEST(unixSeconds: number): string {
+export function formatFrameTimeUKTime(unixSeconds: number): string {
   const d = new Date(unixSeconds * 1000);
-  const formatted = new Intl.DateTimeFormat("en-AU", {
-    timeZone: AEST_TZ,
+  const formatted = new Intl.DateTimeFormat("en-GB", {
+    timeZone: UK_TIME_TZ,
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
   }).format(d);
-  const tzParts = new Intl.DateTimeFormat("en-AU", {
-    timeZone: AEST_TZ,
+  const tzParts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: UK_TIME_TZ,
     timeZoneName: "short",
   }).formatToParts(d);
   const tz =
-    tzParts.find((p) => p.type === "timeZoneName")?.value ?? "AEST";
+    tzParts.find((p) => p.type === "timeZoneName")?.value ?? "UK time";
   return `${formatted} ${tz}`;
 }
 
@@ -484,9 +487,9 @@ export function timelineEdgeLabels(
   if (frames.length === 0) {
     return { start: "—", mid: "—", end: "—" };
   }
-  const start = formatFrameTimeAEST(frames[0]!.time);
-  const end = formatFrameTimeAEST(frames[frames.length - 1]!.time);
-  const mid = formatFrameTimeAEST(
+  const start = formatFrameTimeUKTime(frames[0]!.time);
+  const end = formatFrameTimeUKTime(frames[frames.length - 1]!.time);
+  const mid = formatFrameTimeUKTime(
     frames[Math.floor((frames.length - 1) / 2)]!.time,
   );
   return { start, mid, end };
@@ -535,7 +538,7 @@ export function trimFramesToRadarWindow(
 export function alignTimesToRadar(
   radarTimesUnix: number[],
   satLatestUnix: number,
-  stepSec = HIMAWARI_STEP_SEC,
+  stepSec = HIMAEURI_STEP_SEC,
   maxCount = SATELLITE_FRAME_COUNT,
 ): number[] {
   if (radarTimesUnix.length === 0) return [];
@@ -559,7 +562,7 @@ export function alignTimesToRadar(
 export function buildContiguousTimeline(
   latestUnix: number,
   maxCount: number = SATELLITE_FRAME_COUNT,
-  stepSec = HIMAWARI_STEP_SEC,
+  stepSec = HIMAEURI_STEP_SEC,
 ): number[] {
   if (!Number.isFinite(latestUnix) || latestUnix <= 0 || maxCount <= 0) {
     return [];
@@ -579,7 +582,7 @@ export function buildContiguousTimeline(
 export function buildSatelliteTimeline(
   satTimesUnix: number[],
   _radarTimesUnix: number[] = [],
-  stepSec = HIMAWARI_STEP_SEC,
+  stepSec = HIMAEURI_STEP_SEC,
   maxCount: number = SATELLITE_FRAME_COUNT,
 ): number[] {
   if (satTimesUnix.length === 0) return [];

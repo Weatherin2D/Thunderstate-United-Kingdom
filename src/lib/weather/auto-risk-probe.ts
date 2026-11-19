@@ -353,7 +353,7 @@ export function explainProbeSite(
       ],
       conditions: [],
       guidance:
-        "Guidance only — not an official warning. Check BoM for warnings.",
+        "Guidance only — not an official warning. Check Met Office for warnings.",
     };
   }
 
@@ -435,7 +435,7 @@ export function explainProbeSite(
         ]
       : undefined,
     guidance:
-      "Guidance from the painted map + nearest model sample (~40 km scale). Not an official warning — check BoM for warnings.",
+      "Guidance from the painted map + nearest model sample (~40 km scale). Not an official warning — check Met Office for warnings.",
   };
 }
 

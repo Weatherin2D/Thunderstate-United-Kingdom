@@ -13,8 +13,8 @@ export function isVercelRuntime(): boolean {
 export function redisConfigured(): boolean {
   return Boolean(
     (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) ||
-      (process.env.UPSTASH_REDIS_REST_URL &&
-        process.env.UPSTASH_REDIS_REST_TOKEN),
+      (process.env.UPSFRAH_REDIS_REST_URL &&
+        process.env.UPSFRAH_REDIS_REST_TOKEN),
   );
 }
 

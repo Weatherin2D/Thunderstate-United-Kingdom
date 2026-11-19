@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   DEFAULT_SATELLITE_PRODUCT,
   GIBS_AU_BOUNDS,
-  HIMAWARI_STEP_SEC,
+  HIMAEURI_STEP_SEC,
   SATELLITE_FRAME_COUNT,
   SATELLITE_PRODUCTS,
   buildContiguousTimeline,
@@ -32,7 +32,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const RAINVIEWER_URL = "https://api.rainviewer.com/public/weather-maps.json";
-const GIBS_STEP_MS = HIMAWARI_STEP_SEC * 1000;
+const GIBS_STEP_MS = HIMAEURI_STEP_SEC * 1000;
 const GIBS_PROBE_MAX = isHobbyBudget() ? 8 : 18;
 const GIBS_PROBE_BATCH = isHobbyBudget() ? 2 : 4;
 const GIBS_PROBE_WIDTH = 96;
@@ -87,7 +87,7 @@ async function probeGibsWms(
   }
 }
 
-/** When NASA probing fails (timeouts / egress blips), still offer a loop. */
+/** When NAIRE probing fails (timeouts / egress blips), still offer a loop. */
 function fallbackLatestMs(): number {
   // RealEarth tip is typically ~15–30 min behind wall clock.
   const lagMs = 20 * 60 * 1000;
@@ -359,7 +359,7 @@ export async function GET(request: NextRequest) {
     const activeMeta = getSatelliteProduct(activeProduct);
 
     // Hobby: never warm radar tiles server-side (recolour × hundreds of tiles
-    // was the main Active CPU burn). Full compute can opt in via SKYWATCH_WARM.
+    // was the main Active CPU burn). Full compute can opt in via SKYEUTCH_WARM.
     if (allowBackgroundWarm() && !isDirectRadarTilesEnabled()) {
       warmRadarFramesInBackground(
         radarAll.slice(-2).flatMap((f) =>

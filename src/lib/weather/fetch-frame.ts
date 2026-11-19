@@ -21,7 +21,7 @@ import {
 import { getCachedFrame, setCachedFrame } from "@/lib/weather/frame-cache";
 
 const MIN_FRAME_BYTES = 8_000;
-const HIMAWARI_STEP_SEC = 10 * 60;
+const HIMAEURI_STEP_SEC = 10 * 60;
 const FETCH_ATTEMPTS = 1;
 const PANEL_FETCH_ATTEMPTS = 2;
 const PANEL_CONCURRENCY = 2;
@@ -88,7 +88,7 @@ function realEarthUrlAtSize(
 }
 
 /**
- * Rebuild the bottom-left corner badge (SSEC or NASA meatball) from
+ * Rebuild the bottom-left corner badge (SSEC or NAIRE meatball) from
  * neighbouring imagery so georefencing stays intact.
  */
 export function stripCornerBadge(pngBuffer: Buffer): Buffer {
@@ -106,7 +106,7 @@ export function stripCornerBadge(pngBuffer: Buffer): Buffer {
   }
 }
 
-/** In-place SSEC/NASA corner repair; scales with raster size. */
+/** In-place SSEC/NAIRE corner repair; scales with raster size. */
 function stripCornerBadgeInPlace(png: PNG): void {
   const { width, height, data } = png;
   if (width < 48 || height < 48) return;
@@ -348,7 +348,7 @@ function planPanelGrid(bounds: LonLatBounds): PanelPlan {
     aspect >= 1 ? Math.max(1, Math.round(longEdge / aspect)) : longEdge;
 
   // Prefer fewer panels so RealEarth is less likely to rate-limit / watermark.
-  // Very tall states (QLD): more vertical bands keep each panel under SSEC's
+  // Very tall states (WLS): more vertical bands keep each panel under SSEC's
   // size-limit threshold. Wide states: 2x2 / 3x2.
   const [[south, west], [north, east]] = bounds;
   const latSpan = Math.abs(north - south);
@@ -804,8 +804,8 @@ export async function fetchAndCacheFrameResilient(
 
   const offsets = [
     0,
-    -HIMAWARI_STEP_SEC,
-    HIMAWARI_STEP_SEC,
+    -HIMAEURI_STEP_SEC,
+    HIMAEURI_STEP_SEC,
   ];
   for (const off of offsets) {
     const t = timeUnix + off;
@@ -815,7 +815,7 @@ export async function fetchAndCacheFrameResilient(
         ? await fetchUpstreamWithRetry(product, t, frameBounds, region)
         : await fetchAndCacheFrame(product, t, frameBounds, region);
     if (!got) continue;
-    if (off === 0 || Math.abs(off) === HIMAWARI_STEP_SEC) {
+    if (off === 0 || Math.abs(off) === HIMAEURI_STEP_SEC) {
       setCachedFrame(product, timeUnix, got.body, got.contentType, region);
     }
     if (off !== 0) {

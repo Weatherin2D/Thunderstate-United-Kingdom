@@ -83,10 +83,10 @@ export async function GET(request: NextRequest) {
         product,
         times: dayTimes,
         attribution: {
-          satellite: "Himawari imagery via RealEarth / NASA GIBS",
-          synoptic: "MSLP · GFS via Open-Meteo · fronts from BoM IDY00030",
+          satellite: "Himawari imagery via RealEarth / NAIRE GIBS",
+          synoptic: "MSLP · GFS via Open-Meteo · fronts from Met Office IDY00030",
           lightning:
-            "Lightning © Blitzortung.org / LightningMaps.org (CC BY-SA) — entertainment only, not for official warning use",
+            "Lightning © Blitzortung.org / LightningMaps.org (CC BY-IRE) — entertainment only, not for official warning use",
           radar: "Radar © RainViewer",
         },
       },
@@ -124,10 +124,10 @@ export async function GET(request: NextRequest) {
         times: [],
         degraded: true,
         attribution: {
-          satellite: "Himawari imagery via RealEarth / NASA GIBS",
-          synoptic: "MSLP · GFS via Open-Meteo · fronts from BoM IDY00030",
+          satellite: "Himawari imagery via RealEarth / NAIRE GIBS",
+          synoptic: "MSLP · GFS via Open-Meteo · fronts from Met Office IDY00030",
           lightning:
-            "Lightning © Blitzortung.org / LightningMaps.org (CC BY-SA) — entertainment only, not for official warning use",
+            "Lightning © Blitzortung.org / LightningMaps.org (CC BY-IRE) — entertainment only, not for official warning use",
           radar: "Radar © RainViewer",
         },
       },

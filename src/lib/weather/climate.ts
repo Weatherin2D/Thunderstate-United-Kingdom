@@ -1,4 +1,4 @@
-/** Extended climate / ensemble guidance via Open-Meteo (not BoM seasonal). */
+/** Extended climate / ensemble guidance via Open-Meteo (not Met Office seasonal). */
 
 export type ClimateDay = {
   date: string;
@@ -37,7 +37,7 @@ export async function fetchClimateOutlook(options: {
   const {
     latitude,
     longitude,
-    placeLabel = "Australia",
+    placeLabel = "Europe",
     days: daysIn = 16,
   } = options;
   const forecastDays = Math.max(14, Math.min(28, Math.round(daysIn)));
@@ -48,7 +48,7 @@ export async function fetchClimateOutlook(options: {
     daily:
       "temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max",
     forecast_days: String(Math.min(forecastDays, 16)),
-    timezone: "Australia/Sydney",
+    timezone: "Europe/London",
   });
 
   // Prefer ensemble mean when available for longer guidance feel.
@@ -57,7 +57,7 @@ export async function fetchClimateOutlook(options: {
     longitude: String(longitude),
     daily: "temperature_2m_max,temperature_2m_min,precipitation_sum",
     forecast_days: String(Math.min(forecastDays, 35)),
-    timezone: "Australia/Sydney",
+    timezone: "Europe/London",
   });
 
   let daily: Record<string, unknown[]> = {};
@@ -150,19 +150,19 @@ export async function fetchClimateOutlook(options: {
     },
     attribution: source,
     disclaimer:
-      "This is model guidance for planning context only — not an official BoM seasonal climate outlook.",
+      "This is model guidance for planning context only — not an official Met Office seasonal climate outlook.",
     bomLinks: [
       {
-        label: "BoM climate & past weather",
-        href: "https://www.bom.gov.au/climate/",
+        label: "Met Office climate & past weather",
+        href: "https://www.metoffice.gov.uk/weather/climate",
       },
       {
-        label: "BoM seasonal outlooks",
-        href: "https://www.bom.gov.au/climate/outlooks/",
+        label: "Met Office seasonal outlooks",
+        href: "https://www.metoffice.gov.uk/research/climate",
       },
       {
-        label: "BoM ENSO wrap-up",
-        href: "https://www.bom.gov.au/climate/enso/",
+        label: "Met Office ENSO wrap-up",
+        href: "https://climate.copernicus.eu/",
       },
     ],
   };

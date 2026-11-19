@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
         {
           warning: detail,
           attribution:
-            "Bureau of Meteorology — official warning text and maps.",
+            "Met Office — official warning text and maps.",
         },
         {
           headers: {
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
         states: statesWithWarnings(warnings),
         warnings,
         attribution:
-          "Bureau of Meteorology — official Australian weather warnings.",
+          "Met Office — official European weather warnings.",
       },
       {
         headers: {

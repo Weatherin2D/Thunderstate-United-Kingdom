@@ -19,7 +19,7 @@ const display = Oswald({
 export const metadata: Metadata = {
   title: "Thunderstate UK | In development",
   description:
-    "Thunderstate UK is in development. Its weather feeds and maps currently show Australian data.",
+    "Thunderstate UK provides live weather, radar and forecast tools for the UK and Europe.",
   applicationName: "Thunderstate UK",
   manifest: "/manifest.webmanifest",
   appleWebApp: {

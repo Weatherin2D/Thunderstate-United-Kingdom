@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import {
-  BOM_FRONTS_ATTRIBUTION,
+  MET_OFFICE_FRONTS_ATTRIBUTION,
   getBomFrontFeatures,
 } from "@/lib/weather/bom-fronts";
 import { contourPressureGrid } from "@/lib/weather/synoptic-contour";
@@ -21,7 +21,7 @@ import {
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const runtime = "nodejs";
-/** Cold Open-Meteo + BoM chart work needs headroom on Vercel. */
+/** Cold Open-Meteo + Met Office chart work needs headroom on Vercel. */
 export const maxDuration = 60;
 
 async function frontsOrEmpty(stamp: string) {
@@ -69,7 +69,7 @@ export async function GET() {
     }
 
     const attribution = fronts.length
-      ? `${SYNOPTIC_ATTRIBUTION} · ${BOM_FRONTS_ATTRIBUTION}`
+      ? `${SYNOPTIC_ATTRIBUTION} · ${MET_OFFICE_FRONTS_ATTRIBUTION}`
       : SYNOPTIC_ATTRIBUTION;
 
     const payload: SynopticPayload = {

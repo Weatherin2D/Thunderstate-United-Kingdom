@@ -105,8 +105,8 @@ const FALLBACK_MODELS: { id: MapModelId; label: string }[] = [
 function formatHourLabel(iso: string): string {
   const ms = Date.parse(iso);
   if (!Number.isFinite(ms)) return iso;
-  return new Intl.DateTimeFormat("en-AU", {
-    timeZone: "Australia/Sydney",
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
     weekday: "short",
     day: "numeric",
     month: "short",
@@ -168,8 +168,8 @@ function readModelsQuery(): {
       model: DEFAULT_MODEL_ID,
       diff: null,
       time: null,
-      lat: -31.95,
-      lon: 115.86,
+      lat: 51.5074,
+      lon: -0.1278,
       skewt: true,
       transect: false,
       engine: "predict",
@@ -192,8 +192,8 @@ function readModelsQuery(): {
     model,
     diff: diff && diff !== model ? diff : null,
     time: sp.get("time"),
-    lat: sp.get("lat") != null ? Number(sp.get("lat")) : -31.95,
-    lon: sp.get("lon") != null ? Number(sp.get("lon")) : 115.86,
+    lat: sp.get("lat") != null ? Number(sp.get("lat")) : 51.5074,
+    lon: sp.get("lon") != null ? Number(sp.get("lon")) : -0.1278,
     // Default Skew-T on so AI V1 mini sounding is visible without hunting.
     skewt: hasSkewtParam ? sp.get("skewt") === "1" : true,
     transect: sp.get("transect") === "1",
@@ -1073,7 +1073,7 @@ export function EcmwfModelsDashboard() {
                   <p className="text-sm font-semibold text-white">
                     {activeTime ? formatHourLabel(activeTime) : "—"}
                     <span className="ml-2 text-xs font-normal text-white/50">
-                      AEST/AEDT
+                      UK time
                     </span>
                     {diffLabel ? (
                       <span className="ml-2 text-xs font-semibold text-amber-200/90">

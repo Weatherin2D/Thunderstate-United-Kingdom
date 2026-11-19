@@ -23,9 +23,9 @@ export function HazardsDashboard() {
   const { place: saved, saveFromBomLocation } = useSavedPlace();
   const [place, setPlace] = useState<Place>({
     geohash: STATE_CAPITALS.nsw.geohash,
-    lat: -33.87,
-    lon: 151.21,
-    label: "Sydney, NSW",
+    lat: 51.5074,
+    lon: -0.1278,
+    label: "London, ENG",
   });
   const [data, setData] = useState<HazardsPayload | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,7 +71,7 @@ export function HazardsDashboard() {
     return () => ac.abort();
   }, [place, load]);
 
-  const tz = data?.location.timezone || "Australia/Sydney";
+  const tz = data?.location.timezone || "Europe/London";
   const maxUv = Math.max(
     1,
     ...(data?.uv.hourly.map((h) => h.uv ?? 0) ?? [1]),

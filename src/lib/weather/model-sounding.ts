@@ -33,7 +33,7 @@ const MODEL_OPEN_METEO: Record<
     label: "UKMO Global (~10 km)",
   },
   ifs: { models: "ecmwf_ifs", label: "ECMWF IFS HRES" },
-  access: { models: "bom_access_global", label: "BoM ACCESS-G" },
+  access: { models: "bom_access_global", label: "Met Office ACCESS-G" },
 };
 
 const BOX_ROW_NS = ["N", "C", "S"] as const;

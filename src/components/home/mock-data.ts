@@ -32,15 +32,15 @@ export const MAP_SETTINGS = [
   { id: "liveLocation", label: "Live location" },
   { id: "radarSmoothing", label: "Radar soft edges" },
   { id: "radarSites", label: "Radar sites" },
-  { id: "bomWarnings", label: "BoM warnings" },
+  { id: "bomWarnings", label: "Weather warnings" },
   { id: "forecastDistricts", label: "Forecast zone districts" },
   { id: "lightningBolts", label: "Lightning bolt icons" },
   { id: "stationColorValues", label: "Colour station values" },
   { id: "cityLabels", label: "City labels" },
   { id: "townLabels", label: "Town labels (dense)" },
-  { id: "stateOutlines", label: "State outlines" },
-  { id: "stateLabels", label: "State labels" },
-  { id: "outlines", label: "Outlines" },
+  { id: "stateOutlines", label: "UK nation outlines" },
+  { id: "stateLabels", label: "Nation labels" },
+  { id: "outlines", label: "Coastlines" },
   { id: "oceanNames", label: "Ocean names" },
 ] as const;
 
@@ -77,9 +77,9 @@ export const DEFAULT_MAP_SETTINGS: MapSettingsState = {
    * recolour (blended pixels fall out of the Universal Blue LUT).
    */
   radarSmoothing: false,
-  /** Show every official BoM radar site location in Australia. */
+  /** Show available UK/European radar site locations. */
   radarSites: false,
-  /** Draw active severe weather and thunderstorm warning areas. */
+  /** Draw active UK/European severe weather warning areas. */
   bomWarnings: false,
   /** Label the forecast districts attached to active warning polygons. */
   forecastDistricts: false,
@@ -92,7 +92,7 @@ export const DEFAULT_MAP_SETTINGS: MapSettingsState = {
   townLabels: true,
   stateOutlines: true,
   stateLabels: true,
-  /** Australia coastline is on by default */
+  /** European coastline is on by default */
   outlines: true,
   oceanNames: true,
   lightningIconScale: DEFAULT_LIGHTNING_ICON_SCALE,
@@ -122,104 +122,104 @@ export type MapMode = (typeof MAP_MODES)[number];
 export type RegionBounds = [[number, number], [number, number]];
 
 /**
- * Map region focus. National = full AU frame; states zoom Map + Satellite
- * into that area (satellite requests a tighter higher-res crop).
+ * Map region focus. The United Kingdom is the default; European regions and
+ * the Europe-wide view are available as explicit selections.
  */
 export const MAP_REGIONS = [
   {
     id: "national",
-    label: "National",
-    short: "AU",
+    label: "Europe-wide",
+    short: "EUR",
     bounds: [
-      [-48, 105],
-      [-5, 165],
+      [34, -12],
+      [71, 32],
     ] as RegionBounds,
   },
   {
     id: "nsw",
-    label: "New South Wales",
-    short: "NSW",
+    label: "United Kingdom",
+    short: "UK",
     // Full state + coastal pad (geojson ~141–153.6E, 37.5–28.2S)
     bounds: [
-      [-37.86, 140.55],
-      [-27.81, 154.06],
+      [49.5, -8.7],
+      [59.5, 2.1],
     ] as RegionBounds,
   },
   {
     id: "vic",
-    label: "Victoria",
-    short: "VIC",
+    label: "England",
+    short: "ENG",
     // Full state + Bass Strait pad (geojson ~141–150E, 39.1–34.0S)
     bounds: [
-      [-39.48, 140.51],
-      [-33.63, 150.43],
+      [49.8, -6.5],
+      [55.9, 2.1],
     ] as RegionBounds,
   },
   {
     id: "qld",
-    label: "Queensland",
-    short: "QLD",
+    label: "Scotland",
+    short: "SCT",
     // Full mainland + Torres approaches + Coral Sea pad
     bounds: [
-      [-29.53, 137.55],
-      [-9.05, 154.05],
+      [54.5, -8.6],
+      [60.9, -0.6],
     ] as RegionBounds,
   },
   {
     id: "wa",
-    label: "Western Australia",
-    short: "WA",
+    label: "Wales",
+    short: "WLS",
     // Full mainland + Indian Ocean / Timor Sea pad (Steep Point → Kimberley)
     bounds: [
-      [-35.55, 112.75],
-      [-12.95, 129.45],
+      [51.3, -5.8],
+      [53.6, -2.6],
     ] as RegionBounds,
   },
   {
     id: "sa",
-    label: "South Australia",
-    short: "SA",
+    label: "Northern Ireland",
+    short: "NIR",
     // Full state + Bight pad (geojson ~129–141E, 38.1–26.0S)
     bounds: [
-      [-38.41, 128.55],
-      [-25.65, 141.45],
+      [54, -8.2],
+      [55.3, -5.3],
     ] as RegionBounds,
   },
   {
     id: "tas",
-    label: "Tasmania",
-    short: "TAS",
+    label: "Western Europe",
+    short: "WE",
     // Full island + surrounding waters (geojson ~143.8–148.3E, 43.6–39.6S)
     bounds: [
-      [-43.98, 143.38],
-      [-39.23, 148.78],
+      [41, -11],
+      [54.5, 9],
     ] as RegionBounds,
   },
   {
     id: "nt",
-    label: "Northern Territory",
-    short: "NT",
+    label: "Central Europe",
+    short: "CE",
     // Full territory + Top End waters (geojson ~129–138E, 26.0–11.1S)
     bounds: [
-      [-26.35, 128.55],
-      [-10.79, 138.45],
+      [43, 3],
+      [55.5, 18],
     ] as RegionBounds,
   },
   {
     id: "act",
-    label: "Australian Capital Territory",
-    short: "ACT",
-    // Full ACT with framing pad so the territory isn't edge-clipped
+    label: "Mediterranean",
+    short: "MED",
+    // Full DEU with framing pad so the territory isn't edge-clipped
     bounds: [
-      [-36.05, 148.55],
-      [-34.95, 149.60],
+      [35, -10],
+      [47, 30],
     ] as RegionBounds,
   },
 ] as const;
 
 export type MapRegionId = (typeof MAP_REGIONS)[number]["id"];
 
-export const DEFAULT_MAP_REGION: MapRegionId = "national";
+export const DEFAULT_MAP_REGION: MapRegionId = "nsw";
 
 export function getMapRegion(
   id: MapRegionId = DEFAULT_MAP_REGION,
@@ -231,9 +231,9 @@ export function isMapRegionId(value: string): value is MapRegionId {
   return MAP_REGIONS.some((r) => r.id === value);
 }
 
-/** Demo “now” for Sydney — shared so every panel stays consistent. */
+/** Demo “now” for London — shared so every panel stays consistent. */
 export const SYDNEY_NOW = {
-  place: "Sydney, NSW",
+  place: "London, England",
   condition: "Partly cloudy",
   tempC: 22,
   feelsLikeC: 21,
@@ -247,37 +247,37 @@ export const SYDNEY_NOW = {
   rainChancePct: 10,
   uv: "6 High",
   /** Fixed demo clock so labels stay stable in the shell. */
-  clockLabel: "Wed 16 Sep · 4:32 PM AEST",
+  clockLabel: "Wed 16 Sep · 4:32 PM BST",
   dateHeading: "Wednesday 16 September",
 } as const;
 
 export const WARNINGS = [
   {
-    id: "nsw-ts",
-    states: ["NSW"],
+    id: "uk-ts",
+    states: ["UK"],
     title: "Severe Thunderstorm Warning",
-    detail: "Eastern NSW — damaging winds & large hail possible",
+    detail: "Southern England — damaging winds & large hail possible",
     tone: "amber",
   },
   {
-    id: "qld-flood",
-    states: ["QLD"],
+    id: "uk-flood",
+    states: ["UK"],
     title: "Flood Warning",
-    detail: "Coastal QLD catchments — heavy rain ongoing",
+    detail: "South-west England catchments — heavy rain ongoing",
     tone: "sky",
   },
   {
-    id: "nsw-marine",
-    states: ["NSW"],
+    id: "uk-marine",
+    states: ["UK"],
     title: "Marine Wind Warning",
-    detail: "NSW coastal waters — strong winds & hazardous seas",
+    detail: "English Channel — strong winds & hazardous seas",
     tone: "violet",
   },
   {
-    id: "qld-tc",
-    states: ["QLD"],
-    title: "Tropical Cyclone Watch",
-    detail: "Far North QLD — monitoring developing system",
+    id: "eu-storm",
+    states: ["EU"],
+    title: "European Severe Storm Watch",
+    detail: "Western Europe — monitoring developing storms",
     tone: "cyan",
   },
 ] as const;
@@ -291,11 +291,11 @@ export function warningStates(): string[] {
   return [...set];
 }
 
-/** National briefing notes — not a repeat of the warning titles. */
+/** UK/Europe briefing notes — not a repeat of the warning titles. */
 export const HIGHLIGHTS = [
-  "Storms favour the ranges of eastern NSW later this afternoon",
-  "Heat building inland WA through the weekend",
-  "Fresh to strong southerlies easing along the NSW coast overnight",
+  "Thunderstorms expected across south-east England later this afternoon",
+  "Warm, humid air spreading across central Europe through the weekend",
+  "Fresh Atlantic winds easing around the UK coast overnight",
 ] as const;
 
 /** Starts on “today” (Wed) so it matches SYDNEY_NOW. */
@@ -318,23 +318,23 @@ export const MODEL_ROWS = [
 ] as const;
 
 export const CAPITAL_NOW = [
-  { city: "Sydney", tempC: 22, wind: "SSW 18", condition: "Partly cloudy" },
-  { city: "Melbourne", tempC: 15, wind: "S 22", condition: "Cloudy" },
-  { city: "Brisbane", tempC: 26, wind: "NE 14", condition: "Mostly sunny" },
-  { city: "Perth", tempC: 24, wind: "SW 20", condition: "Sunny" },
-  { city: "Adelaide", tempC: 18, wind: "SW 25", condition: "Clearing" },
-  { city: "Hobart", tempC: 13, wind: "NW 16", condition: "Shower or two" },
-  { city: "Canberra", tempC: 14, wind: "NW 12", condition: "Partly cloudy" },
-  { city: "Darwin", tempC: 31, wind: "E 18", condition: "Humid" },
+  { city: "London", tempC: 22, wind: "SSW 18", condition: "Partly cloudy" },
+  { city: "Edinburgh", tempC: 15, wind: "S 22", condition: "Cloudy" },
+  { city: "Cardiff", tempC: 18, wind: "SW 25", condition: "Clearing" },
+  { city: "Belfast", tempC: 16, wind: "W 20", condition: "Showers" },
+  { city: "Dublin", tempC: 17, wind: "SW 18", condition: "Cloudy" },
+  { city: "Paris", tempC: 24, wind: "SW 14", condition: "Mostly sunny" },
+  { city: "Amsterdam", tempC: 20, wind: "W 16", condition: "Showers" },
+  { city: "Berlin", tempC: 23, wind: "SE 12", condition: "Partly cloudy" },
 ] as const;
 
 export const CITY_MARKERS: { name: string; lat: number; lon: number }[] = [
-  { name: "Perth", lat: -31.95, lon: 115.86 },
-  { name: "Darwin", lat: -12.46, lon: 130.84 },
-  { name: "Brisbane", lat: -27.47, lon: 153.03 },
-  { name: "Adelaide", lat: -34.93, lon: 138.6 },
-  { name: "Sydney", lat: -33.87, lon: 151.21 },
-  { name: "Melbourne", lat: -37.81, lon: 144.96 },
-  { name: "Hobart", lat: -42.88, lon: 147.33 },
-  { name: "Canberra", lat: -35.28, lon: 149.13 },
+  { name: "London", lat: 51.5074, lon: -0.1278 },
+  { name: "Edinburgh", lat: 55.9533, lon: -3.1883 },
+  { name: "Cardiff", lat: 51.4816, lon: -3.1791 },
+  { name: "Belfast", lat: 54.5973, lon: -5.9301 },
+  { name: "Dublin", lat: 53.3498, lon: -6.2603 },
+  { name: "Paris", lat: 48.8566, lon: 2.3522 },
+  { name: "Amsterdam", lat: 52.3676, lon: 4.9041 },
+  { name: "Berlin", lat: 52.52, lon: 13.405 },
 ];

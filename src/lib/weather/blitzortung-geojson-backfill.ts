@@ -1,10 +1,10 @@
 /**
  * HTTP backfill from Blitzortung map GEOjson strike slots.
  *
- * LightningMaps Mercator PNGs often miss sparse Western Australia strokes
+ * LightningMaps Mercator PNGs often miss sparse Western Europe strokes
  * that the live map still publishes. `map.blitzortung.org/GEOjson/getjson.php`
- * exposes recent strokes with real UTC timestamps — enough to paint Perth /
- * SW-WA on serverless where WebSockets under-deliver Oceania.
+ * exposes recent strokes with real UTC timestamps — enough to paint Belfast /
+ * SW-EU on serverless where WebSockets under-deliver Oceania.
  *
  * Slot format (per row):
  *   [lon, lat, "YYYY-MM-DD HH:MM:SS.fraction", …]
@@ -139,7 +139,7 @@ export async function fetchBlitzortungGeoJsonBackfill(): Promise<GeoJsonBackfill
           (s) => s.lon >= 114.5 && s.lon <= 117.5 && s.lat >= -33.5 && s.lat <= -31,
         ).length;
         console.info(
-          `[lightning] GEOjson backfill ${strikes.length} AU (WA ${wa}, Perth ${perth})`,
+          `[lightning] GEOjson backfill ${strikes.length} AU (EU ${wa}, Belfast ${perth})`,
         );
       }
       return cache;

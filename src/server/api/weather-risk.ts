@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { METEYE_THUNDERSTORM_CATEGORIES } from "@/lib/weather/bom-meteye-constants";
-import { getMeteyeThunderstormOutlook } from "@/lib/weather/bom-meteye-thunderstorm";
 import {
   getModelRiskCatalog,
   resolveModelRiskKind,
@@ -12,7 +10,7 @@ export const maxDuration = 60;
 
 /**
  * GET /api/weather/risk?source=bom|pulse|access|ifs|ukmo|auto&product=risk|tstorm|hail|wind|rain|tornado
- * Catalog of thunderstorm risk — BoM MetEye (default) or CloudCountry model outlooks.
+ * Catalog of UK/Europe thunderstorm risk — model outlooks are live; official imagery is explicitly unavailable.
  * `auto` is accepted as a legacy alias for `pulse`. Product applies to model sources only.
  */
 export async function GET(req: NextRequest) {
@@ -39,39 +37,19 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const outlook = await getMeteyeThunderstormOutlook();
     return NextResponse.json(
       {
-        status: outlook.status,
+        status: "unavailable",
         source: "bom" as const,
         product: "risk" as const,
-        updatedAt: outlook.issuedAt,
-        issuedAt: outlook.issuedAt,
-        days: outlook.days.map((d) => {
-          const available = (d.legend ?? []).some((item) => item.used);
-          return {
-            day: d.effectiveDay,
-            label: d.label,
-            dateLabel: d.dateLabel,
-            available,
-            imageUrl: available
-              ? `/api/weather/risk-image?source=bom&day=${d.effectiveDay}&t=${encodeURIComponent(outlook.issuedAt ?? "")}`
-              : null,
-            issuedAt: outlook.issuedAt,
-            legend: d.legend,
-          };
-        }),
-        legend: METEYE_THUNDERSTORM_CATEGORIES,
-        attribution:
-          "Bureau of Meteorology MetEye thunderstorm forecast (IDZ73094)",
-        message: outlook.message,
-        outlook,
+        updatedAt: null,
+        issuedAt: null,
+        days: [],
+        legend: [],
+        attribution: "UK/Europe risk sources",
+        message: "Official UK/Europe thunderstorm risk imagery is not yet connected.",
       },
-      {
-        headers: {
-          "Cache-Control": "public, max-age=120, stale-while-revalidate=600",
-        },
-      },
+      { headers: { "Cache-Control": "no-store" } },
     );
   } catch (err) {
     console.error("[weather/risk]", err);

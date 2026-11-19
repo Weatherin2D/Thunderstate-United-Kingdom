@@ -1,30 +1,30 @@
 /**
- * Smooth BoM-style risk regions from sparse forecast samples.
+ * Smooth Met Office-style risk regions from sparse forecast samples.
  *
  * Renders a georeferenced PNG of nested carved risk bands (not town squares
  * or overlapping circles). The soft influence field is blurred, quantized to
- * the 4 BoM categories, then painted as continuous filled regions.
+ * the 4 Met Office categories, then painted as continuous filled regions.
  */
 
 import { PNG } from "pngjs";
 
 /** Geographic frame of the risk raster (Leaflet ImageOverlay bounds). */
-export const BOM_RISK_IMAGE_BOUNDS: [[number, number], [number, number]] = [
+export const MET_OFFICE_RISK_IMAGE_BOUNDS: [[number, number], [number, number]] = [
   [-44.0, 112.5], // SW
   [-9.5, 154.5], // NE
 ];
 
 const AU = {
-  minLat: BOM_RISK_IMAGE_BOUNDS[0][0],
-  maxLat: BOM_RISK_IMAGE_BOUNDS[1][0],
-  minLon: BOM_RISK_IMAGE_BOUNDS[0][1],
-  maxLon: BOM_RISK_IMAGE_BOUNDS[1][1],
+  minLat: MET_OFFICE_RISK_IMAGE_BOUNDS[0][0],
+  maxLat: MET_OFFICE_RISK_IMAGE_BOUNDS[1][0],
+  minLon: MET_OFFICE_RISK_IMAGE_BOUNDS[0][1],
+  maxLon: MET_OFFICE_RISK_IMAGE_BOUNDS[1][1],
 };
 
 /** Working raster size (upscaled for the final PNG). */
 const WORK_WIDTH = 400;
 const OUT_WIDTH = 900;
-/** Large sigma merges town samples into continuous BoM-like carved bands. */
+/** Large sigma merges town samples into continuous Met Office-like carved bands. */
 const SIGMA_KM = 380;
 const CUTOFF_SIGMA = 2.35;
 
@@ -214,7 +214,7 @@ function blurField(
   }
 }
 
-/** Georeferenced PNG of nested BoM risk bands for Leaflet ImageOverlay. */
+/** Georeferenced PNG of nested Met Office risk bands for Leaflet ImageOverlay. */
 export function renderBomRiskPng(points: RiskSamplePoint[]): Buffer {
   const work = sizeFor(WORK_WIDTH);
   const out = sizeFor(OUT_WIDTH);

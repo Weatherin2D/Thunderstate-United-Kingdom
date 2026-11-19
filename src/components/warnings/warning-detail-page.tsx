@@ -144,7 +144,7 @@ export function WarningDetailPage({ id }: { id: string }) {
                     key={`${warning.id}-img-${i}`}
                     className="overflow-hidden rounded-lg border border-white/12 bg-black"
                   >
-                    {/* BoM embeds maps as data URLs or absolute URLs */}
+                    {/* Met Office embeds maps as data URLs or absolute URLs */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={img.src}
@@ -179,7 +179,7 @@ export function WarningDetailPage({ id }: { id: string }) {
                 rel="noopener noreferrer"
                 className="underline hover:text-white/80"
               >
-                Bureau of Meteorology
+                Met Office
               </a>
               . Always follow official advice for your area.
             </p>

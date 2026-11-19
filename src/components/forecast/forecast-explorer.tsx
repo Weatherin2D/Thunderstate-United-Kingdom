@@ -60,7 +60,7 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
         if (!res.ok) {
           throw new Error(
             res.status === 404
-              ? "No BoM forecast for this location."
+              ? "No Met Office forecast for this location."
               : `Forecast unavailable (${res.status})`,
           );
         }
@@ -78,7 +78,7 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
     return () => ac.abort();
   }, [activeHash]);
 
-  const tz = data?.location.timezone || "Australia/Sydney";
+  const tz = data?.location.timezone || "Europe/London";
   const today = data?.daily[0] ?? null;
   const hourly = useMemo(() => data?.hourly ?? [], [data]);
   const rainTimeline = useMemo(
@@ -100,14 +100,14 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
         <div className="mb-5 space-y-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--cyan)]">
-              Bureau of Meteorology
+              Met Office
             </p>
             <h1 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-extrabold text-white sm:text-3xl">
               Location forecast
             </h1>
             <p className="mt-1.5 max-w-xl text-sm text-white/70">
-              Search any Australian suburb, town or postcode for the official
-              BoM outlook.
+              Search any European suburb, town or postcode for the official
+              Met Office outlook.
             </p>
           </div>
           <LocationSearch
@@ -157,7 +157,7 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
         </div>
 
         {loading ? (
-          <p className="text-sm text-white/70">Loading BoM forecast…</p>
+          <p className="text-sm text-white/70">Loading Met Office forecast…</p>
         ) : null}
         {error ? (
           <div className="sw-panel p-4 text-sm text-white/85">{error}</div>
@@ -181,7 +181,7 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
                     <p className="mt-1 text-xs text-white/50">
                       Observations from {data.observation.stationName}
                       {data.observation.stationId
-                        ? ` · BoM ${data.observation.stationId}`
+                        ? ` · Met Office ${data.observation.stationId}`
                         : ""}
                       {data.observation.stationDistanceKm != null
                         ? ` · ${formatDistance(data.observation.stationDistanceKm)} away`
@@ -548,7 +548,7 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
                 </h3>
                 <p className="mb-3 text-xs text-white/55">
                   Next {rainTimeline.length} hours — chance bars with optional
-                  mm range from BoM hourly.
+                  mm range from Met Office hourly.
                 </p>
                 <div className="sw-chip-row items-end sm:gap-1">
                   {rainTimeline.map((h) => {
@@ -742,7 +742,7 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
                           day.rainAmount50PercentChanceMm != null ||
                           day.rainAmount75PercentChanceMm != null ? (
                             <p>
-                              BoM rain amount guidance (25/50/75% chance):{" "}
+                              Met Office rain amount guidance (25/50/75% chance):{" "}
                               {[
                                 day.rainAmount25PercentChanceMm != null
                                   ? `25% ${day.rainAmount25PercentChanceMm} ${day.rainUnits}`
@@ -794,8 +794,8 @@ export function ForecastExplorer({ geohash = null, region = null }: Props) {
               data.hourlyIssueTime !== data.issueTime
                 ? ` · Hourly issued ${formatClock(data.hourlyIssueTime, tz)}`
                 : ""}
-              . Independent display, not operated or endorsed by BoM. Official
-              forecasts may change — check BoM for warnings.
+              . Independent display, not operated or endorsed by Met Office. Official
+              forecasts may change — check Met Office for warnings.
             </p>
           </div>
         ) : null}

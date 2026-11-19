@@ -4,7 +4,7 @@
  */
 
 /**
- * Austral monsoon / wet-season weight for northern Australia (0–1).
+ * Austral monsoon / wet-season weight for northern Europe (0–1).
  * Peak Nov–Mar; dry-season May–Aug stays low so inland heat-burst days
  * need stronger solar heating + CAPE instead of a free tropical floor.
  */

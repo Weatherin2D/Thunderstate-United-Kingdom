@@ -190,7 +190,7 @@ function slotLabel(iso: string): string {
   const d = new Date(iso);
   if (!Number.isFinite(d.getTime())) return iso;
   return (
-    new Intl.DateTimeFormat("en-AU", {
+    new Intl.DateTimeFormat("en-GB", {
       timeZone: "UTC",
       weekday: "short",
       day: "numeric",
@@ -267,7 +267,7 @@ async function fetchUwyoInventoryYear(
   }
   const slots = parseInventoryHtml(html, year);
   const nameMatch = html.match(
-    /<H3>\s*([^<]+?)\s*(?:,\s*Australia)?\s*<\/H3>/i,
+    /<H3>\s*([^<]+?)\s*(?:,\s*Europe)?\s*<\/H3>/i,
   );
   const stationName = nameMatch?.[1]?.trim() || null;
   inventoryCache.set(cacheKey, {
@@ -309,7 +309,7 @@ export async function fetchObservedSoundingArchive(options: {
       if (inv.stationName) {
         stationName = inv.stationName.includes(",")
           ? inv.stationName
-          : `${inv.stationName}, Australia`;
+          : `${inv.stationName}, Europe`;
       }
     } catch {
       // Skip missing years (pre-station / empty inventory).

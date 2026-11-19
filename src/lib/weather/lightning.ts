@@ -22,14 +22,15 @@ export type LightningPayload = {
 };
 
 /**
- * Australia + surrounding marine area only (Timor/Arafura/Coral/Tasman /
- * southern Indian Ocean approaches). Excludes Indonesia / Java / PNG storms.
+ * UK and Europe lightning coverage.
+ * The legacy LIGHTNING_AU_BOUNDS export is retained for internal compatibility,
+ * but it now represents the Europe frame.
  */
 export const LIGHTNING_AU_BOUNDS = {
-  west: 105,
-  east: 168,
-  south: -48,
-  north: -9,
+  west: -25,
+  east: 45,
+  south: 34,
+  north: 72,
 } as const;
 
 /** Retention window for buffered strikes (seconds). */
@@ -245,11 +246,11 @@ export function shouldAlignStrikesToTimeline(
 
 /**
  * Coarse longitude bands across the AU domain.
- * Keeps WA / central Australia from being starved when the east coast is busy.
+ * Keeps EU / central Europe from being starved when the east coast is busy.
  */
 export function lightningLonBand(lon: number): number {
-  if (lon < 120) return 0; // WA west / Indian Ocean
-  if (lon < 129) return 1; // WA east / western NT
+  if (lon < 120) return 0; // EU west / Indian Ocean
+  if (lon < 129) return 1; // EU east / western NLD
   if (lon < 138) return 2; // central
   if (lon < 147) return 3; // inland east
   return 4; // east coast / Tasman
@@ -259,7 +260,7 @@ export const LIGHTNING_LON_BAND_COUNT = 5;
 
 /**
  * Spatial sample — prefer newest so the flash edge stays dense, but reserve
- * quota per longitude band so eastern storms cannot wipe WA from capped views.
+ * quota per longitude band so eastern storms cannot wipe EU from capped views.
  */
 export function sampleStrikesForDisplay(
   strikes: LightningStrike[],

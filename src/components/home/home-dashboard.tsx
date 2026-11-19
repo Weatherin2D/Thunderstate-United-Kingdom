@@ -16,7 +16,7 @@ import {
   HomeCapitalsPanel,
   HomeDateHeading,
   HomeNowPanel,
-  HomeSydneyForecastProvider,
+  HomeLondonForecastProvider,
   HomeWeekPanel,
   usePreferSavedRegion,
 } from "@/components/home/home-live-panels";
@@ -61,7 +61,7 @@ import {
   SATELLITE_FRAME_COUNT,
   SATELLITE_FRAME_COUNTS,
   SATELLITE_PRODUCTS,
-  formatFrameTimeAEST,
+  formatFrameTimeUKTime,
   frameIndexToScrub,
   getPlaybackSpeed,
   getSatelliteProduct,
@@ -247,13 +247,13 @@ function OverlayControls({
       <div className="rounded-2xl border border-[var(--cyan)]/25 bg-[var(--cyan)]/10 px-3 py-3 text-xs text-white/80">
         <p className="font-bold text-[var(--cyan)]">
           {regionId === "national"
-            ? "Australia-wide coverage"
+            ? "Europe-wide coverage"
             : `${regionLabel} focus`}
         </p>
         <p className="mt-1">
           {regionId === "national"
-            ? "From tropical coasts to alpine peaks."
-            : "Map and satellite zoom into this region — pick National to return."}
+            ? "Across the British Isles and wider European weather."
+            : "Map and satellite zoom into this region — pick Europe-wide to return."}
         </p>
       </div>
     </>
@@ -487,7 +487,7 @@ function HomeDashboardInner({
     const { shareContent } = await import("@/lib/share");
     const result = await shareContent({
       title: "Thunderstate",
-      text: "Live weather across Australia — radar, lightning and satellite.",
+      text: "Live weather across Europe — radar, lightning and satellite.",
       url: window.location.href,
     });
     if (result === "shared" || result === "copied") {
@@ -928,7 +928,7 @@ function HomeDashboardInner({
       }
       return "No frames";
     }
-    return formatFrameTimeAEST(activeFrame.time);
+    return formatFrameTimeUKTime(activeFrame.time);
   }, [
     useTimeline,
     useSatelliteFrames,
@@ -977,10 +977,10 @@ function HomeDashboardInner({
   const liveTipLabel = useMemo(() => {
     if (useRadarLoop) {
       const tip = loopFrames[loopFrames.length - 1]?.time;
-      return tip != null ? formatFrameTimeAEST(tip) : null;
+      return tip != null ? formatFrameTimeUKTime(tip) : null;
     }
     if (!lastTipAt) return null;
-    return formatFrameTimeAEST(lastTipAt);
+    return formatFrameTimeUKTime(lastTipAt);
   }, [useRadarLoop, loopFrames, lastTipAt]);
 
   const liveFresh = useRadarLoop
@@ -1010,16 +1010,16 @@ function HomeDashboardInner({
       ? "Radar"
       : focus === "satellite"
         ? "Satellite"
-        : "National overview";
+        : "UK overview";
   const pageSubtitle =
     focus === "radar"
       ? "Live rain radar with lightning and national map overlays."
       : focus === "satellite"
-        ? "Satellite images across Australia — infrared, natural colour and air-mass views."
+        ? "Satellite images across Europe — infrared, natural colour and air-mass views."
         : null;
 
   return (
-    <HomeSydneyForecastProvider>
+    <HomeLondonForecastProvider>
     <div className="mx-auto w-full max-w-[1600px] space-y-4 px-3 pb-6 pt-3 sm:px-4 sm:pb-8 sm:pt-4">
       {!focus ? <HomeHero /> : null}
 
@@ -1030,7 +1030,7 @@ function HomeDashboardInner({
         <p className="text-sm text-white/70 sm:text-base">
           {pageSubtitle ?? (
             <>
-              <HomeDateHeading /> — observed and forecast across Australia.
+              <HomeDateHeading /> — observed and forecast across Europe.
             </>
           )}
         </p>
@@ -1276,7 +1276,7 @@ function HomeDashboardInner({
             className={cn(
               "relative z-0 overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_12px_40px_rgba(0,0,0,0.35)]",
               // Satellite: let the region crop's mercator aspect drive height so
-              // tall states (WA/QLD/NT/…) are not clipped by a fixed 4:3 box.
+              // tall states (EU/WLS/NLD/…) are not clipped by a fixed 4:3 box.
               // Map/radar: fill the centre column edge-to-edge against the side
               // panels (no centred max-width square leaving empty gutters).
               showSatelliteLoop
@@ -1478,7 +1478,7 @@ function HomeDashboardInner({
                     {useRadarLoop
                       ? "No radar frames right now — try again shortly."
                       : satProductMeta.daytimeOnly
-                        ? "Visible imagery needs daylight over Australia — try Infrared or Air Mass."
+                        ? "Visible imagery needs daylight over Europe — try Infrared or Air Mass."
                         : "No frames for this product right now."}
                   </p>
                 ) : (
@@ -1609,6 +1609,6 @@ function HomeDashboardInner({
         <HomeUpperAirPanel />
       </div>
     </div>
-    </HomeSydneyForecastProvider>
+    </HomeLondonForecastProvider>
   );
 }

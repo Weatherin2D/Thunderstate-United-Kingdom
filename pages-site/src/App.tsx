@@ -22,7 +22,7 @@ function App() {
   const [opacity, setOpacity] = useState(0.75)
   const [showSatellite, setShowSatellite] = useState(false)
   const [satelliteUrl, setSatelliteUrl] = useState<string | null>(null)
-  const [selectedId, setSelectedId] = useState<string | null>('syd')
+  const [selectedId, setSelectedId] = useState<string | null>('lon')
   const [panelOpen, setPanelOpen] = useState(true)
 
   const speedMs = SPEEDS.find((s) => s.id === speedId)?.ms ?? 400
@@ -75,7 +75,7 @@ function App() {
       <header className="brand-bar">
         <div className="brand">
           <p className="brand-mark">Thunderstate UK</p>
-          <p className="brand-sub">In development — showing Australian weather</p>
+          <p className="brand-sub">UK & Europe live weather</p>
         </div>
         <p className="tagline">
           Live rain radar and capital forecasts — static hosting, no server.
@@ -148,7 +148,7 @@ function App() {
               aria-label="Radar frame"
             />
             <p className="frame-meta">
-              {frame ? formatFrameTime(frame.time) : '—'} AEST/AEDT · frame{' '}
+              {frame ? formatFrameTime(frame.time) : '—'} UK time · frame{' '}
               {index + 1}/{frames.length}
             </p>
           </>

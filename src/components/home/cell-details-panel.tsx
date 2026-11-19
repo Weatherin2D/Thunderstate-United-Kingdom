@@ -171,7 +171,7 @@ export function CellDetailsPanel({
 
       <p className="text-[10px] text-white/40">
         Thunderstate estimates based on lightning activity. This is not
-        an official Bureau of Meteorology warning.
+        an official Met Office warning.
       </p>
     </section>
   );

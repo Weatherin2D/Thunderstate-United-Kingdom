@@ -98,7 +98,7 @@ export async function fetchEnsembleSpaghetti(options: {
     longitude: longitude.toFixed(4),
     hourly: variable,
     forecast_days: String(forecastDays),
-    timezone: "Australia/Sydney",
+    timezone: "Europe/London",
   });
 
   const url = `https://ensemble-api.open-meteo.com/v1/ensemble?${params}&models=ecmwf_ifs025`;

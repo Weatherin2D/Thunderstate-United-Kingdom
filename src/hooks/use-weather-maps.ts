@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DEFAULT_SATELLITE_PRODUCT,
-  HIMAWARI_STEP_SEC,
+  HIMAEURI_STEP_SEC,
   SATELLITE_FRAME_COUNT,
   type SatelliteProductId,
   type SatelliteFrameCount,
@@ -34,7 +34,7 @@ const LIVE_POLL_MS = 180_000;
 const BOUNDARY_OFFSET_MS = 120_000;
 
 function msUntilNextTenMinuteBoundary(now = Date.now()): number {
-  const stepMs = HIMAWARI_STEP_SEC * 1000;
+  const stepMs = HIMAEURI_STEP_SEC * 1000;
   const next = Math.ceil((now + 1) / stepMs) * stepMs;
   return Math.max(30_000, next - now + BOUNDARY_OFFSET_MS);
 }

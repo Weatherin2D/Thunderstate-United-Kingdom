@@ -195,7 +195,7 @@ export function CommunityDashboard() {
           Community
         </h1>
         <p className="max-w-2xl text-sm text-white/70 sm:text-base">
-          Share photos of weather you have seen around Australia, from storms
+          Share photos of weather you have seen around Europe, from storms
           and fog to rainbows. Browse photos, like them, and join the conversation.
         </p>
       </div>

@@ -10,10 +10,10 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const sydney = STATE_CAPITALS.nsw;
-    const lat = Number(url.searchParams.get("lat") || -33.87);
-    const lon = Number(url.searchParams.get("lon") || 151.21);
+    const lat = Number(url.searchParams.get("lat") || 51.5074);
+    const lon = Number(url.searchParams.get("lon") || -0.1278);
     const placeLabel =
-      url.searchParams.get("place") || sydney.name || "Sydney";
+      url.searchParams.get("place") || sydney.name || "London";
     const days = Number(url.searchParams.get("days") || "1");
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
       return NextResponse.json({ error: "Invalid coordinates" }, { status: 400 });

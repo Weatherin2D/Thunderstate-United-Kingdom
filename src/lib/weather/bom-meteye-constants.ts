@@ -3,12 +3,12 @@
  */
 
 /** Geographic frame matching WMS GetMap BBOX (Leaflet ImageOverlay). */
-export const BOM_METEYE_IMAGE_BOUNDS: [[number, number], [number, number]] = [
-  [-44.0, 112.5], // SW
-  [-9.5, 154.5], // NE
+export const MET_OFFICE_METEYE_IMAGE_BOUNDS: [[number, number], [number, number]] = [
+  [34.0, -12.0], // SW
+  [62.0, 25.0], // NE
 ];
 
-/** MetEye legend colours (from /australia/meteye/legends/IDZ73094.html). */
+/** Thunderstorm legend colours for the UK/Europe frame. */
 export const METEYE_THUNDERSTORM_CATEGORIES = [
   {
     id: "tstm_chance",

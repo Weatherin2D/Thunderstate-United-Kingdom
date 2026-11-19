@@ -37,7 +37,7 @@ import type { LightningStrike } from "@/lib/weather/lightning";
 import {
   GIBS_AU_BOUNDS,
   PLAYBACK_SPEEDS,
-  formatFrameTimeAEST,
+  formatFrameTimeUKTime,
   frameIndexToScrub,
   getPlaybackSpeed,
   getSatelliteProduct,
@@ -722,7 +722,7 @@ function ArchiveDashboardInner() {
     if (!catalog || !parts) {
       return Array.from({ length: 12 }, (_, i) => ({
         value: i + 1,
-        label: new Date(2000, i, 1).toLocaleString("en-AU", { month: "short" }),
+        label: new Date(2000, i, 1).toLocaleString("en-GB", { month: "short" }),
       }));
     }
     const epoch = unixToAestParts(catalog.epochUnix);
@@ -733,7 +733,7 @@ function ArchiveDashboardInner() {
       if (parts.year === tip.year && m > tip.month) continue;
       months.push({
         value: m,
-        label: new Date(2000, m - 1, 1).toLocaleString("en-AU", {
+        label: new Date(2000, m - 1, 1).toLocaleString("en-GB", {
           month: "short",
         }),
       });
@@ -905,7 +905,7 @@ function ArchiveDashboardInner() {
         </h1>
         <p className="max-w-2xl text-sm text-white/65">
           Satellite, synoptic and lightning from {catalog.epochLabel} onward.
-          Pick a date and time in Australian Eastern time.
+          Pick a date and time in European Eastern time.
         </p>
       </header>
 
@@ -1303,7 +1303,7 @@ function ArchiveDashboardInner() {
                 </button>
               ))}
               <span className="ml-auto text-xs font-semibold text-white/70">
-                {activeTime != null ? formatFrameTimeAEST(activeTime) : "—"}
+                {activeTime != null ? formatFrameTimeUKTime(activeTime) : "—"}
               </span>
             </div>
             <input

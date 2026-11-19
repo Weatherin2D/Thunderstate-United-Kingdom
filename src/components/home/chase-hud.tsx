@@ -31,9 +31,9 @@ export function ChaseHud({
   const [notifyNear, setNotifyNear] = useState(false);
   const origin = useMemo(
     () => ({
-      lat: place?.lat ?? -33.87,
-      lon: place?.lon ?? 151.21,
-      label: place ? `${place.name}, ${place.state}` : "Sydney, NSW",
+      lat: place?.lat ?? 51.5074,
+      lon: place?.lon ?? -0.1278,
+      label: place ? `${place.name}, ${place.state}` : "London, ENG",
     }),
     [place],
   );
@@ -182,7 +182,7 @@ export function ChaseHud({
           <p className="flex items-center gap-1 text-[10px] text-white/40">
             <Radio className="h-3 w-3" aria-hidden />
             Thunderstate estimates from lightning activity. These are
-            not official Bureau of Meteorology tracks.
+            not official Met Office tracks.
           </p>
         </>
       ) : (

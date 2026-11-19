@@ -1,31 +1,23 @@
 import type { SoundingStation } from "@/lib/weather/sounding-types";
 
-/** Australian radiosonde / upper-air sites (WMO ids for UWYO). */
+/** UK and European radiosonde / upper-air sites (UWYO WMO stations). */
 export const SOUNDING_STATIONS: SoundingStation[] = [
-  { wmo: "94120", name: "Darwin Airport", state: "NT", lat: -12.42, lon: 130.89 },
-  { wmo: "94203", name: "Broome Airport", state: "WA", lat: -17.95, lon: 122.23 },
-  { wmo: "94294", name: "Weipa Aero", state: "QLD", lat: -12.68, lon: 141.92 },
-  { wmo: "94312", name: "Port Hedland", state: "WA", lat: -20.38, lon: 118.63 },
-  { wmo: "94326", name: "Alice Springs", state: "NT", lat: -23.8, lon: 133.89 },
-  { wmo: "94332", name: "Mount Isa", state: "QLD", lat: -20.68, lon: 139.49 },
-  { wmo: "94374", name: "Rockhampton", state: "QLD", lat: -23.38, lon: 150.48 },
-  { wmo: "94430", name: "Meekatharra", state: "WA", lat: -26.61, lon: 118.54 },
-  { wmo: "94510", name: "Charleville", state: "QLD", lat: -26.41, lon: 146.26 },
-  { wmo: "94578", name: "Brisbane Airport", state: "QLD", lat: -27.39, lon: 153.13 },
-  { wmo: "94610", name: "Perth Airport", state: "WA", lat: -31.93, lon: 115.98 },
-  { wmo: "94659", name: "Woomera", state: "SA", lat: -31.2, lon: 136.81 },
-  { wmo: "94672", name: "Adelaide Airport", state: "SA", lat: -34.95, lon: 138.52 },
-  { wmo: "94711", name: "Cobar", state: "NSW", lat: -31.53, lon: 145.75 },
-  { wmo: "94767", name: "Sydney Airport", state: "NSW", lat: -33.95, lon: 151.18 },
-  { wmo: "94776", name: "Williamtown", state: "NSW", lat: -32.79, lon: 151.84 },
-  { wmo: "94821", name: "Mount Gambier", state: "SA", lat: -37.75, lon: 140.77 },
-  { wmo: "94866", name: "Melbourne Airport", state: "VIC", lat: -37.67, lon: 144.84 },
-  { wmo: "94970", name: "Hobart Airport", state: "TAS", lat: -42.83, lon: 147.5 },
-  { wmo: "94975", name: "Macquarie Island", state: "TAS", lat: -54.5, lon: 158.94 },
+  { wmo: "03772", name: "Camborne", state: "ENG", lat: 50.218, lon: -5.326 },
+  { wmo: "03005", name: "Lerwick", state: "SCT", lat: 60.139, lon: -1.183 },
+  { wmo: "03502", name: "Aberporth", state: "WLS", lat: 52.139, lon: -4.57 },
+  { wmo: "03920", name: "Belfast", state: "NIR", lat: 54.5, lon: -6.35 },
+  { wmo: "03953", name: "Valentia", state: "IRE", lat: 51.938, lon: -10.243 },
+  { wmo: "07145", name: "Trappes", state: "FRA", lat: 48.774, lon: 2.009 },
+  { wmo: "10393", name: "Lindenberg", state: "DEU", lat: 52.208, lon: 14.118 },
+  { wmo: "06260", name: "De Bilt", state: "NLD", lat: 52.1, lon: 5.18 },
+  { wmo: "08023", name: "La Coruna", state: "ESP", lat: 43.366, lon: -8.416 },
+  { wmo: "16245", name: "Pratica di Mare", state: "ITA", lat: 41.655, lon: 12.448 },
+  { wmo: "12374", name: "Legionowo", state: "POL", lat: 52.407, lon: 20.955 },
+  { wmo: "11035", name: "Vienna", state: "AUT", lat: 48.248, lon: 16.356 },
 ];
 
 export function getSoundingStation(wmo: string): SoundingStation | null {
-  return SOUNDING_STATIONS.find((s) => s.wmo === wmo) ?? null;
+  return SOUNDING_STATIONS.find((station) => station.wmo === wmo) ?? null;
 }
 
 export function nearestSoundingStation(
@@ -33,14 +25,14 @@ export function nearestSoundingStation(
   lon: number,
 ): SoundingStation {
   let best = SOUNDING_STATIONS[0]!;
-  let bestD = Infinity;
-  for (const s of SOUNDING_STATIONS) {
-    const d =
-      (s.lat - lat) ** 2 +
-      ((s.lon - lon) * Math.cos((lat * Math.PI) / 180)) ** 2;
-    if (d < bestD) {
-      bestD = d;
-      best = s;
+  let bestDistance = Infinity;
+  for (const station of SOUNDING_STATIONS) {
+    const distance =
+      (station.lat - lat) ** 2 +
+      ((station.lon - lon) * Math.cos((lat * Math.PI) / 180)) ** 2;
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = station;
     }
   }
   return best;

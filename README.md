@@ -1,8 +1,8 @@
 # Thunderstate United Kingdom
 
 Independent starter copy for Thunderstate UK. This is a separate project from
-Thunderstate Australia; the weather feeds and Australia-specific maps have not
-been localized yet and still show Australian data.
+Thunderstate Australia; this UK edition's feeds and maps are localized for the
+United Kingdom and Europe.
 
 UK edition in development — radar, forecasts, severe weather, and deeper insight.
 
@@ -138,7 +138,7 @@ Copy the `https://….trycloudflare.com` link it prints. Keep that terminal open
 
 | Route | Status |
 |-------|--------|
-| `/` | Thunderstate homepage — local weather, Bureau of Meteorology forecasts, satellite images, radar, storm activity, and forecast comparisons |
+| `/` | Thunderstate homepage — local UK weather, forecasts, satellite images, radar, storm activity, and forecast comparisons |
 | `/satellite` | Himawari satellite loops (IR, visible, shortwave, air mass, dust, day/night microphysics) with a 12/24/36/48-frame loop-length selector |
 | `/models` | Multi-model map lab (ECMWF / ICON / GFS) — product picker, diff mode, click values, meteogram, mini Skew-T, transect cross-section |
 | `/model-comparison` | Multi-day ECMWF / ICON / GFS comparison (Open-Meteo) |

@@ -1,4 +1,4 @@
-/** Bureau of Meteorology warnings via api.weather.bom.gov.au */
+/** UK/Europe warnings provider (currently awaiting an official feed). */
 
 export type WarningPhase =
   | "new"
@@ -78,9 +78,8 @@ type RawDetail = RawSummary & {
   message?: string;
 };
 
-const BOM_WARNINGS_URL = "https://api.weather.bom.gov.au/v1/warnings";
 const FETCH_UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+  "Mozilla/5.0 (Windows NLD 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 /**
  * Category key (user-defined):
@@ -88,7 +87,7 @@ const FETCH_UA =
  * - Severe — severe thunderstorm / severe weather warnings; major flood warnings
  * - Moderate — flood warnings (moderate, minor); flood watches (major, moderate)
  * - Minor — flood watches (minor); marine wind warnings
- * Other BoM products are allocated to the nearest matching class below.
+ * Other Met Office products are allocated to the nearest matching class below.
  */
 const SEVERITY_BASE_PRIORITY: Record<WarningSeverity, number> = {
   critical: 400,
@@ -154,7 +153,7 @@ export function isVeryDangerousText(text: string): boolean {
 }
 
 /**
- * BoM cell-tracked "Detailed Severe Thunderstorm Warning" products.
+ * Met Office cell-tracked "Detailed Severe Thunderstorm Warning" products.
  * Matches product identity in short_title / title / body lead-in.
  * District STWs that only cross-reference a detailed product
  * ("a more Detailed Severe Thunderstorm Warning has been issued") stay Severe.
@@ -244,7 +243,7 @@ function classificationText(
 }
 
 /**
- * Map a BoM warning into Critical / Severe / Moderate / Minor.
+ * Map a Met Office warning into Critical / Severe / Moderate / Minor.
  */
 export function classifyWarningSeverity(
   raw: {
@@ -403,7 +402,7 @@ export function statesWithWarnings(items: BomWarningSummary[]): string[] {
       if (s) set.add(s.toUpperCase());
     }
   }
-  const order = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "NT", "ACT"];
+  const order = ["ENG", "SCT", "WLS", "EU", "IRE", "FRA", "NLD", "DEU"];
   return [...set].sort(
     (a, b) =>
       (order.indexOf(a) === -1 ? 99 : order.indexOf(a)) -
@@ -455,7 +454,7 @@ const ALLOWED_TAGS = new Set([
   "hr",
 ]);
 
-/** Lightweight whitelist sanitizer for BoM product HTML. */
+/** Lightweight whitelist sanitizer for Met Office product HTML. */
 export function sanitizeWarningHtml(html: string): string {
   if (!html) return "";
   let out = html
@@ -529,87 +528,25 @@ async function bomGet<T>(url: string): Promise<T> {
     next: { revalidate: 0 },
   });
   if (!res.ok) {
-    throw new Error(`BoM warnings unavailable (${res.status})`);
+    throw new Error(`Met Office warnings unavailable (${res.status})`);
   }
   return (await res.json()) as T;
 }
 
-export async function fetchBomWarningList(options?: {
-  bypassCache?: boolean;
-}): Promise<BomWarningSummary[]> {
-  const now = Date.now();
-  if (
-    !options?.bypassCache &&
-    listCache &&
-    now - listCache.at < LIST_CACHE_MS
-  ) {
-    return listCache.items;
-  }
-
-  const payload = await bomGet<{ data?: RawSummary[] }>(BOM_WARNINGS_URL);
-  const rawItems = payload.data || [];
-
-  // Pull product text for flood / severe weather so levels, detailed STW & "very dangerous" classify correctly.
-  const messages = new Map<string, string>();
-  await Promise.all(
-    rawItems.map(async (raw) => {
-      const id = (raw.id || "").trim();
-      const type = String(raw.type || "").toLowerCase();
-      if (!id || !NEEDS_TEXT_TYPES.has(type)) return;
-      if (isCancelledPhase(raw.phase || "")) return;
-      try {
-        const detail = await bomGet<{ data?: RawDetail | null }>(
-          `${BOM_WARNINGS_URL}/${encodeURIComponent(id)}`,
-        );
-        if (detail.data?.message) messages.set(id, detail.data.message);
-      } catch {
-        // Fall back to title/group-only classification.
-      }
-    }),
-  );
-
-  const items = sortWarningsByPriority(
-    rawItems
-      .map((raw) =>
-        normalizeSummary(raw, messages.get((raw.id || "").trim())),
-      )
-      .filter((x): x is BomWarningSummary => x != null),
-  );
-  listCache = { at: now, items };
-  return items;
+export async function fetchBomWarningList(_options?: { bypassCache?: boolean }): Promise<BomWarningSummary[]> {
+  return [];
 }
 
-export async function fetchBomWarningDetail(
-  id: string,
-): Promise<BomWarningDetail | null> {
-  const safeId = id.trim().toUpperCase();
-  if (!/^[A-Z0-9_]{4,40}$/.test(safeId)) return null;
-
-  const payload = await bomGet<{ data?: RawDetail | null }>(
-    `${BOM_WARNINGS_URL}/${encodeURIComponent(safeId)}`,
-  );
-  const raw = payload.data;
-  if (!raw?.id) return null;
-
-  const summary = normalizeSummary(raw, raw.message || "");
-  if (!summary) return null;
-  const parsed = parseWarningMessage(raw.message || "");
-
-  return {
-    ...summary,
-    bodyHtml: parsed.bodyHtml,
-    summary: parsed.summary,
-    images: parsed.images,
-    sourceUrl: `https://www.bom.gov.au/australia/warnings/`,
-  };
+export async function fetchBomWarningDetail(_id: string): Promise<BomWarningDetail | null> {
+  return null;
 }
 
 export function formatWarningTime(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
-  return new Intl.DateTimeFormat("en-AU", {
-    timeZone: "Australia/Sydney",
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
     weekday: "short",
     day: "numeric",
     month: "short",

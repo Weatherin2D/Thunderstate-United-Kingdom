@@ -69,8 +69,8 @@ function StormDensityMap({
 export function HomeMomentCard() {
   const { place } = useSavedPlace();
   const name = place?.name ?? STATE_CAPITALS.nsw.name;
-  const lat = place?.lat ?? -33.87;
-  const lon = place?.lon ?? 151.21;
+  const lat = place?.lat ?? 51.5074;
+  const lon = place?.lon ?? -0.1278;
   const { data: storm, loading: stormLoading } = useStormActivity();
   const { data: models, loading: modelsLoading } = useModelComparison(
     lat,
@@ -231,7 +231,7 @@ export function HomeStormTrackerPanel() {
               </p>
             )}
             <p className="text-[var(--ink)]/55">
-              National {data.total15m} / 15 min · {data.total60m} / hour
+              UK & Europe {data.total15m} / 15 min · {data.total60m} / hour
             </p>
             {data.hotspots.length > 1 ? (
               <p className="line-clamp-2 text-[var(--ink)]/60">
@@ -251,8 +251,8 @@ export function HomeStormTrackerPanel() {
 
 export function HomeModelComparisonPanel() {
   const { place } = useSavedPlace();
-  const lat = place?.lat ?? -33.87;
-  const lon = place?.lon ?? 151.21;
+  const lat = place?.lat ?? 51.5074;
+  const lon = place?.lon ?? -0.1278;
   const name = place?.name ?? STATE_CAPITALS.nsw.name;
   const { data, loading, error } = useModelComparison(lat, lon, name);
 
@@ -331,7 +331,7 @@ export function HomeUpperAirPanel() {
     if (!data?.validTime) return null;
     const d = new Date(data.validTime);
     if (!Number.isFinite(d.getTime())) return null;
-    return new Intl.DateTimeFormat("en-AU", {
+    return new Intl.DateTimeFormat("en-GB", {
       timeZone: "UTC",
       weekday: "short",
       day: "numeric",
@@ -343,16 +343,16 @@ export function HomeUpperAirPanel() {
   }, [data?.validTime]);
 
   return (
-    <PanelShell title="Atmosphere above Sydney">
+    <PanelShell title="Atmosphere above London">
       {loading && !data ? (
-        <p className="text-sm text-white/70">Loading Sydney weather-balloon data…</p>
+        <p className="text-sm text-white/70">Loading London weather-balloon data…</p>
       ) : null}
       {error && !data ? (
         <p className="text-sm text-white/80">{error}</p>
       ) : null}
       {data?.status === "empty" ? (
         <p className="text-sm text-white/80">
-          {data.message ?? "No recent weather-balloon data for Sydney Airport."}
+          {data.message ?? "No recent weather-balloon data for London Airport."}
         </p>
       ) : null}
       {data && data.status !== "empty" ? (

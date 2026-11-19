@@ -12,7 +12,7 @@ export async function GET() {
       {
         generated: new Date().toISOString(),
         capitals,
-        attribution: "Bureau of Meteorology",
+        attribution: "Met Office",
       },
       {
         headers: {

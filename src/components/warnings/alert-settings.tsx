@@ -5,7 +5,7 @@ import { useWarningAlerts } from "@/hooks/use-warning-alerts";
 import type { AlertSeverityFloor } from "@/lib/prefs/alerts";
 import { cn } from "@/lib/utils";
 
-const STATE_OPTIONS = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "NT", "ACT"];
+const STATE_OPTIONS = ["ENG", "SCT", "WLS", "NIR"];
 
 export function WarningAlertSettings() {
   const { prefs, permission, ready, savePrefs, requestPermission } =
@@ -48,8 +48,8 @@ export function WarningAlertSettings() {
             Browser alerts
           </h2>
           <p className="mt-1 max-w-xl text-xs text-white/65">
-            Get alerts for new Critical or Severe Bureau of Meteorology warnings
-            in your selected states, and for Thunderstate thunderstorm
+            Get alerts for new Critical or Severe Met Office warnings
+            in your selected UK areas, and for Thunderstate thunderstorm
             estimates. Alert settings stay on this device; no account or email
             is needed.
           </p>
@@ -108,7 +108,7 @@ export function WarningAlertSettings() {
 
         <div>
           <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-white/50">
-            States (none = all)
+            Areas (none = UK-wide)
           </p>
           <div className="flex flex-wrap gap-1.5">
             {STATE_OPTIONS.map((s) => {
@@ -136,7 +136,7 @@ export function WarningAlertSettings() {
           </div>
           {prefs.states.length === 0 ? (
             <p className="mt-1.5 text-[10px] text-white/45">
-              Watching all states. Tap a state to narrow the list.
+              Watching all UK areas. Tap a nation to narrow the list.
             </p>
           ) : (
             <button

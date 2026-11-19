@@ -66,25 +66,19 @@ import type {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const AUSTRALIA_MAP_BOUNDS = [
-  [-48, 100],
-  [-5, 170],
+const EUROPE_MAP_BOUNDS = [
+  [34, -12],
+  [71, 32],
 ] as [[number, number], [number, number]];
 
-const BOM_RADAR_SITES = [
-  { name: "Darwin", lat: -12.46, lng: 130.84 },
-  { name: "Townsville", lat: -19.25, lng: 146.77 },
-  { name: "Cairns", lat: -16.93, lng: 145.77 },
-  { name: "Brisbane", lat: -27.47, lng: 153.03 },
-  { name: "Sydney", lat: -33.86, lng: 151.21 },
-  { name: "Melbourne", lat: -37.81, lng: 144.96 },
-  { name: "Adelaide", lat: -34.93, lng: 138.6 },
-  { name: "Perth", lat: -31.95, lng: 115.86 },
-  { name: "Hobart", lat: -42.88, lng: 147.33 },
-  { name: "Alice Springs", lat: -23.7, lng: 133.88 },
-  { name: "Broome", lat: -17.95, lng: 122.23 },
-  { name: "Geraldton", lat: -28.78, lng: 114.61 },
-  { name: "Longreach", lat: -23.44, lng: 144.26 },
+const MET_OFFICE_RADAR_SITES = [
+  { name: "London", lat: 51.5074, lng: -0.1278 },
+  { name: "Edinburgh", lat: 55.9533, lng: -3.1883 },
+  { name: "Cardiff", lat: 51.4816, lng: -3.1791 },
+  { name: "Belfast", lat: 54.5973, lng: -5.9301 },
+  { name: "Paris", lat: 48.8566, lng: 2.3522 },
+  { name: "Amsterdam", lat: 52.3676, lng: 4.9041 },
+  { name: "Berlin", lat: 52.52, lng: 13.405 },
 ] as const;
 
 function warningDisplayTitle(warning: BomWarningSummary): string {
@@ -97,14 +91,13 @@ function fallbackWarningPoint(warning: BomWarningSummary): {
   lng: number;
 } {
   const stateMap: Record<string, [number, number]> = {
-    nsw: [-32.9, 147.6],
-    vic: [-37.2, 144.8],
-    qld: [-24.5, 145.6],
-    wa: [-25.3, 121.8],
-    sa: [-31.5, 135.8],
-    tas: [-42.0, 146.8],
-    nt: [-20.8, 133.8],
-    act: [-35.5, 149.1],
+    england: [52.5, -1.5],
+    scotland: [56.5, -4],
+    wales: [52.3, -3.7],
+    ireland: [53.3, -8],
+    france: [46.5, 2],
+    germany: [51, 10],
+    europe: [54, 12],
   };
 
   const state = (warning.states[0] || warning.state).toLowerCase();
@@ -113,7 +106,7 @@ function fallbackWarningPoint(warning: BomWarningSummary): {
     return { lat: point[0], lng: point[1] };
   }
 
-  return { lat: -25.3, lng: 133.8 };
+  return { lat: 54, lng: 12 };
 }
 
 const bomWarningIcon = L.divIcon({
@@ -269,7 +262,7 @@ function RadarSitesOverlay({ enabled }: { enabled: boolean }) {
 
   return (
     <>
-      {BOM_RADAR_SITES.map((site) => (
+      {MET_OFFICE_RADAR_SITES.map((site) => (
         <CircleMarker
           key={site.name}
           center={[site.lat, site.lng]}
@@ -336,7 +329,7 @@ function BomWarningMapMarker({ warning }: { warning: BomWarningSummary }) {
   const openWarning = () => {
     if (
       window.confirm(
-        `Open the Bureau of Meteorology warning for ${warningDisplayTitle(warning)}?`,
+        `Open the Met Office warning for ${warningDisplayTitle(warning)}?`,
       )
     ) {
       window.location.assign(warning.href);
@@ -360,17 +353,17 @@ function BomWarningMapMarker({ warning }: { warning: BomWarningSummary }) {
           {officialMap ? (
             <img
               src={officialMap.src}
-              alt={`Official Bureau of Meteorology warning map: ${warning.title}`}
+              alt={`Official Met Office warning map: ${warning.title}`}
               className="block h-auto max-h-64 w-full object-contain"
             />
           ) : loading ? (
-            <p className="text-sm">Loading the official BoM warning map…</p>
+            <p className="text-sm">Loading the official Met Office warning map…</p>
           ) : detail ? (
-            <p className="text-sm">BoM has not provided a map for this warning.</p>
+            <p className="text-sm">Met Office has not provided a map for this warning.</p>
           ) : loadFailed ? (
-            <p className="text-sm">The official BoM map could not be loaded.</p>
+            <p className="text-sm">The official Met Office map could not be loaded.</p>
           ) : (
-            <p className="text-sm">Loading the official BoM warning map…</p>
+            <p className="text-sm">Loading the official Met Office warning map…</p>
           )}
           <button
             type="button"
@@ -467,7 +460,7 @@ type Props = {
   /** Radar timeline frames for prefetch / smooth playback. */
   radarLoopFrames?: WeatherFrame[];
   radarFrameIndex?: number;
-  /** Official BoM thunderstorm forecast chart (risk page). */
+  /** Official Met Office thunderstorm forecast chart (risk page). */
   riskImageUrl?: string | null;
   riskImageBounds?: [[number, number], [number, number]] | null;
   /** sheet = product graphic over map; geo = georeferenced plate */
@@ -558,7 +551,7 @@ function FitRegionBounds({
       map.fitBounds(bounds, {
         animate: withAnimate,
         padding: [pad, pad],
-        // Avoid over-zooming ACT/TAS on tall phones and clipping edges.
+        // Avoid over-zooming DEU/FRA on tall phones and clipping edges.
         maxZoom: isNational ? 6 : 9,
       });
     };
@@ -1081,7 +1074,7 @@ export function HomeMap({
         zoom={4}
         minZoom={3}
         maxZoom={18}
-        maxBounds={AUSTRALIA_MAP_BOUNDS}
+        maxBounds={EUROPE_MAP_BOUNDS}
         maxBoundsViscosity={1.0}
         className="h-full w-full !bg-[#0a1628]"
         style={{ background: "#0a1628" }}
@@ -1249,7 +1242,7 @@ export function HomeMap({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={riskImageUrl}
-            alt="BoM thunderstorm forecast"
+            alt="Met Office thunderstorm forecast"
             className="max-h-full max-w-full object-contain shadow-[0_12px_48px_rgba(0,0,0,0.55)]"
             draggable={false}
           />

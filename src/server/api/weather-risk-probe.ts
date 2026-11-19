@@ -33,6 +33,15 @@ export async function GET(req: NextRequest) {
   const dayNum = Number(req.nextUrl.searchParams.get("day") || "1");
 
   try {
+    if (!modelKind && sourceParam === "bom") {
+      return NextResponse.json(
+        {
+          status: "unavailable",
+          message: "Official UK/Europe thunderstorm risk imagery is not yet connected.",
+        },
+        { headers: { "Cache-Control": "no-store" }, status: 404 },
+      );
+    }
     if (categoryId) {
       if (sourceParam === "bom" || (!modelKind && sourceParam === "bom")) {
         const cat = METEYE_THUNDERSTORM_CATEGORIES.find(
@@ -53,7 +62,7 @@ export async function GET(req: NextRequest) {
             cat.id === "tstm_likely"
               ? "Thunderstorms are likely in the period — plan for lightning and local heavy rain."
               : "At least a low chance of thunderstorms in the period — isolated cells possible.",
-          productLabel: "BoM thunderstorms",
+          productLabel: "Met Office thunderstorms",
         });
       }
       const def = explainCategoryDefinition(product, categoryId);

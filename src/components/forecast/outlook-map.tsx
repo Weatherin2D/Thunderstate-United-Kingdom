@@ -217,19 +217,19 @@ export function OutlookMap({ mapView, features, legend: _legend }: OutlookMapPro
     const controller = new AbortController();
     void (async () => {
       try {
-        const response = await fetch("/geo/australia-outline.geojson", {
+        const response = await fetch("/geo/europe-outline.geojson", {
           signal: controller.signal,
         });
         if (!response.ok) {
           throw new Error(
-            `Australia outline request failed (${response.status})`,
+            `Europe outline request failed (${response.status})`,
           );
         }
         const data = (await response.json()) as GeoJSON.GeoJsonObject;
         if (!controller.signal.aborted) setOutline(data);
       } catch (error) {
         if (controller.signal.aborted) return;
-        console.error("Failed to load the Australia outline.", error);
+        console.error("Failed to load the Europe outline.", error);
       }
     })();
     return () => {

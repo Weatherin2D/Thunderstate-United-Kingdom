@@ -1,6 +1,6 @@
-/** AEST/AEDT archive time helpers (Australia/Sydney). */
+/** UK time archive time helpers (Europe/London). */
 
-export const ARCHIVE_TZ = "Australia/Sydney";
+export const ARCHIVE_TZ = "Europe/London";
 export const ARCHIVE_STEP_SEC = 10 * 60;
 export const ARCHIVE_SCRUB_HALF_WINDOW_SEC = 2 * 60 * 60;
 
@@ -14,7 +14,7 @@ export type AestParts = {
   minute: number;
 };
 
-/** Calendar parts for a unix instant in Australia/Sydney. */
+/** Calendar parts for a unix instant in Europe/London. */
 export function unixToAestParts(unixSec: number): AestParts {
   const d = new Date(unixSec * 1000);
   const fmt = new Intl.DateTimeFormat("en-CA", {
@@ -41,7 +41,7 @@ export function unixToAestParts(unixSec: number): AestParts {
 }
 
 /**
- * Convert AEST wall-clock parts to unix seconds.
+ * Convert UK time wall-clock parts to unix seconds.
  * Uses iterative refinement against Intl (handles DST).
  */
 export function aestPartsToUnix(parts: AestParts): number {
@@ -70,7 +70,7 @@ export function aestPartsToUnix(parts: AestParts): number {
   return guess;
 }
 
-/** Start of the Sydney calendar day containing `unixSec` (or now). */
+/** Start of the London calendar day containing `unixSec` (or now). */
 export function startOfAestDayUnix(unixSec = Math.floor(Date.now() / 1000)): number {
   const p = unixToAestParts(unixSec);
   return aestPartsToUnix({
@@ -113,7 +113,7 @@ export function formatAestHourKey(unixSec: number): {
 }
 
 export function formatArchiveDateTimeLabel(unixSec: number): string {
-  return new Intl.DateTimeFormat("en-AU", {
+  return new Intl.DateTimeFormat("en-GB", {
     timeZone: ARCHIVE_TZ,
     weekday: "short",
     day: "numeric",

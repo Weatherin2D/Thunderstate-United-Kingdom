@@ -54,7 +54,7 @@ function formatValid(iso: string | null): string {
   if (!iso) return "—";
   const d = new Date(iso);
   if (!Number.isFinite(d.getTime())) return iso;
-  return new Intl.DateTimeFormat("en-AU", {
+  return new Intl.DateTimeFormat("en-GB", {
     timeZone: "UTC",
     weekday: "short",
     day: "numeric",
@@ -81,9 +81,9 @@ function readSoundingsQuery(): {
     mode: "model" as SoundingMode,
     engine: "predict" as EngineUiMode,
     model: "pulse" as SoundingModelId,
-    lat: -31.95,
-    lon: 115.86,
-    place: "Perth, WA",
+    lat: 54.5973,
+    lon: -5.9301,
+    place: "Belfast, Northern Ireland",
   };
   if (typeof window === "undefined") return fallback;
   const sp = new URLSearchParams(window.location.search);
@@ -114,7 +114,7 @@ export function SoundingsDashboard() {
   // Default Model + AI V1 — Observed depends on UWYO which often times out.
   const [mode, setMode] = useState<SoundingMode>(initial.mode);
   const [engineMode, setEngineMode] = useState<EngineUiMode>(initial.engine);
-  const [station, setStation] = useState("94610"); // Perth — often available
+  const [station, setStation] = useState("03772"); // Camborne / UK observed-sounding fallback
   const [model, setModel] = useState<SoundingModelId>(initial.model);
   const [place, setPlace] = useState<Place>({
     lat: initial.lat,

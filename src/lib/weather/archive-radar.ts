@@ -1,4 +1,4 @@
-/** Capture + store Australian RainViewer radar tiles for the archive. */
+/** Capture + store European RainViewer radar tiles for the archive. */
 
 import {
   putRadarFrame,
@@ -99,7 +99,7 @@ export async function ensureArchiveRadarAt(targetUnix: number): Promise<boolean>
   return stored > 0;
 }
 
-/** Generate tile coords within an Australia window, capped per zoom. */
+/** Generate tile coords within an Europe window, capped per zoom. */
 function radarTileCoords(
   z: number,
   maxTiles: number,

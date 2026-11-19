@@ -12,15 +12,15 @@ import {
   AUTO_RISK_MAX_RANK,
   type AutoHatchId,
 } from "@/lib/weather/auto-risk-categories";
-import { BOM_RISK_IMAGE_BOUNDS } from "@/lib/weather/bom-risk-smooth";
+import { MET_OFFICE_RISK_IMAGE_BOUNDS } from "@/lib/weather/bom-risk-smooth";
 
-export { BOM_RISK_IMAGE_BOUNDS as AUTO_RISK_IMAGE_BOUNDS };
+export { MET_OFFICE_RISK_IMAGE_BOUNDS as AUTO_RISK_IMAGE_BOUNDS };
 
 const AU = {
-  minLat: BOM_RISK_IMAGE_BOUNDS[0][0],
-  maxLat: BOM_RISK_IMAGE_BOUNDS[1][0],
-  minLon: BOM_RISK_IMAGE_BOUNDS[0][1],
-  maxLon: BOM_RISK_IMAGE_BOUNDS[1][1],
+  minLat: MET_OFFICE_RISK_IMAGE_BOUNDS[0][0],
+  maxLat: MET_OFFICE_RISK_IMAGE_BOUNDS[1][0],
+  minLon: MET_OFFICE_RISK_IMAGE_BOUNDS[0][1],
+  maxLon: MET_OFFICE_RISK_IMAGE_BOUNDS[1][1],
 };
 
 const WORK_WIDTH = 960;
@@ -38,8 +38,8 @@ const OPEN_PX = 2;
 /** Guaranteed width (px) of each outer band around the next-higher core. */
 const NEST_GAP_PX = 5;
 /** Drop sample sites with fewer than this many neighbours inside NEIGHBOR_KM. */
-const MIN_SAMPLE_NEIGHBORS = 1;
-const SAMPLE_NEIGHBOR_KM = 165;
+const MIN_IREMPLE_NEIGHBORS = 1;
+const IREMPLE_NEIGHBOR_KM = 165;
 
 const COLOR_BY_RANK: Record<number, [number, number, number, number]> = {};
 for (const c of AUTO_RISK_CATEGORIES) {
@@ -81,12 +81,12 @@ function consolidateSamplePoints(
       let neighbours = 0;
       for (const o of elevated) {
         if (o === p) continue;
-        if (approxKm(p.lat, p.lon, o.lat, o.lon) <= SAMPLE_NEIGHBOR_KM) {
+        if (approxKm(p.lat, p.lon, o.lat, o.lon) <= IREMPLE_NEIGHBOR_KM) {
           neighbours += 1;
-          if (neighbours >= MIN_SAMPLE_NEIGHBORS) break;
+          if (neighbours >= MIN_IREMPLE_NEIGHBORS) break;
         }
       }
-      if (neighbours >= MIN_SAMPLE_NEIGHBORS) return p;
+      if (neighbours >= MIN_IREMPLE_NEIGHBORS) return p;
       // Keep hatch-only hints only when a neighbour exists.
       if (p.hatch > 0 && neighbours >= 1) {
         return { ...p, rank: Math.min(p.rank, 3) };

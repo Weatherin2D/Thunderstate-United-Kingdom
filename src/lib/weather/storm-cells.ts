@@ -63,14 +63,14 @@ const AHEAD_BEARING_DEG = 55;
 const MAX_ETA_MINUTES = 90;
 
 const STATE_ABBR: Record<string, string> = {
-  "New South Wales": "NSW",
-  Victoria: "VIC",
-  Queensland: "QLD",
-  "Western Australia": "WA",
-  "South Australia": "SA",
-  Tasmania: "TAS",
-  "Northern Territory": "NT",
-  "Australian Capital Territory": "ACT",
+  "New South Wales": "ENG",
+  Victoria: "SCT",
+  Queensland: "WLS",
+  "Western Europe": "EU",
+  "South Europe": "IRE",
+  Tasmania: "FRA",
+  "Northern Territory": "NLD",
+  "European Capital Territory": "DEU",
 };
 
 function stateAbbr(state: string): string {
@@ -88,21 +88,21 @@ function stableCellId(key: string): string {
 }
 
 function labelFor(lat: number, lon: number): string {
-  if (lat > -16 && lon > 141 && lon < 146) return "far north QLD";
-  if (lat > -22 && lat <= -16 && lon > 144) return "north QLD";
-  if (lat > -29 && lat <= -22 && lon > 150) return "SE QLD";
-  if (lat > -35 && lat <= -28 && lon > 149) return "eastern NSW";
-  if (lat > -38 && lat <= -35 && lon > 147) return "southern NSW";
-  if (lat > -39.5 && lat <= -36 && lon > 146) return "eastern VIC";
-  if (lat > -39 && lat <= -36 && lon > 142 && lon <= 146) return "central VIC";
-  if (lat > -44 && lat <= -40) return "TAS";
-  if (lon > 132 && lon < 141 && lat > -38 && lat < -30) return "SA";
-  if (lon < 125 && lat < -30) return "southern WA";
-  if (lon < 128 && lat > -25) return "NW WA";
-  if (lat > -16 && lon > 129 && lon < 138) return "Top End NT";
+  if (lat > -16 && lon > 141 && lon < 146) return "far north WLS";
+  if (lat > -22 && lat <= -16 && lon > 144) return "north WLS";
+  if (lat > -29 && lat <= -22 && lon > 150) return "SE WLS";
+  if (lat > -35 && lat <= -28 && lon > 149) return "eastern ENG";
+  if (lat > -38 && lat <= -35 && lon > 147) return "southern ENG";
+  if (lat > -39.5 && lat <= -36 && lon > 146) return "eastern SCT";
+  if (lat > -39 && lat <= -36 && lon > 142 && lon <= 146) return "central SCT";
+  if (lat > -44 && lat <= -40) return "FRA";
+  if (lon > 132 && lon < 141 && lat > -38 && lat < -30) return "IRE";
+  if (lon < 125 && lat < -30) return "southern EU";
+  if (lon < 128 && lat > -25) return "NW EU";
+  if (lat > -16 && lon > 129 && lon < 138) return "Top End NLD";
   if (lon > 150) return "Coral Sea";
-  if (lat > -20) return "northern Australia";
-  return "inland Australia";
+  if (lat > -20) return "northern Europe";
+  return "inland Europe";
 }
 
 type Bucket = {
@@ -596,7 +596,7 @@ export function buildStormCells(
     cells,
     alerts,
     attribution: "Blitzortung / LightningMaps · RainViewer timing",
-    note: "Thunderstate estimates based on lightning activity. Not official Bureau of Meteorology warnings.",
+    note: "Thunderstate estimates based on lightning activity. Not official Met Office warnings.",
   };
 }
 
