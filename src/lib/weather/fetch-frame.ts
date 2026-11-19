@@ -787,10 +787,7 @@ export async function fetchAndCacheFrameResilient(
   bounds?: LonLatBounds,
   region = "national",
 ): Promise<{ body: Buffer; contentType: string; resolvedTime: number } | null> {
-  const frameBounds: LonLatBounds = bounds ?? [
-    [-48, 105],
-    [-5, 165],
-  ];
+  const frameBounds: LonLatBounds = bounds ?? GIBS_UK_BOUNDS;
   const cached = getCachedFrame(product, timeUnix, region);
   if (cached) {
     return {

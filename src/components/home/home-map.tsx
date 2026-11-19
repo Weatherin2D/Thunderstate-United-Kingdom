@@ -53,7 +53,7 @@ import type { StormCell } from "@/lib/weather/storm-cell-types";
 import type { SynopticFrame } from "@/lib/weather/synoptic";
 import type { SynopticGeoJson } from "@/lib/weather/synoptic-contour";
 import {
-  GIBS_AU_ASPECT,
+  GIBS_UK_ASPECT,
   boundsMercatorAspect,
   lonLatToBoundsPct,
   type WeatherFrame,
@@ -137,16 +137,9 @@ function useLiveLocation(enabled: boolean): {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!enabled) {
-      setPosition(null);
-      setError(null);
-      return;
-    }
+    if (!enabled) return;
 
-    if (!navigator.geolocation) {
-      setError("Location is not supported by this browser.");
-      return;
-    }
+    if (!navigator.geolocation) return;
 
     const watchId = navigator.geolocation.watchPosition(
       ({ coords }) => {
@@ -167,7 +160,11 @@ function useLiveLocation(enabled: boolean): {
       { enableHighAccuracy: true, maximumAge: 1_000, timeout: 20_000 },
     );
 
-    return () => navigator.geolocation.clearWatch(watchId);
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+      setPosition(null);
+      setError(null);
+    };
   }, [enabled]);
 
   return { position, error };
@@ -636,7 +633,7 @@ function SatelliteRadarOverlay({
   return (
     <div className="skywatch-radar-overlay pointer-events-none absolute inset-0 z-[10]">
       <MapContainer
-        center={[-25.5, 134.5]}
+        center={[54.5, -3.5]}
         zoom={4}
         className="h-full w-full !bg-transparent [&_.leaflet-container]:!bg-transparent [&_.leaflet-tile-pane]:!opacity-100"
         zoomControl={false}
@@ -703,7 +700,6 @@ function SatelliteFrameView({
     if (!url) {
       // Keep last decoded frame if the URL briefly goes null during scrub.
       loadingRef.current = null;
-      setFailed(false);
       return;
     }
     if (url === displayRef.current || url === loadingRef.current) {
@@ -776,6 +772,7 @@ function SatelliteFrameView({
     return () => {
       if (fallbackTimer != null) window.clearTimeout(fallbackTimer);
       if (loadingRef.current === url) loadingRef.current = null;
+      setFailed(false);
     };
   }, [url, fallbackUrl]);
 
@@ -858,7 +855,7 @@ export function HomeMap({
   const radarTiles = frameTileUrl && showRadarOverlay ? frameTileUrl : null;
   const radarSmoothed = mapSettings.radarSmoothing;
   const satAspect = isNational
-    ? GIBS_AU_ASPECT
+    ? GIBS_UK_ASPECT
     : boundsMercatorAspect(bounds);
   const { position: liveLocation, error: liveLocationError } = useLiveLocation(
     mapSettings.liveLocation,
@@ -898,7 +895,7 @@ export function HomeMap({
         data-region={regionId}
       >
         <MapContainer
-          center={[-25.5, 134.5]}
+          center={[54.5, -3.5]}
           zoom={4}
           className="h-full w-full !bg-[#0a1628]"
           style={{ background: "#0a1628" }}
@@ -1070,7 +1067,7 @@ export function HomeMap({
       className="skywatch-map relative z-0 h-full min-h-[280px] w-full overflow-hidden sm:min-h-[360px]"
     >
       <MapContainer
-        center={[-25.5, 134.5]}
+        center={[54.5, -3.5]}
         zoom={4}
         minZoom={3}
         maxZoom={18}
