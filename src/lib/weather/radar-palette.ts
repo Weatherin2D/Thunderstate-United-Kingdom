@@ -1,4 +1,5 @@
 import { PNG } from "pngjs";
+import sharp from "sharp";
 import universalBlueDbz from "../../../data/rainviewer-universal-blue.json";
 import {
   RADAR_PALETTE_ID,
@@ -234,46 +235,41 @@ export const RADAR_NATIVE_MAX_ZOOM = 8;
 export const RADAR_TILE_SIZE = 512 as const;
 
 /**
- * Crop a child tile out of a recoloured native parent and nearest-neighbour
- * upscale to RADAR_TILE_SIZE². NN preserves the exact CloudCountry dBZ palette
- * colours (no blended intermediate shades).
+ * Crop a child tile out of a native parent and nearest-neighbour upscale to
+ * RADAR_TILE_SIZE². NN preserves the exact colours (no blended intermediate
+ * shades). Accepts PNG (legacy RainViewer) or WebP (MeteoPool) input buffers.
  */
-export function extractOverzoomTile(
-  parentPng: Buffer,
+export async function extractOverzoomTile(
+  parentBuffer: Buffer,
   scale: number,
   childX: number,
   childY: number,
-): Buffer {
-  if (scale <= 1) return parentPng;
-  const parent = PNG.sync.read(parentPng);
-  const srcSize = parent.width;
+): Promise<Buffer> {
+  if (scale <= 1) return parentBuffer;
+  const srcSize = RADAR_TILE_SIZE; // 512 for MeteoPool WebP
   const childSize = srcSize / scale;
   if (!Number.isFinite(childSize) || childSize < 1) {
     return transparentRadarTilePng();
   }
   const ox = (childX % scale) * childSize;
   const oy = (childY % scale) * childSize;
-  const outSize = RADAR_TILE_SIZE;
-  const out = new PNG({ width: outSize, height: outSize });
-  for (let y = 0; y < outSize; y++) {
-    const sy = Math.min(
-      srcSize - 1,
-      Math.floor(oy + (y * childSize) / outSize),
-    );
-    for (let x = 0; x < outSize; x++) {
-      const sx = Math.min(
-        srcSize - 1,
-        Math.floor(ox + (x * childSize) / outSize),
-      );
-      const si = (sy * srcSize + sx) << 2;
-      const di = (y * outSize + x) << 2;
-      out.data[di] = parent.data[si]!;
-      out.data[di + 1] = parent.data[si + 1]!;
-      out.data[di + 2] = parent.data[si + 2]!;
-      out.data[di + 3] = parent.data[si + 3]!;
-    }
+  try {
+    return await sharp(parentBuffer)
+      .extract({
+        left: Math.floor(ox),
+        top: Math.floor(oy),
+        width: Math.floor(childSize),
+        height: Math.floor(childSize),
+      })
+      .resize(RADAR_TILE_SIZE, RADAR_TILE_SIZE, {
+        kernel: sharp.kernel.nearest,
+        fit: "fill",
+      })
+      .webp()
+      .toBuffer();
+  } catch {
+    return transparentRadarTilePng();
   }
-  return PNG.sync.write(out);
 }
 
 /**

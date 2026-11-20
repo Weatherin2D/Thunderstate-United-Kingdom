@@ -137,7 +137,9 @@ export async function GET(req: NextRequest) {
   }
 
   const out = overzoom
-    ? extractOverzoomTile(parentTile, scale, xi, yi)
+    ? await extractOverzoomTile(parentTile, scale, xi, yi).catch(() =>
+        emptyWebpTile(),
+      )
     : parentTile;
   setCachedRadarTile(cacheKey, out);
   return webpResponse(out, {
